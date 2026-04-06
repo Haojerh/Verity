@@ -49,5 +49,5 @@ Make sure MySQL is running, then create the database in MYSQL command line clien
 CREATE DATABASE verity;
 ```
 
-# Project Architecture
+## Project Architecture
 Frontend (React + Tailwind), Backend (Spring Boot), Database (MySQL)
