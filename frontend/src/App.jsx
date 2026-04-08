@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes/AppRouter";
 import api from "./services/api";
 
 function App() {
@@ -12,9 +14,7 @@ function App() {
       });
   }, []);
 
-  return (
-    <h1 className="text-3xl">Open console to see API result</h1>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
