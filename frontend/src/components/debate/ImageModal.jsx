@@ -27,7 +27,11 @@ export default function ImageModal({
   return (
     <div
       className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center"
-      onClick={onClose}
+      onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+        }}
     >
       {/* Close button */}
       <button
