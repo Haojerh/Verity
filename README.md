@@ -26,6 +26,11 @@ git --version
 ```
 
 ## How to Run the Project
+First, clone the project from GitHub:
+```
+git clone https://github.com/your-username/verity.git
+cd verity
+```
 ### 1. Run Frontend (React)
 Open a terminal:
 ```
