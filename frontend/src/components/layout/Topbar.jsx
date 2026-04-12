@@ -17,7 +17,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode 
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="block sm:hidden p-2 hover:bg-muted rounded-lg"
+            className="block md:hidden p-2 hover:bg-muted rounded-lg"
           >
             ☰
           </button>

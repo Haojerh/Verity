@@ -64,17 +64,15 @@ export default function Home() {
     }
     ];
   return (
-    <div className="p-4 sm:p-6">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="mb-6 text-xl font-semibold">
-          Recommended Debates
-        </h2>
+    <div className="max-w-4xl mx-auto">
+      <h2 className="mb-6 text-xl font-semibold">
+        Recommended Debates
+      </h2>
 
-        <div className="space-y-4">
-          {recommendedDebates.map((debate) => (
-            <DebateCard key={debate.id} debate={debate} />
-          ))}
-        </div>
+      <div className="space-y-4">
+        {recommendedDebates.map((debate) => (
+          <DebateCard key={debate.id} debate={debate} />
+        ))}
       </div>
     </div>
   );

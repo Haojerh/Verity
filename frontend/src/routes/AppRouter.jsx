@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import Home from "../pages/Home";
+import UserManagement from "../pages/UserManagement";
 
 export const router = createBrowserRouter([
   {
@@ -13,4 +14,16 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
+  {
+    path: "/user_management",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <UserManagement />,
+      },
+    ],
+  },
+
 ]);
