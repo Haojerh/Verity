@@ -8,7 +8,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     <aside
       className={`${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } md:translate-x-0 fixed md:sticky top-[64px] left-0 w-64 h-[calc(100vh-64px)] border-r border-border bg-card shrink-0 flex flex-col overflow-hidden transition-transform duration-300 z-50 md:z-auto`}
+      } md:translate-x-0 fixed md:sticky top-16 left-0 w-64 h-[calc(100vh-64px)] border-r border-border bg-card shrink-0 flex flex-col overflow-hidden transition-transform duration-300 z-50 md:z-auto`}
     >
       <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
 
