@@ -1,7 +1,9 @@
+import { useLocation } from "react-router-dom";
+import TopicHeader from "../components/topic/TopicHeader";
 import DebateCard from "../components/debate/DebateCard";
 
-export default function Home() {
-    const recommendedDebates = [
+export default function ExploreDetail() {
+  const recommendedDebates = [
     {
         id: 1,
         title: "iOS vs Android",
@@ -62,18 +64,17 @@ export default function Home() {
         "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800"
         ]
     }
-    ];
-  return (
-    <div className="max-w-4xl mx-auto w-full">
-      <h2 className="mb-6 text-2xl font-semibold">
-        Recommended Debates
-      </h2>
+  ];
+  const { state: topic } = useLocation();
 
-      <div className="space-y-4">
-        {recommendedDebates.map((debate) => (
-          <DebateCard key={debate.id} debate={debate} />
-        ))}
-      </div>
+  return (
+    <div className="max-w-4xl mx-auto w-full space-y-6">
+        <TopicHeader topic={topic} />
+        <div className="space-y-4">
+            {recommendedDebates.map((debate) => (
+                <DebateCard key={debate.id} debate={debate} />
+            ))}
+        </div>
     </div>
-  );
+  )
 }

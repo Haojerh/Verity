@@ -16,7 +16,7 @@ export default function ModeratorRow({ user, onOpenLogs }) {
 
       <td className="hidden sm:table-cell p-4 text-center">
         <button onClick={onOpenLogs} className="p-1 rounded">
-            <History className="h-5 w-5 text-primary hover:text-green-700" />
+            <History className="h-5 w-5 text-primary hover:text-secondary" />
         </button>
       </td>
 
@@ -25,7 +25,7 @@ export default function ModeratorRow({ user, onOpenLogs }) {
             <button className="px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 bg-gray-200 hover:bg-gray-300">
                 Warn
             </button>
-            <button className="px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 text-white bg-red-700 hover:bg-red-800">
+            <button className="px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 text-white bg-destructive hover:bg-red-900">
                 Demote
             </button>
         </div>

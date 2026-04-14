@@ -4,6 +4,7 @@ import Pagination from "../components/ui/Pagination";
 import SearchBar from "../components/ui/SearchBar";
 import UserTable from "../components/userManagement/UserTable";
 import PunishmentLogs from "../components/userManagement/PunishmentLogs";
+import Header from "../components/ui/Header";
 
 export default function UserManagement() {
   const userData = [
@@ -62,7 +63,7 @@ export default function UserManagement() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
-  const itemsPerPage = 10;
+  const itemsPerPage = 1;
 
   const filters = ["All", "Banned", "Muted"];
 
@@ -92,12 +93,7 @@ export default function UserManagement() {
     <div className="max-w-255 mx-auto w-full">
       
       {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold mb-1">User Management</h2>
-        <p className="text-sm text-gray-500">
-          Manage users, bans, mutes and activity logs.
-        </p>
-      </div>
+      <Header title="User Management" desc="Manage users, bans, mutes and activity logs" />
 
       {/* Filters + Search */}
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">

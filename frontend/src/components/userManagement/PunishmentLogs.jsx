@@ -59,7 +59,7 @@ export default function PunishmentLogs({ onClose, logs }) {
       <div className="px-6 py-4 border-t flex justify-end bg-gray-50">
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-primary hover:bg-green-700 text-white rounded-full text-sm"
+          className="px-4 py-2 bg-primary hover:bg-secondary text-white rounded-full text-sm"
         >
           Done
         </button>

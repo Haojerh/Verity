@@ -35,7 +35,7 @@ export default function UserRow({ user, onOpenLogs }) {
 
       <td className="hidden md:table-cell p-4 text-center">
         <button onClick={onOpenLogs} className="p-1 rounded">
-            <History className="h-5 w-5 text-primary hover:text-green-700" />
+            <History className="h-5 w-5 text-primary hover:text-secondary" />
         </button>
       </td>
 
@@ -73,8 +73,6 @@ export default function UserRow({ user, onOpenLogs }) {
           </div>
         )}
       </td>
-    </tr>
-
-    
+    </tr>  
   );
 }

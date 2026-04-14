@@ -3,6 +3,9 @@ import Layout from "../components/layout/Layout";
 import Home from "../pages/Home";
 import UserManagement from "../pages/UserManagement";
 import ModeratorManagement from "../pages/ModeratorManagement";
+import Explore from "../pages/Explore";
+import ExploreDetail from "../pages/ExploreDetail";
+import TopicManagement from "../pages/TopicManagement";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +37,32 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <ModeratorManagement />,
+      },
+    ],
+  },
+
+  {
+    path: "/explore",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Explore />,
+      },
+      {
+        path: ":id",
+        element: <ExploreDetail />,
+      },
+    ],
+  },
+
+  {
+    path: "/topic_management",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <TopicManagement />,
       },
     ],
   },

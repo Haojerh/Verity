@@ -3,6 +3,7 @@ import Pagination from "../components/ui/Pagination";
 import SearchBar from "../components/ui/SearchBar";
 import ModeratorTable from "../components/moderatorManagement/ModeratorTable";
 import PunishmentLogs from "../components/moderatorManagement/PunishmentLogs";
+import Header from "../components/ui/Header";
 
 export default function ModeratorManagement() {
   const userData = [
@@ -60,12 +61,7 @@ export default function ModeratorManagement() {
     <div className="max-w-255 mx-auto w-full">
       
       {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold mb-1">Moderator Management</h2>
-        <p className="text-sm text-gray-500">
-          Audit and Regulate staff permission and status.
-        </p>
-      </div>
+      <Header title="Moderator Management" desc="Audit and Regulate staff permission and status" />
 
       {/* Search */}
       <div className="mb-4">
