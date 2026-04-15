@@ -50,7 +50,7 @@ export default function TopicCard({ topic, actions }) {
           )}
         </div>
 
-        <p className="text-zinc-600 mb-6 text-sm leading-relaxed line-clamp-2">
+        <p className="text-muted-foreground mb-6 text-sm leading-relaxed line-clamp-2">
           {topic.description}
         </p>
 

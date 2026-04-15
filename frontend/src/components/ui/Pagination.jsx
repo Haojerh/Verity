@@ -40,7 +40,7 @@ export default function Pagination({
             className={`w-8 h-8 rounded-full text-xs font-bold ${
               currentPage === page
                 ? "bg-primary text-white"
-                : "hover:bg-gray-200"
+                : "hover:bg-muted"
             }`}
           >
             {page}

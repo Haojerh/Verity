@@ -12,7 +12,7 @@ export default function FilterBar({
           className={`h-8 px-3 text-xs rounded-full transition ${
             activeFilter === filter
               ? "bg-primary text-white"
-              : "bg-gray-200 hover:bg-gray-300"
+              : "bg-muted hover:bg-gray-300"
           }`}
         >
           {filter}

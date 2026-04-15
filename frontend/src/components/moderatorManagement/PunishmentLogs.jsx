@@ -1,25 +1,25 @@
 import Modal from "../ui/Modal";
+import ModalFooter from "../ui/ModalFooter";
 import { X, History } from "lucide-react";
 
 export default function PunishmentLogs({ onClose, logs }) {
   return (
     <Modal onClose={onClose}>
       {/* HEADER */}
-      <div className="px-6 py-4 border-b flex items-center justify-between bg-gray-50">
-        <h3 className="text-lg font-bold flex items-center gap-2">
-          <History className="text-primary" />
-          Punishment Logs
-        </h3>
-
+      <div className="px-8 py-6 flex items-center justify-between">
+        <div className="flex flex-row gap-3 items-center">
+            <History className="w-8 h-8 text-primary bg-primary/10 p-1 rounded-md" />
+            <h3 className="text-xl font-bold">Punishment Logs</h3>
+        </div>
         <button onClick={onClose}>
-          <X className="w-5 h-5" />
+            <X className="w-5 h-5" />
         </button>
       </div>
 
       {/* BODY */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="text-xs uppercase bg-gray-100">
+          <thead className="text-xs uppercase bg-muted/80">
             <tr>
               <th className="p-4 text-left">User</th>
               <th className="p-4 text-left">Time</th>
@@ -31,7 +31,7 @@ export default function PunishmentLogs({ onClose, logs }) {
 
           <tbody>
             {logs.map((log, i) => (
-              <tr key={i} className="border-t hover:bg-gray-50">
+              <tr key={i} className="border-t hover:bg-muted/30">
                 <td className="p-4 font-semibold text-primary">{log.user}</td>
                 <td className="p-4 text-xs">{log.time}</td>
 
@@ -56,15 +56,7 @@ export default function PunishmentLogs({ onClose, logs }) {
       </div>
 
       {/* FOOTER */}
-      <div className="px-6 py-4 border-t flex justify-end bg-gray-50">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 bg-primary hover:bg-secondary text-white rounded-full text-sm"
-        >
-          Done
-        </button>
-      </div>
-
+      <ModalFooter buttonText="Done" buttonColor="primary" buttonNumber={1} onClose={onClose} />
     </Modal>
   );
 }

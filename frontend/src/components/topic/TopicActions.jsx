@@ -13,7 +13,7 @@ export default function TopicActions({ onEdit, onDelete }) {
 
       <button
         onClick={onDelete}
-        className="flex gap-2 items-center justify-center rounded-3xl w-full py-1.5 text-white bg-destructive hover:bg-red-800 transition-all">
+        className="flex gap-2 items-center justify-center rounded-3xl w-full py-1.5 text-white bg-destructive hover:bg-destructive-hover transition-all">
         <Trash2 className="h-4 w-4"/>
         Delete
       </button>

@@ -8,6 +8,7 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [displayModeOpen, setDisplayModeOpen] = useState(false);
 
+  // Automatically close sidebar when needed
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
 

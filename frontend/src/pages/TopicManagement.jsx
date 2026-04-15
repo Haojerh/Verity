@@ -58,7 +58,7 @@ export default function TopicManagement() {
     <div className="max-w-4xl mx-auto">
       <Header title="Topic Management" desc="Add, edit or delete topics in the system" />
 
-      <div className="flex flex-row justify-between flex-wrap mb-8">
+      <div className="flex flex-row justify-between gap-4 flex-wrap mb-8">
         <SearchBar 
         value={search}
         onChange={setSearch}

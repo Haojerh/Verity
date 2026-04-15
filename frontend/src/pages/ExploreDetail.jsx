@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import TopicHeader from "../components/topic/TopicHeader";
-import DebateCard from "../components/debate/DebateCard";
+import DebateCard from "../components/homeDebate/DebateCard";
 
 export default function ExploreDetail() {
   const recommendedDebates = [

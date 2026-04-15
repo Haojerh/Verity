@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import FilterBar from "../components/ui/FilterBar";
 import Pagination from "../components/ui/Pagination";
 import SearchBar from "../components/ui/SearchBar";
 import UserTable from "../components/userManagement/UserTable";
 import PunishmentLogs from "../components/userManagement/PunishmentLogs";
 import Header from "../components/ui/Header";
+import BanModal from "../components/userManagement/BanModal";
+import UnbanModal from "../components/userManagement/UnbanModal";
+import MuteModal from "../components/userManagement/MuteModal";
+import UnmuteModal from "../components/userManagement/UnmuteModal";
+import WarnModal from "../components/userManagement/WarnModal";
 
 export default function UserManagement() {
   const userData = [
@@ -58,16 +63,26 @@ export default function UserManagement() {
     },
   ];
 
-  // 🔥 state
+  // state
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const itemsPerPage = 1;
+  const [modal, setModal] = useState({
+    type: null,
+    user: null
+  });
 
+  // modal control
+  const openModal = useCallback((type, user) => {
+    setModal({ type, user });
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setModal({ type: null, user: null });
+  }, []);
+
+  // filtering logic
   const filters = ["All", "Banned", "Muted"];
-
-  // 🔍 filtering logic
   const filteredUsers = userData.filter((user) => {
     const matchSearch =
       user.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -82,6 +97,7 @@ export default function UserManagement() {
   });
 
   // pagination
+  const itemsPerPage = 1;
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
   const paginatedUsers = filteredUsers.slice(
@@ -90,12 +106,11 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="max-w-255 mx-auto w-full">
-      
+    <div className="max-w-4xl mx-auto w-full">
       {/* Header */}
       <Header title="User Management" desc="Manage users, bans, mutes and activity logs" />
 
-      {/* Filters + Search */}
+      {/* Filters and Search */}
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
         <FilterBar
           filters={filters}
@@ -111,7 +126,7 @@ export default function UserManagement() {
       </div>
 
       {/* Table */}
-      <UserTable users={paginatedUsers} onOpenLogs={(user) => setSelectedUser(user)} />
+      <UserTable users={paginatedUsers} onAction={openModal} />
 
       <Pagination
       currentPage={currentPage}
@@ -121,10 +136,46 @@ export default function UserManagement() {
       itemsPerPage={itemsPerPage}
       />
 
-      {selectedUser && (
+      {/* Overlay */}
+      {modal.type === "logs" && (
         <PunishmentLogs
-            logs={fakeLogs}
-            onClose={() => setSelectedUser(null)}
+          logs={fakeLogs}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "warn" && (
+        <WarnModal
+          user={modal.user}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "ban" && (
+        <BanModal
+          user={modal.user}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "unban" && (
+        <UnbanModal
+          user={modal.user}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "mute" && (
+        <MuteModal
+          user={modal.user}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "unmute" && (
+        <UnmuteModal
+          user={modal.user}
+          onClose={closeModal}
         />
       )}
     </div>

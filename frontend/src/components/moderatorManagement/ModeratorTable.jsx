@@ -1,10 +1,10 @@
 import ModeratorRow from "./ModeratorRow";
 
-export default function ModeratorTable({ users, onOpenLogs }) {
+export default function ModeratorTable({ users, onAction }) {
   return (
     <div className="bg-white rounded-xl border overflow-visible shadow-md">
       <table className="w-full text-sm">
-        <thead className="bg-gray-100 text-xs uppercase">
+        <thead className="bg-muted/80 text-xs uppercase">
           <tr>
             <th className="p-4 text-left">ID</th>
             <th className="p-4 text-left">Name</th>
@@ -16,7 +16,7 @@ export default function ModeratorTable({ users, onOpenLogs }) {
 
         <tbody>
           {users.map((user) => (
-            <ModeratorRow key={user.id} user={user} onOpenLogs={() => onOpenLogs(user)} />
+            <ModeratorRow key={user.id} user={user} onAction={onAction} />
           ))}
         </tbody>
       </table>

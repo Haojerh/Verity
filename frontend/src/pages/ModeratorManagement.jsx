@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Pagination from "../components/ui/Pagination";
 import SearchBar from "../components/ui/SearchBar";
 import ModeratorTable from "../components/moderatorManagement/ModeratorTable";
 import PunishmentLogs from "../components/moderatorManagement/PunishmentLogs";
+import WarnModal from "../components/userManagement/WarnModal";
+import DemoteModal from "../components/moderatorManagement/DemoteModal";
 import Header from "../components/ui/Header";
 
 export default function ModeratorManagement() {
@@ -40,16 +42,28 @@ export default function ModeratorManagement() {
   // 🔥 state
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const itemsPerPage = 10;
+  const [modal, setModal] = useState({
+      type: null,
+      user: null
+  });
+  
+  // modal control
+  const openModal = useCallback((type, user) => {
+    setModal({ type, user });
+  }, []);
 
-  // 🔍 filtering logic
+  const closeModal = useCallback(() => {
+    setModal({ type: null, user: null });
+  }, []);
+
+  // filtering logic
   const filteredUsers = userData.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase()) ||
     user.email.toLowerCase().includes(search.toLowerCase())
   );
 
   // pagination
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
   const paginatedUsers = filteredUsers.slice(
@@ -58,8 +72,7 @@ export default function ModeratorManagement() {
   );
 
   return (
-    <div className="max-w-255 mx-auto w-full">
-      
+    <div className="max-w-4xl mx-auto w-full">
       {/* Header */}
       <Header title="Moderator Management" desc="Audit and Regulate staff permission and status" />
 
@@ -73,7 +86,7 @@ export default function ModeratorManagement() {
       </div>
 
       {/* Table */}
-      <ModeratorTable users={paginatedUsers} onOpenLogs={(user) => setSelectedUser(user)} />
+      <ModeratorTable users={paginatedUsers} onAction={openModal} />
 
       <Pagination
       currentPage={currentPage}
@@ -83,12 +96,29 @@ export default function ModeratorManagement() {
       itemsPerPage={itemsPerPage}
       />
 
-      {selectedUser && (
+      {/* Overlay */}
+      {modal.type === "logs" && (
         <PunishmentLogs
-            logs={fakeLogs}
-            onClose={() => setSelectedUser(null)}
+          logs={fakeLogs}
+          onClose={closeModal}
         />
       )}
+
+      {modal.type === "warn" && (
+        <WarnModal
+          user={modal.user}
+          roleType="moderator"
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "demote" && (
+        <DemoteModal
+          user={modal.user}
+          onClose={closeModal}
+        />
+      )}
+
     </div>
   );
 }
