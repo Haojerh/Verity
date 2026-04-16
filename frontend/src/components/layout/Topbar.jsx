@@ -2,10 +2,11 @@ import { Search, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import logoImage from "../../assets/Verity.svg";
+import logoImageDark from "../../assets/VerityDark.svg"
 import Avatar from "../ui/Avatar";
 import ProfileDropdown from "../ui/ProfileDropdown";
 
-export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode }) {
+export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode, isDark }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const currentUser = "currentUser123";
 
@@ -23,7 +24,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode 
           </button>
 
           <Link to="/">
-            <img src={logoImage} className="h-10 hidden sm:block" />
+            <img src={isDark ? logoImageDark : logoImage} className="h-10 hidden sm:block" />
           </Link>
         </div>
 
@@ -34,10 +35,10 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode 
             <input
               type="text"
               placeholder="Search debates..."
-              className="w-full pl-10 pr-4 py-2 bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
               style={{
                 border: '2px solid transparent',
-                backgroundImage: 'linear-gradient(white, white), linear-gradient(to right, #22c55e, #ef4444)',
+                backgroundImage: 'linear-gradient(var(--background), var(--background)), linear-gradient(to right, #22c55e, #ef4444)',
                 backgroundOrigin: 'border-box',
                 backgroundClip: 'padding-box, border-box'
               }}
@@ -64,7 +65,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode 
             </button>
 
             {profileMenuOpen && (
-              <ProfileDropdown onClose={() => setProfileMenuOpen(false)} />
+              <ProfileDropdown onClose={() => setProfileMenuOpen(false)} onToggle={onOpenDisplayMode} />
             )}
           </div>
 

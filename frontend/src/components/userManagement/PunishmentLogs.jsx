@@ -1,30 +1,23 @@
 import Modal from "../ui/Modal";
-import { X, History } from "lucide-react";
+import { History } from "lucide-react";
 import ModalFooter from "../ui/ModalFooter";
+import ModalHeader from "../ui/ModalHeader";
 
-export default function PunishmentLogs({ onClose, logs }) {
+export default function PunishmentLogs({ roleType="user", onClose, logs }) {
   return (
     <Modal onClose={onClose}>
-      {/* HEADER */}
-      <div className="px-8 py-6 flex items-center justify-between">
-        <div className="flex flex-row gap-3 items-center">
-            <History className="w-8 h-8 text-primary bg-primary/10 p-1 rounded-md" />
-            <h3 className="text-xl font-bold">Punishment Logs</h3>
-        </div>
-        <button onClick={onClose}>
-            <X className="w-5 h-5" />
-        </button>
-      </div>
+      <ModalHeader text="Punishment Logs" color="primary" icon={History} onClose={onClose}/>
 
       {/* BODY */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-xs uppercase bg-muted/80">
             <tr>
+              {roleType == "mod" && <th className="p-4 text-left">User</th>}
               <th className="p-4 text-left">Time</th>
               <th className="p-4 text-left">Type</th>
               <th className="p-4 text-left">Duration</th>
-              <th className="p-4 text-left">Moderator</th>
+              {roleType == "user" && <th className="p-4 text-left">Moderator</th>}
               <th className="p-4 text-left">Reason</th>
             </tr>
           </thead>
@@ -32,6 +25,7 @@ export default function PunishmentLogs({ onClose, logs }) {
           <tbody>
             {logs.map((log, i) => (
               <tr key={i} className="border-t hover:bg-muted/30">
+                {roleType == "mod" && <td className="p-4 font-semibold text-primary">{log.user}</td>}
                 <td className="p-4 text-xs">{log.time}</td>
 
                 <td className="p-4">
@@ -47,8 +41,8 @@ export default function PunishmentLogs({ onClose, logs }) {
                 </td>
 
                 <td className="p-4 text-xs">{log.duration}</td>
-                <td className="p-4 font-semibold text-primary">{log.moderator}</td>
-                <td className="p-4 text-xs text-gray-600">{log.reason}</td>
+                {roleType == "user" && <td className="p-4 font-semibold text-primary">{log.moderator}</td>}
+                <td className="p-4 text-xs">{log.reason}</td>
               </tr>
             ))}
           </tbody>

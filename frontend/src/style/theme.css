@@ -41,7 +41,11 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --box: #F3F4F5;
-  --box-border: #E1E3E4;
+  --shadow-dark-sm: 0 1px 2px 0 rgba(255, 255, 255, 0.05);
+  --shadow-dark: 0 1px 3px 0 rgba(255, 255, 255, 0.1), 0 1px 2px 0 rgba(255, 255, 255, 0.06);
+  --shadow-dark-md: 0 4px 6px -1px rgba(0,0,0,0.6), 0 0 12px rgba(255,255,255,0.15);
+  --shadow-dark-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 255, 255, 0.18);
+  --shadow-dark-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 15px 20px -10px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 255, 255, 0.22);
 }
 
 .dark {
@@ -51,9 +55,9 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
+  --primary: #00A63E;
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --secondary: #008C34;
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
@@ -124,6 +128,12 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --shadow-dark-sm: var(--shadow-dark-sm);
+  --shadow-dark: var(--shadow-dark);
+  --shadow-dark-md: var(--shadow-dark-md);
+  --shadow-dark-lg: var(--shadow-dark-lg);
+  --shadow-dark-xl: var(--shadow-dark-xl);
+  --shadow-dark-2xl: var(--shadow-dark-2xl);
 }
 
 @layer base {

@@ -22,7 +22,7 @@ export default function SelectBox({
         <select
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full appearance-none bg-box border border-box-border text-muted-foreground rounded-xl py-3.5 px-4 pr-10 text-sm font-medium transition-all"
+          className="w-full appearance-none bg-muted/70 border borer-box text-muted-foreground rounded-xl py-3.5 px-4 pr-10 text-sm font-medium transition-all"
         >
           {/* Placeholder */}
           <option value="" disabled>

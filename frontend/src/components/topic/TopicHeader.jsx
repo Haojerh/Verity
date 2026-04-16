@@ -14,7 +14,7 @@ export default function TopicHeader({ topic }) {
       <div className="relative px-8 pb-8 -mt-6 sm:-mt-12 md:-mt-14 lg:-mt-16 flex items-end gap-4 justify-between flex-wrap">
         <div className="flex flex-row items-end gap-4 md:gap-6">
           {/* Avatar */}
-          <div className="w-16 h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-4 sm:border-6 md:border-8 border-white overflow-hidden shadow-xl">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-4 sm:border-6 md:border-8 border-white overflow-hidden shadow-xl dark:shadow-dark-xl">
               <img
                 src={topic.avatar}
                 alt="avatar"

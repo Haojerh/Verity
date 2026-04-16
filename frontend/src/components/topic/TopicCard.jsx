@@ -8,7 +8,7 @@ export default function TopicCard({ topic, actions }) {
   return (
     <div
       onClick={() => navigate(`/explore/${topic.id}`, { state: topic })}
-      className="border rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+      className="border rounded-xl overflow-hidden group hover:shadow-xl dark:hover:shadow-dark-xl transition-all duration-300 transform hover:-translate-y-1"
     >
       <div className="h-40 relative">
         <img

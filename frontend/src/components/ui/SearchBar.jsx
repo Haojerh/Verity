@@ -13,7 +13,7 @@ export default function SearchBar({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
-            className="h-8 bg-muted px-10 rounded-full text-sm w-full md:w-64 "
+            className="h-8 px-10 rounded-full text-sm w-full md:w-64 bg-muted"
             />
         </div>
   );

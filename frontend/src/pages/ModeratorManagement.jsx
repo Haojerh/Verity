@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import Pagination from "../components/ui/Pagination";
 import SearchBar from "../components/ui/SearchBar";
 import ModeratorTable from "../components/moderatorManagement/ModeratorTable";
-import PunishmentLogs from "../components/moderatorManagement/PunishmentLogs";
+import PunishmentLogs from "../components/userManagement/PunishmentLogs";
 import WarnModal from "../components/userManagement/WarnModal";
 import DemoteModal from "../components/moderatorManagement/DemoteModal";
 import Header from "../components/ui/Header";
@@ -32,6 +32,24 @@ export default function ModeratorManagement() {
   const fakeLogs = [
     {
         user: "An1me12",
+        moderator: "Admin_Zora",
+        time: "2023-11-20 14:30",
+        type: "Banned",
+        duration: "Permanent",
+        moderator: "Admin_Zora",
+        reason: "Repeated hate speech",
+    },
+    {
+        user: "An1me12",
+        moderator: "Mod_Kael",
+        time: "2023-10-05 09:15",
+        type: "Muted",
+        duration: "7 Days",
+        reason: "Spamming discussion threads",
+    },
+    {
+        user: "An1me12",
+        moderator: "System_Bot",
         time: "2023-08-12 18:45",
         type: "Warned",
         duration: "N/A",
@@ -99,6 +117,7 @@ export default function ModeratorManagement() {
       {/* Overlay */}
       {modal.type === "logs" && (
         <PunishmentLogs
+          roleType="mod"
           logs={fakeLogs}
           onClose={closeModal}
         />

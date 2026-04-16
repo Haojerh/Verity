@@ -3,7 +3,8 @@ import Modal from "../ui/Modal";
 import SelectBox from "../ui/SelectBox";
 import ConfirmDisplay from "../ui/ConfirmDisplay";
 import ModalFooter from "../ui/ModalFooter";
-import { X, TriangleAlert } from "lucide-react";
+import ModalHeader from "../ui/ModalHeader";
+import { TriangleAlert } from "lucide-react";
 
 export default function WarnModal({ user, onClose, roleType="default" }) {
   const [reason, setReason] = useState("");
@@ -18,16 +19,7 @@ export default function WarnModal({ user, onClose, roleType="default" }) {
 
   return (
     <Modal onClose={onClose}>
-      {/* Header */}
-      <div className="px-8 py-6 flex items-center justify-between">
-        <div className="flex flex-row gap-3 items-center">
-            <TriangleAlert className="w-8 h-8 text-destructive bg-destructive/10 p-1 rounded-md" />
-            <h3 className="text-xl font-bold">Warn {roleType == "default" ? "User" : "Moderator"}</h3>
-        </div>
-        <button onClick={onClose}>
-            <X className="w-5 h-5" />
-        </button>
-      </div>
+      <ModalHeader text={`Warn ${roleType == "default" ? "User" : "Moderator"}`} color="red" icon={TriangleAlert} onClose={onClose}/>
 
       <div className="px-8 pb-8 space-y-6">
         <ConfirmDisplay user={user} type="warn" />

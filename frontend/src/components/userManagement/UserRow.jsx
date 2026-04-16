@@ -52,11 +52,10 @@ export default function UserRow({ user, onAction }) {
 
         {/* Dropdown */}
         {open && (
-          <div className="absolute right-8 md:right-4 mt-2 w-32 bg-white border rounded-lg shadow-lg z-50">
-
+          <div className="absolute right-8 md:right-4 mt-2 w-32 bg-background border rounded-lg shadow-lg dark:shadow-dark-lg z-50">
             <button 
               onClick={() => onAction("warn", user)}
-              className="w-full text-left px-3 py-2 text-xs hover:bg-muted/50">
+              className="w-full text-left px-3 py-2 text-xs rounded-t-md hover:bg-muted/50">
                 Warn
             </button>
             
@@ -71,7 +70,7 @@ export default function UserRow({ user, onAction }) {
             {/* MUTE / UNMUTE */}
             <button
               onClick={() => onAction(user.isMuted ? "unmute" : "mute", user)}
-              className="w-full text-left px-3 py-2 text-xs hover:bg-muted/50"
+              className="w-full text-left px-3 py-2 text-xs rounded-b-md hover:bg-muted/50"
             >
               {user.isMuted ? "Unmute" : "Mute"}
             </button>

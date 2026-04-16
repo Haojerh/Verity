@@ -27,8 +27,8 @@ export default function DurationSelector({ value, type="default", onChange }) {
             />
 
             <div className="
-              px-4 py-3 rounded-xl border border-box-border
-              bg-box peer-checked:bg-destructive/30
+              px-4 py-3 rounded-xl border borer-box
+              bg-muted/70 peer-checked:bg-destructive/30
               peer-checked:border-2 peer-checked:text-destructive
               peer-checked:border-destructive transition-all 
               group-hover:bg-destructive/5 group-hover:border-destructive/15

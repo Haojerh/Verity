@@ -2,8 +2,8 @@ import UserRow from "./UserRow";
 
 export default function UserTable({ users, onAction }) {
   return (
-    <div className="bg-white rounded-xl border overflow-visible shadow-md">
-      <table className="w-full text-sm">
+    <div className="bg-background border overflow-visible shadow-md dark:shadow-dark-md">
+      <table className="w-full text-sm border-separate border-spacing-0">
         <thead className="bg-muted/80 text-xs uppercase">
           <tr>
             <th className="p-4 text-left">ID</th>

@@ -41,6 +41,8 @@ export default function UserManagement() {
 
   const fakeLogs = [
     {
+        user: "An1me12",
+        moderator: "Admin_Zora",
         time: "2023-11-20 14:30",
         type: "Banned",
         duration: "Permanent",
@@ -48,17 +50,19 @@ export default function UserManagement() {
         reason: "Repeated hate speech",
     },
     {
+        user: "An1me12",
+        moderator: "Mod_Kael",
         time: "2023-10-05 09:15",
         type: "Muted",
         duration: "7 Days",
-        moderator: "Mod_Kael",
         reason: "Spamming discussion threads",
     },
     {
+        user: "An1me12",
+        moderator: "System_Bot",
         time: "2023-08-12 18:45",
         type: "Warned",
         duration: "N/A",
-        moderator: "System_Bot",
         reason: "Harassment of community members",
     },
   ];
@@ -139,6 +143,7 @@ export default function UserManagement() {
       {/* Overlay */}
       {modal.type === "logs" && (
         <PunishmentLogs
+          roleType="user"
           logs={fakeLogs}
           onClose={closeModal}
         />

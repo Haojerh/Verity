@@ -1,12 +1,30 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Topbar from "./Topbar";
 import Sidebar from "./Sidebar";
 import DisplayModeModal from "../ui/DisplayModeModal";
+import Topbar from "./Topbar";
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [displayModeOpen, setDisplayModeOpen] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("theme");
+
+    if (saved) return saved === "dark";
+
+    return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+  });
+
+  // sync changes
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
 
   // Automatically close sidebar when needed
   useEffect(() => {
@@ -34,6 +52,7 @@ export default function Layout() {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         onOpenDisplayMode={() => setDisplayModeOpen(true)}
+        isDark={isDark}
       />
 
       <div className="flex relative">
@@ -48,7 +67,7 @@ export default function Layout() {
       </div>
 
       {displayModeOpen && (
-        <DisplayModeModal onClose={() => setDisplayModeOpen(false)} />
+        <DisplayModeModal onClose={() => {setDisplayModeOpen(false)}} isDark={isDark} onDark={setIsDark}/>
       )}
     </div>
   );

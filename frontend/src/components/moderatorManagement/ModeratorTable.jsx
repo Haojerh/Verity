@@ -2,7 +2,7 @@ import ModeratorRow from "./ModeratorRow";
 
 export default function ModeratorTable({ users, onAction }) {
   return (
-    <div className="bg-white rounded-xl border overflow-visible shadow-md">
+    <div className="bg-background border overflow-hidden shadow-md dark:shadow-dark-md">
       <table className="w-full text-sm">
         <thead className="bg-muted/80 text-xs uppercase">
           <tr>
