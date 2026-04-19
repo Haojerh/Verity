@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import TopicActions from "./TopicActions";
 
-export default function TopicCard({ topic, actions }) {
+export default function TopicCard({ topic, onAction=null }) {
   const navigate = useNavigate();
   const [follow, setFollow] = useState(false);
 
@@ -32,7 +33,7 @@ export default function TopicCard({ topic, actions }) {
             {topic.title}
           </h3>
 
-          {!actions && (
+          {!onAction && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -54,9 +55,9 @@ export default function TopicCard({ topic, actions }) {
           {topic.description}
         </p>
 
-        {actions && (
+        {onAction && (
           <div onClick={(e) => e.stopPropagation()}>
-            {actions}
+            <TopicActions onAction={onAction} topic={topic} />
           </div>
         )}
       </div>

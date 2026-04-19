@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import TopicCard from "../components/topic/TopicCard";
 import SearchBar from "../components/ui/SearchBar";
 import Header from "../components/ui/Header";
 import TopicActions from "../components/topic/TopicActions";
+import NewTopicModal from "../components/topic/NewTopicModal";
+import EditTopicModal from "../components/topic/EditTopicModal";
+import DeleteTopicModal from "../components/topic/DeleteTopicModal";
 
 export default function TopicManagement() {
   const topics = [
@@ -49,6 +52,18 @@ export default function TopicManagement() {
   ];
 
   const [search, setSearch] = useState("");
+  const [modal, setModal] = useState({
+      type: null,
+      topic: null
+  });
+
+  const openModal = useCallback((type, topic) => {
+    setModal({ type, topic });
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setModal({ type: null, topic: null });
+  }, []);
 
   const filteredTopics = topics.filter((topic) =>
     topic.title.toLowerCase().includes(search.toLowerCase())
@@ -63,7 +78,9 @@ export default function TopicManagement() {
         value={search}
         onChange={setSearch}
         placeholder="Find topics by name..." />
-        <button className="px-4 py-1.5 text-white bg-primary hover:bg-secondary rounded-md transition-all" >+ New Topic</button>
+        <button 
+        onClick={() => openModal("new", null)}
+        className="px-4 py-1.5 text-white bg-primary hover:bg-secondary rounded-md transition-all" >+ New Topic</button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -71,11 +88,31 @@ export default function TopicManagement() {
           <TopicCard
           key={topic.id}
           topic={topic}
-          actions={
-            <TopicActions onEdit="" onDelete="" />
-          }/>
+          onAction={openModal}
+          />
         ))}
       </div>
+
+      {/* Overlay */}
+      {modal.type === "new" && (
+        <NewTopicModal
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "edit" && (
+        <EditTopicModal
+          topic={modal.topic}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "delete" && (
+        <DeleteTopicModal
+          topic={modal.topic}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 }
