@@ -10,7 +10,7 @@ export default function DemoteModal({ user, onClose }) {
       <ModalHeader text="Demote Moderator" color="red" icon={TriangleAlert} onClose={onClose}/>
 
       <div className="px-8 pb-8 space-y-6">
-        <ConfirmDisplay user={user} type="demote" />
+        <ConfirmDisplay data={user} type="demote" />
       </div>
 
       {/* Footer */}

@@ -22,7 +22,7 @@ export default function WarnModal({ user, onClose, roleType="default" }) {
       <ModalHeader text={`Warn ${roleType == "default" ? "User" : "Moderator"}`} color="red" icon={TriangleAlert} onClose={onClose}/>
 
       <div className="px-8 pb-8 space-y-6">
-        <ConfirmDisplay user={user} type="warn" />
+        <ConfirmDisplay data={user} type="warn" />
         <SelectBox
           label="Select Reason"
           options={reasonOptions}

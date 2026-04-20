@@ -5,7 +5,7 @@ export default function Modal({ children, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-background w-full max-w-2xl mx-4 rounded-xl shadow-2xl dark-shadow-dark-2xl overflow-hidden border"
+        className="bg-background w-full max-w-2xl max-h-[90vh] flex flex-col mx-4 rounded-xl shadow-2xl dark-shadow-dark-2xl overflow-hidden border"
         onClick={(e) => e.stopPropagation()}
       >
         {children}

@@ -24,7 +24,7 @@ export default function BanModal({ user, onClose }) {
       <ModalHeader text="Ban User" color="red" icon={Ban} onClose={onClose}/>
 
       <div className="px-8 pb-8 space-y-6">
-        <ConfirmDisplay user={user} type="ban" />
+        <ConfirmDisplay data={user} type="ban" />
         <SelectBox
           label="Select Reason"
           options={reasonOptions}

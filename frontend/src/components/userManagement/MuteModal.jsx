@@ -25,7 +25,7 @@ export default function MuteModal({ user, onClose }) {
 
       <div className="px-8 pb-8 space-y-6">
         {/* User info */}
-        <ConfirmDisplay user={user} type="mute" />
+        <ConfirmDisplay data={user} type="mute" />
 
         <SelectBox
           label="Select Reason"

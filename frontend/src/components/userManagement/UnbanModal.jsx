@@ -10,7 +10,7 @@ export default function UnbanModal({ user, onClose }) {
       <ModalHeader text="Unban User" color="primary" icon={Ban} onClose={onClose}/>
 
       <div className="px-8 pb-8 space-y-6">
-        <ConfirmDisplay user={user} type="unban" />
+        <ConfirmDisplay data={user} type="unban" />
       </div>
 
       {/* Footer */}

@@ -10,7 +10,7 @@ export default function UnmuteModal({ user, onClose }) {
       <ModalHeader text="Ummute User" color="primary" icon={Volume2} onClose={onClose}/>
 
       <div className="px-8 pb-8 space-y-6">
-        <ConfirmDisplay user={user} type="unmute" />
+        <ConfirmDisplay data={user} type="unmute" />
       </div>
 
       {/* Footer */}

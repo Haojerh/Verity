@@ -11,7 +11,7 @@ export default function DeleteTopicModal({ topic, onClose }) {
       <ModalHeader text="Delete Topic" color="red" icon={Trash2} onClose={onClose}/>
 
       <div className="px-8 pb-8 space-y-6">
-        <ConfirmDisplay user={topic} entity="topic" type="delete" />
+        <ConfirmDisplay data={topic} entity="topic" type="delete" />
       </div>
 
       {/* Footer */}
