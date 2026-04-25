@@ -6,6 +6,7 @@ import ModeratorManagement from "../pages/ModeratorManagement";
 import Explore from "../pages/Explore";
 import ExploreDetail from "../pages/ExploreDetail";
 import TopicManagement from "../pages/TopicManagement";
+import VerityTest from "../pages/VerityTest";
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +64,17 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <TopicManagement />,
+      },
+    ],
+  },
+
+    {
+    path: "/verity",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <VerityTest />,
       },
     ],
   },
