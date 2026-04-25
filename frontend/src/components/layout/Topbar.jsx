@@ -1,15 +1,23 @@
 import { Search, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logoImage from "../../assets/Verity.svg";
-import logoImageDark from "../../assets/VerityDark.svg"
 import Avatar from "../ui/Avatar";
 import ProfileDropdown from "../ui/ProfileDropdown";
 
-export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode, isDark }) {
+export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const currentUser = "currentUser123";
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+    console.log("Searching:", searchQuery);
+    navigate(`/?q=${encodeURIComponent(searchQuery)}`); 
+  };
+  
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border">
       <div className="flex items-center justify-between px-6 py-3">
@@ -18,13 +26,13 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="block md:hidden p-2 hover:bg-muted rounded-lg"
+            className="block sm:hidden p-2 hover:bg-muted rounded-lg"
           >
             ☰
           </button>
 
           <Link to="/">
-            <img src={isDark ? logoImageDark : logoImage} className="h-10 hidden sm:block" />
+            <img src={logoImage} className="h-10 hidden sm:block" />
           </Link>
         </div>
 
@@ -35,10 +43,15 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
             <input
               type="text"
               placeholder="Search debates..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
+              className="w-full pl-10 pr-4 py-2 bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
               style={{
                 border: '2px solid transparent',
-                backgroundImage: 'linear-gradient(var(--background), var(--background)), linear-gradient(to right, #22c55e, #ef4444)',
+                backgroundImage: 'linear-gradient(white, white), linear-gradient(to right, #22c55e, #ef4444)',
                 backgroundOrigin: 'border-box',
                 backgroundClip: 'padding-box, border-box'
               }}
@@ -65,7 +78,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
             </button>
 
             {profileMenuOpen && (
-              <ProfileDropdown onClose={() => setProfileMenuOpen(false)} onToggle={onOpenDisplayMode} />
+              <ProfileDropdown onClose={() => setProfileMenuOpen(false)} />
             )}
           </div>
 
