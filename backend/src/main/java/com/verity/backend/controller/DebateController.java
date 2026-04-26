@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/debates")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 public class DebateController {
     private static final Logger logger = LoggerFactory.getLogger(DebateController.class);
 
