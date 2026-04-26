@@ -1,4 +1,4 @@
-export default function TextBox({ label="Enter", multiline, error, placeholder="Enter the value...", value, onChange }) {
+export default function TextBox({ label="Enter", multiline="false", error, placeholder="Enter the value...", value, onChange }) {
     const baseClasses = "w-full appearance-none bg-muted/70 border text-muted-foreground rounded-xl py-3.5 px-4 pr-10 text-sm font-medium transition-all";
     const borderClasses = error && "border-destructive";
 
