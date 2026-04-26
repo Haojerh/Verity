@@ -1,35 +1,38 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import DebateCard from "../components/debate/DebateCard";
-
+import DebateCard from "../components/homeDebate/DebateCard";
 
 export default function Home() {
   const [debates, setDebates] = useState([]);
-  const [loading, setLoading] = useState(false); // Optional: add loading state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const location = useLocation();
 
-
-  // Get query from URL
-  const query = new URLSearchParams(location.search).get("q");
+  // Sanitize the search query
+  const getSafeQuery = () => {
+    const rawQuery = new URLSearchParams(location.search).get("q");
+    if (!rawQuery) return null;
+    
+    // Decode the double-encoded query
+    let decodedQuery;
+    try {
+      decodedQuery = decodeURIComponent(decodeURIComponent(rawQuery));
+    } catch (e) {
+      decodedQuery = rawQuery;
+    }
+    
+    // Sanitize
+    let safe = decodedQuery
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/[<>{}()]/g, '')
+      .replace(/javascript:/gi, '')
+      .trim()
+      .slice(0, 100);
+    
+    return safe || null;
+  };
   
-  // Sanitize query for display (remove < > characters)
-  const sanitizeForDisplay = (str) => {
-    if (!str) return '';
-    return str.replace(/[<>]/g, '');
-  };
-
-
-  // Escape HTML for safety (though React does this automatically for text)
-  const escapeHtml = (str) => {
-    if (!str) return '';
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-  };
-
+  const query = getSafeQuery();
 
   useEffect(() => {
     const fetchDebates = async () => {
@@ -41,45 +44,43 @@ export default function Home() {
         } else {
           url = `http://localhost:8080/api/debates`;
         }
-      
+        
+        console.log("Fetching:", url);
+        
         const response = await fetch(url);
-      
-      // Check if response is ok
+        
         if (!response.ok) {
-          const errorData = await response.text();
-          console.error("Search error:", errorData);
-          setDebates([]);
-          return;
+          const errorText = await response.text();
+          console.error("Response error:", response.status, errorText);
+          throw new Error(`Search failed: ${response.status}`);
         }
-      
+        
         const data = await response.json();
         setDebates(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error("Search error:", err);
         setDebates([]);
       } finally {
         setLoading(false);
       }
     };
 
-
     fetchDebates();
-}, [query]);
-
-
-  // Get safe version for display
-  const displayQuery = sanitizeForDisplay(query);
-
+  }, [query]);
 
   return (
     <div className="p-4 sm:p-6">
       <div className="max-w-4xl mx-auto">
         
-        {/* Title - React auto-escapes, so no need for escapeHtml here */}
         <h2 className="mb-6 text-xl font-semibold">
-          {query && query.trim() ? `Search Results for "${displayQuery}"` : "Recommended Debates"}
+          {query ? `Search Results for "${query}"` : "Recommended Debates"}
         </h2>
 
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+            Error: {error}
+          </div>
+        )}
 
         <div className="space-y-4">
           {loading ? (
@@ -92,7 +93,6 @@ export default function Home() {
             <p>No results found</p>
           )}
         </div>
-
 
       </div>
     </div>
