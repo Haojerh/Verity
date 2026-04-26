@@ -12,19 +12,23 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 @RestController
 @RequestMapping("/api/debates")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 public class DebateController {
     private static final Logger logger = LoggerFactory.getLogger(DebateController.class);
 
+
     @Autowired
     private DebateRepository debateRepository;
+
 
     @GetMapping
     public List<Debate> getAllDebates() {
         return debateRepository.findAll();
     }
+
 
     @GetMapping("/search")
     public ResponseEntity<?> searchDebates(@RequestParam(value = "q", defaultValue = "") String q) {
@@ -48,6 +52,7 @@ public class DebateController {
         return ResponseEntity.ok(results);
     }
 
+
     @GetMapping("/search/paginated")
     public Page<Debate> searchDebatesPaginated(
             @RequestParam String q,
@@ -56,4 +61,3 @@ public class DebateController {
         Pageable pageable = PageRequest.of(page, size);
         return debateRepository.searchDebatesPaginated(q, pageable);
     }
-}
