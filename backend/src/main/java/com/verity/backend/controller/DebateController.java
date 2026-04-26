@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/debates")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class DebateController {
     private static final Logger logger = LoggerFactory.getLogger(DebateController.class);
 
@@ -26,30 +26,25 @@ public class DebateController {
         return debateRepository.findAll();
     }
 
-    // SINGLE search endpoint with proper validation
     @GetMapping("/search")
-    public ResponseEntity<?> searchDebates(@RequestParam String q) {
-        logger.info("Search query received - length: {}", q != null ? q.length() : 0);
+    public ResponseEntity<?> searchDebates(@RequestParam(value = "q", defaultValue = "") String q) {
+        logger.info("Search query: '{}'", q);
         
-        // Validate input
+        // If empty, return empty list
         if (q == null || q.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Search query cannot be empty");
+            return ResponseEntity.ok(List.of());
         }
         
-        // Limit length
-        if (q.length() > 100) {
-            return ResponseEntity.badRequest().body("Search query too long (max 100 chars)");
+        // Simply limit length - no character validation
+        String searchTerm = q;
+        if (searchTerm.length() > 100) {
+            searchTerm = searchTerm.substring(0, 100);
         }
         
-        // Validate characters (only allow alphanumeric, spaces, and basic punctuation)
-        if (!q.matches("^[a-zA-Z0-9\\s\\-_,.]+$")) {
-            return ResponseEntity.badRequest().body("Invalid characters in search query");
-        }
+        // Direct search - let the database handle it
+        List<Debate> results = debateRepository.searchDebates(searchTerm);
+        logger.info("Found {} results", results.size());
         
-        // Sanitize - remove dangerous characters
-        String sanitizedQ = q.replaceAll("[<>{}()]", "");
-        
-        List<Debate> results = debateRepository.searchDebates(sanitizedQ);
         return ResponseEntity.ok(results);
     }
 
