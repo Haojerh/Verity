@@ -29,10 +29,7 @@ public class DebateController {
         return debateRepository.findAll();
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> f63f7b3fe72de73bf5d4eb34a562154796fec33d
     @GetMapping("/search")
     public ResponseEntity<?> searchDebates(@RequestParam(value = "q", defaultValue = "") String q) {
         logger.info("Search query: '{}'", q);
@@ -64,7 +61,3 @@ public class DebateController {
         Pageable pageable = PageRequest.of(page, size);
         return debateRepository.searchDebatesPaginated(q, pageable);
     }
-<<<<<<< HEAD
-}
-=======
->>>>>>> f63f7b3fe72de73bf5d4eb34a562154796fec33d
