@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { Bell, CheckCheck, X } from "lucide-react";
 
@@ -188,7 +187,7 @@ export default function NotificationPanel({ onClose, onUnreadCountChange }) {
     </div>
   );
 }
-=======
+
 import { useState, useEffect } from "react";
 import { Bell, CheckCheck, X } from "lucide-react";
 
@@ -378,4 +377,3 @@ export default function NotificationPanel({ onClose, onUnreadCountChange }) {
     </div>
   );
 }
->>>>>>> f63f7b3fe72de73bf5d4eb34a562154796fec33d
