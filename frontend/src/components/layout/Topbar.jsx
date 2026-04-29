@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import logoImage from "../../assets/Verity.svg";
 import Avatar from "../ui/Avatar";
 import ProfileDropdown from "../ui/ProfileDropdown";
-import NotificationPanel from "../notification/NotificationPanel";
+// import NotificationPanel from "../notification/NotificationPanel";
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -117,12 +117,25 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode 
           </div>
 
           {/* Profile */}
-          <div className="relative">
+          {/* <div className="relative">
             <button onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
               <Avatar name={currentUser} />
             </button>
             {profileMenuOpen && (
               <ProfileDropdown onClose={() => setProfileMenuOpen(false)} />
+            )}
+          </div> */}
+
+          {/* Profile */}
+          <div className="relative">
+            <button onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
+              <Avatar name={currentUser} />
+            </button>
+            {profileMenuOpen && (
+              <ProfileDropdown 
+                onClose={() => setProfileMenuOpen(false)} 
+                onToggle={onOpenDisplayMode} // Pass the function here
+              />
             )}
           </div>
         </div>
