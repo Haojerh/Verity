@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function DebateImages({ images = [], onImageClick }) {
+export default function DebateImages({ images = [], onImageClick, type="home" }) {
   const [index, setIndex] = useState(0);
 
   if (!images || images.length === 0) return null;
@@ -19,7 +19,9 @@ export default function DebateImages({ images = [], onImageClick }) {
     <div className="relative mb-4">
       <img
         src={images[index]}
-        className="w-full h-60 object-cover rounded-lg"
+        className={`w-full h-60 object-cover rounded-lg ${
+          type === "thread" && " border border-border"
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           onImageClick?.(index);

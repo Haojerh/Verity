@@ -7,6 +7,7 @@ import CommentSection from "../components/debate/CommentSection";
 export default function TopicPage() {
   const [userSide, setUserSide] = useState(null);
   const [activeTab, setActiveTab] = useState("pros");
+  const [fullscreenImage, setFullscreenImage] = useState(null);
 
   const topic = {
     author: "debate_pioneer",
@@ -15,6 +16,10 @@ export default function TopicPage() {
     prosLabel: "It's Art",
     consLabel: "Not Art",
     date: "2024-04-26",
+    images: [
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800",
+      "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800"
+    ],
     statistics: {
       prosVotes: 1247,
       consVotes: 1589,
@@ -42,7 +47,10 @@ export default function TopicPage() {
 
   return (
     <div className="max-w-4xl mx-auto w-full">
-      <ThreadHeader topic={topic} />
+      <ThreadHeader
+        topic={topic}
+        onImageClick={(i) => setSelectedImgIndex(i)}
+      />
       
       <VotingSection 
         topic={topic} 

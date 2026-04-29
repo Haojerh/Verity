@@ -1,7 +1,8 @@
 import Avatar from "../ui/Avatar";
 import { MoreVertical } from "lucide-react";
+import DebateImages from "../homeDebate/DebateImages";
 
-export default function ThreadHeader({ topic }) {
+export default function ThreadHeader({ topic, onImageClick }) {
   return (
     <section className="space-y-3 mb-10">
       <div className="flex justify-between gap-2">
@@ -28,9 +29,16 @@ export default function ThreadHeader({ topic }) {
             @{topic.author}
           </span>
         </div>
+
         <p className="text-xl text-muted-foreground leading-relaxed italic">
           {topic.content}
         </p>
+
+        <DebateImages 
+          images={topic.images} 
+          onImageClick={onImageClick} 
+          type="thread"
+        />
       </div>
     </section>
   );
