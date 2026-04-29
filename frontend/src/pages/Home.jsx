@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import DebateCard from "../components/homeDebate/DebateCard";
+import Header from "../components/ui/Header";
 
 export default function Home() {
   const [debates, setDebates] = useState([]);
@@ -69,31 +70,27 @@ export default function Home() {
   }, [query]);
 
   return (
-    <div className="p-4 sm:p-6">
-      <div className="max-w-4xl mx-auto">
-        
-        <h2 className="mb-6 text-xl font-semibold">
-          {query ? `Search Results for "${query}"` : "Recommended Debates"}
-        </h2>
+    <div className="max-w-4xl mx-auto">
+      <Header 
+      title={query ? `Search Results for "${query}"` : "Recommended Debates"} 
+      desc={query ? "Showing results based on your search" : "Discover debates based on ur interests"} 
+      />
 
-        {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-            Error: {error}
-          </div>
-        )}
-
-        <div className="space-y-4">
-          {loading ? (
-            <p>Loading...</p>
-          ) : debates.length > 0 ? (
-            debates.map((debate) => (
-              <DebateCard key={debate.id} debate={debate} />
-            ))
-          ) : (
-            <p>No results found</p>
-          )}
+      {error && (
+        <div className="bg-red-100 text-destructive p-3 rounded mb-4">
+          Error: {error}
         </div>
+      )}
 
+      <div className="space-y-4">
+        {loading ? (<p>Loading...</p>) : 
+        debates.length > 0 ? (
+          debates.map((debate) => (
+            <DebateCard key={debate.id} debate={debate} />
+          ))
+        ) : (
+          <p>No results found</p>
+        )}
       </div>
     </div>
   );

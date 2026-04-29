@@ -17,8 +17,8 @@ export default function CommentInput({ userSide }) {
         rows="3"
       />
       <div className="flex justify-end mt-3">
-        <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-bold hover:opacity-90 transition-opacity">
-          POST
+        <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg not-only:hover:bg-secondary transition-colors">
+          Post Comment
         </button>
       </div>
     </div>

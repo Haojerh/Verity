@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-    {
+  {
     path: "/topic",
     element: <Layout />,
     children: [
