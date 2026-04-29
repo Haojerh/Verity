@@ -79,7 +79,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode 
               className="w-full pl-10 pr-4 py-2 bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
               style={{
                 border: '2px solid transparent',
-                backgroundImage: 'linear-gradient(white, white), linear-gradient(to right, #22c55e, #ef4444)',
+                backgroundImage: 'linear-gradient(var(--background), var(--background)), linear-gradient(to right, #22c55e, #ef4444)',
                 backgroundOrigin: 'border-box',
                 backgroundClip: 'padding-box, border-box'
               }}
