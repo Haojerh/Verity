@@ -83,6 +83,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+  --input-background: oklch(0.269 0 0);
 }
 
 @theme inline {
@@ -177,6 +178,11 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
+  }
+
+  .text-xxs {
+    font-size: 0.625rem;
+    line-height: 1rem;
   }
 
   button {

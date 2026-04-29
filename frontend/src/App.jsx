@@ -5,13 +5,13 @@ import api from "./services/api";
 
 function App() {
   useEffect(() => {
-    api.get("/test")
-      .then(res => {
-        console.log("DATA:", res.data);
-      })
-      .catch(err => {
-        console.error("ERROR:", err);
-      });
+    // api.get("/test")
+    //   .then(res => {
+    //     console.log("DATA:", res.data);
+    //   })
+    //   .catch(err => {
+    //     console.error("ERROR:", err);
+    //   });
   }, []);
 
   return <RouterProvider router={router} />;
