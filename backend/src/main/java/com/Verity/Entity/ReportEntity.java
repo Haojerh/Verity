@@ -3,7 +3,6 @@ package com.Verity.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.bytebuddy.utility.RandomString;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -27,8 +26,8 @@ public class ReportEntity {
 
     // Optional: If the report is against a specific topic
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "targetTopicID", referencedColumnName = "topicID")
-    private TopicEntity targetTopic;
+    @JoinColumn(name = "targetPostID", referencedColumnName = "postID")
+    private PostEntity targetPost;
 
     // Optional: If the report is against a specific thread/reply
     @ManyToOne(fetch = FetchType.LAZY)

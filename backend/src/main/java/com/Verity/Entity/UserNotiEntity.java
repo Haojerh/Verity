@@ -20,7 +20,7 @@ public class UserNotiEntity extends Auditable {
     private String notiID;
     private String message;
     private String sourceID;
-    private boolean isRead = false;
+    private boolean read = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipientID")

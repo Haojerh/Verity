@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.bytebuddy.utility.RandomString;
 
-import java.util.List;
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -19,8 +17,8 @@ public class ThreadEntity extends Auditable {
     private String stance; // PRO, CON, NEUTRAL
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "topicID")
-    private TopicEntity topic;
+    @JoinColumn(name = "postID")
+    private PostEntity postID;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorID")

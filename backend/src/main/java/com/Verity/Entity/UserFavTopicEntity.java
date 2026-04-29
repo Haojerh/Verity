@@ -19,8 +19,8 @@ public class UserFavTopicEntity extends Auditable {
     @Column(name = "userFavID", nullable = false, unique = true, length = 20)
     private String userFavID;
 
-    @Column(name = "topicID", nullable = true, unique = false, length = 20)
-    private String topicID;
+    @Column(name = "postID", nullable = true, unique = false, length = 20)
+    private String postID;
 
     @Column(name = "threadID", nullable = true, unique = false, length = 20)
     private String threadID;

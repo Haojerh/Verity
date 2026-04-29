@@ -12,6 +12,8 @@ import java.util.List;
 
 public class UserPrincipal implements UserDetails {
 
+    private final UserEntity user;
+
     public UserPrincipal(UserEntity user) {
         this.user = user;
     }

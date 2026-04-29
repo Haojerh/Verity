@@ -8,16 +8,16 @@ import net.bytebuddy.utility.RandomString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "topic_stance", uniqueConstraints = {@UniqueConstraint(columnNames = {"topicID", "userID"})})
-public class TopicStanceEntity extends Auditable {
+@Table(name = "post_stance", uniqueConstraints = {@UniqueConstraint(columnNames = {"postID", "userID"})})
+public class PostStanceEntity extends Auditable {
     @Id
     @Column(length = 20)
     private String stanceID;
     private String chosenStance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "topicID")
-    private TopicEntity topic;
+    @JoinColumn(name = "postID")
+    private PostEntity postID;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID")
