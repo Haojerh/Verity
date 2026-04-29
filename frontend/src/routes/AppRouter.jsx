@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-    {
+  {
     path: "/verity",
     element: <Layout />,
     children: [
