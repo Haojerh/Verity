@@ -18,7 +18,7 @@ export default function DisplayModeModal({ onClose, isDark, onDark }) {
           onClick={() => onDark(false)}
           className={`flex items-center gap-2 border-2 rounded-md p-3 transition-all
             ${!isDark 
-              ? "bg-primary text-white border-secondary" 
+              ? "bg-primary/10 text-foreground border-primary" 
               : "hover:bg-muted/80"}
           `}
         >
@@ -30,7 +30,7 @@ export default function DisplayModeModal({ onClose, isDark, onDark }) {
           onClick={() => onDark(true)}
           className={`flex items-center gap-2 border-2 rounded-md p-3 transition-all
             ${isDark 
-              ? "bg-primary text-white border-secondary" 
+              ? "bg-primary/10 text-foreground border-primary" 
               : "hover:bg-muted/80"}
           `}
         >

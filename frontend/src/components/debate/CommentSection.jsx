@@ -2,11 +2,12 @@ import CommentInput from "./CommentInput";
 import ThreadItem from "./ThreadItem";
 
 export default function CommentSection({ 
-  topic, 
+  post, 
   userSide, 
   activeTab, 
   setActiveTab, 
-  discussionData 
+  discussionData,
+  openModal
 }) {
   return (
     <section className="bg-card border border-border rounded-lg overflow-hidden">
@@ -18,7 +19,7 @@ export default function CommentSection({
           }`}
         >
           <div className="flex items-center justify-center gap-2">
-            <span>Team {topic.prosLabel}</span>
+            <span>Team {post.prosLabel}</span>
             <span className="px-2 rounded-full bg-primary/20 text-primary text-sm">
               {discussionData.filter((c) => c.side === "pros").length}
             </span>
@@ -32,7 +33,7 @@ export default function CommentSection({
           }`}
         >
           <div className="flex items-center justify-center gap-2">
-            <span>Team {topic.consLabel}</span>
+            <span>Team {post.consLabel}</span>
             <span className="px-2 rounded-full bg-destructive/20 text-destructive text-sm">
               {discussionData.filter((c) => c.side === "cons").length}
             </span>
@@ -48,7 +49,7 @@ export default function CommentSection({
           <div className="p-4 bg-muted/20 rounded-2xl text-center border border-border mb-6">
             <p className="text-sm text-muted-foreground">
               You can only contribute arguments on Team{" "}
-              {userSide === "pros" ? topic.prosLabel : topic.consLabel}.
+              {userSide === "pros" ? post.prosLabel : post.consLabel}.
             </p>
           </div>
         )}
@@ -57,7 +58,7 @@ export default function CommentSection({
           {discussionData
             .filter((comment) => comment.side === activeTab)
             .map((comment) => (
-              <ThreadItem key={comment.id} {...comment} />
+              <ThreadItem key={comment.id} comment={comment} openModal={openModal} />
             ))}
         </div>
       </div>

@@ -20,7 +20,7 @@ export default function DebateImages({ images = [], onImageClick, type="home" })
       <img
         src={images[index]}
         className={`w-full h-60 object-cover rounded-lg ${
-          type === "thread" && " border border-border"
+          type === "thread" && "border border-border"
         }`}
         onClick={(e) => {
           e.stopPropagation();

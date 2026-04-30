@@ -1,9 +1,9 @@
 import DebateHeader from "./DebateHeader";
-import DebateImages from "./DebateImages";
+import DebateImages from "../ui/DebateImages";
 import VoteBar from "./VoteBar";
 import ActionBar from "./ActionBar";
 import DebateMenu from "./DebateMenu";
-import ImageModal from "./ImageModal";
+import ImageModal from "../ui/ImageModal";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
