@@ -7,6 +7,7 @@ import Explore from "../pages/Explore";
 import ExploreDetail from "../pages/ExploreDetail";
 import TopicManagement from "../pages/TopicManagement";
 import PostPage from "../pages/PostPage";
+import Login from "../pages/Login";
 
 export const router = createBrowserRouter([
   {
@@ -77,5 +78,11 @@ export const router = createBrowserRouter([
         element: <PostPage />,
       },
     ],
+  },
+
+  {
+    path: "/login",
+    element: <Login />,
+    index: true
   },
 ]);

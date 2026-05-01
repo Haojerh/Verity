@@ -1,0 +1,26 @@
+package com.Verity.Utils;
+
+
+import com.Verity.Domain.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+
+import java.util.Map;
+
+import static java.time.LocalTime.now;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+/**
+ * @author : Eugene
+ * @version : 1.0
+ * @license :  Internation Business Solution (<a href="https://www.ibs.com">IBS</a>)
+ * @mailto : eugene_ong@yahoo.com
+ * @created : 28/04/2026
+ * @description
+ **/
+
+public class RequestUtils {
+    public static Response getResponse(HttpServletRequest request, Map<?,?> data, String message, HttpStatus status){
+        return new Response(now().toString(), status.value(), request.getRequestURI(), HttpStatus.valueOf(status.value()), message, EMPTY, data);
+    }
+}
