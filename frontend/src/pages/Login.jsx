@@ -19,10 +19,7 @@ export default function Login() {
       console.log("Login successful:", response.data);
       window.location.href = '/'; 
     } catch (error) {
-      // 1. Log the full error to see if it is a Network Error
       console.log("Full Error Object:", error);
-
-      // 2. Safely access the message
       const errorMessage = error.response?.data?.message || error.message || "Connection to server failed";
       alert(errorMessage);
     }
