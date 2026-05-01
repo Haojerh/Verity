@@ -1,12 +1,14 @@
-export default function TextBox({ label="Enter", multiline="false", error, placeholder="Enter the value...", value, onChange }) {
-    const baseClasses = "w-full appearance-none bg-muted/70 border text-muted-foreground rounded-xl py-3.5 px-4 pr-10 text-sm font-medium transition-all";
+export default function TextBox({ label, multiline=false, error, placeholder="Enter the value...", value, py="3.5", onChange }) {
+    const baseClasses = `w-full appearance-none bg-muted/70 border text-muted-foreground rounded-xl py-${py} px-4 pr-10 text-sm font-medium transition-all`;
     const borderClasses = error && "border-destructive";
 
     return (
         <div className="space-y-2">
+            {label &&
             <label className="block text-xs font-bold uppercase tracking-widest ml-1">
                 {label}
             </label>
+            }
 
             {multiline ? (
                 <textarea 

@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../../assets/Verity.svg";
+import logoImageDark from "../../assets/VerityDark.svg";
 import Avatar from "../ui/Avatar";
 import ProfileDropdown from "../ui/ProfileDropdown";
 // import NotificationPanel from "../notification/NotificationPanel";
 
-export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode }) {
+export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -60,7 +61,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode 
             ☰
           </button>
           <Link to="/">
-            <img src={logoImage} className="h-10 hidden sm:block" alt="Logo" />
+            <img src={isDark ? logoImageDark : logoImage} className="h-10 hidden sm:block" />
           </Link>
         </div>
 

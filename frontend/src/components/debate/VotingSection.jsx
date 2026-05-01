@@ -1,13 +1,13 @@
-export default function VotingSection({ topic, userSide, handleSelectSide }) {
+export default function VotingSection({ post, userSide, handleSelectSide }) {
   const prosPercentage = (
-    (topic.statistics.prosVotes /
-      (topic.statistics.prosVotes + topic.statistics.consVotes)) *
+    (post.statistics.prosVotes /
+      (post.statistics.prosVotes + post.statistics.consVotes)) *
     100
   ).toFixed(1);
 
   const consPercentage = (
-    (topic.statistics.consVotes /
-      (topic.statistics.prosVotes + topic.statistics.consVotes)) *
+    (post.statistics.consVotes /
+      (post.statistics.prosVotes + post.statistics.consVotes)) *
     100
   ).toFixed(1);
 
@@ -28,7 +28,7 @@ export default function VotingSection({ topic, userSide, handleSelectSide }) {
         >
           <div className="text-center space-y-1">
             <div className="text-xs text-muted-foreground">Position Pro:</div>
-            <div className="mb-1">Team {topic.prosLabel}</div>
+            <div className="mb-1">Team {post.prosLabel}</div>
           </div>
         </button>
 
@@ -45,7 +45,7 @@ export default function VotingSection({ topic, userSide, handleSelectSide }) {
         >
           <div className="text-center space-y-1">
             <div className="text-xs text-muted-foreground">Position Con:</div>
-            <div className="mb-1">Team {topic.consLabel}</div>
+            <div className="mb-1">Team {post.consLabel}</div>
           </div>
         </button>
       </div>
@@ -68,8 +68,8 @@ export default function VotingSection({ topic, userSide, handleSelectSide }) {
       </div>
 
       <div className="flex justify-between text-sm text-muted-foreground">
-        <span>Team {topic.prosLabel}: {topic.statistics.prosVotes} votes</span>
-        <span>Team {topic.consLabel}: {topic.statistics.consVotes} votes</span>
+        <span>Team {post.prosLabel}: {post.statistics.prosVotes} votes</span>
+        <span>Team {post.consLabel}: {post.statistics.consVotes} votes</span>
       </div>
     </section>
   );

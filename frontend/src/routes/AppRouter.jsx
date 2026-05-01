@@ -6,7 +6,7 @@ import ModeratorManagement from "../pages/ModeratorManagement";
 import Explore from "../pages/Explore";
 import ExploreDetail from "../pages/ExploreDetail";
 import TopicManagement from "../pages/TopicManagement";
-import TopicPage from "../pages/TopicPage";
+import PostPage from "../pages/PostPage";
 
 export const router = createBrowserRouter([
   {
@@ -69,12 +69,12 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/topic",
+    path: "/post",
     element: <Layout />,
     children: [
       {
         index: true,
-        element: <TopicPage />,
+        element: <PostPage />,
       },
     ],
   },
