@@ -1,4 +1,6 @@
 package com.Verity.DTO;
+
+
 import com.Verity.Entity.UserFavTopicEntity;
 import com.Verity.Entity.UserNotiEntity;
 import lombok.Data;
@@ -6,8 +8,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Data
-public class UserRequest {
+public class UserDTO {
     private String SYSUNID;
 
     private String SYSCREATEDBY;
@@ -24,11 +27,11 @@ public class UserRequest {
 
     private String email;
 
-    private String password;
-
     private String userRole;
 
     private String userName;
+
+    private String password;
 
     private String userStatus;
 

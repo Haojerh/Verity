@@ -27,8 +27,8 @@ public class UserEntity extends Auditable {
     @Column(name = "email", nullable = false, unique = true, length = 40)
     private String email;
 
-    @Column(name = "username", nullable = false, length = 40)
-    private String username;
+    @Column(name = "userName", nullable = false, length = 40)
+    private String userName;
 
     @Column(name = "userRole", nullable = false, unique = false, length = 40)
     private String userRole;

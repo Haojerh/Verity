@@ -16,11 +16,11 @@ import net.bytebuddy.utility.RandomString;
 
 public class UserNotiEntity extends Auditable {
     @Id
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String notiID;
     private String message;
     private String sourceID;
-    private boolean read = false;
+    private boolean isRead = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipientID")

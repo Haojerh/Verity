@@ -1,43 +1,33 @@
 package com.Verity.Service;
 
+import com.Verity.DTO.Credential;
+import com.Verity.DTO.UserDTO;
 import com.Verity.DTO.UserRequest;
 import com.Verity.Entity.UserEntity;
+import com.Verity.Exceptions.ApiException;
 import com.Verity.Repo.UserRepo;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserServices {
 
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    private final UserRepo userRepo;
 
-    @Autowired
-    private UserRepo userRepo;
-
-//    @Bean
-//    public String  test (){
-//        UserRequest userRequest = new UserRequest();
-//        userRequest.setEmail("siayu@gamil.com");
-//        userRequest.setPassword("123");
-//        userRequest.setUserRole("Administator");
-//        createUser(userRequest);
-//        return"";
-//    }
+    private final PasswordEncoder passwordEncoder;
 
     public void createUser(UserRequest userRequest) {
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userRequest, userEntity);
-        userEntity.setPassword(bCryptPasswordEncoder().encode(userRequest.getPassword()));
+        userEntity.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRepo.save(userEntity);
     }
 
@@ -47,15 +37,27 @@ public class UserServices {
         userRepo.save(userEntity);
     }
 
-    public UserEntity getUserByEmail(String email){
-        return userRepo.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found."));
+    public void deleteUser (UserRequest userRequest){
+        UserEntity userEntity = getUserByEmail(userRequest.getEmail());
+        userEntity.setSYSISDELETED(true);
+        userRepo.save(userEntity);
     }
 
-    public UserEntity getUserByName(String username) {
-        return userRepo.findUserByName(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public UserEntity getUserByEmail(String email){
+        return userRepo.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Error - User not found."));
     }
 
     private UserEntity getUserByID(String id) {
         return userRepo.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found."));
+    }
+
+    public UserDTO authenticate(Credential credential) {
+        UserEntity userEntity = getUserByEmail(credential.getUsername());
+        if (!passwordEncoder.matches(credential.getPassword(), userEntity.getPassword())) {
+            throw new ApiException("Invalid Password.");
+        }
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(userEntity, userDTO);
+        return userDTO;
     }
 }
