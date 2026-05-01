@@ -50,8 +50,8 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)} 
           placeholder="••••••••" 
         />
-        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold hover:opacity-90 transition-opacity mt-4">
-          SIGN IN
+        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold hover:bg-secondary transition-opacity mt-4">
+          Sign In
         </button>
       </form>
     </AuthCard>

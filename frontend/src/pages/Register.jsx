@@ -3,12 +3,38 @@ import { Mail, Lock, User } from "lucide-react";
 import AuthCard from "../components/auth/AuthCard";
 import AuthInput from "../components/auth/AuthInput";
 import api from "../services/api"; 
+import { validatePassword } from "../components/utils/validation";
 
 export default function Register() {
   const [userName, setUserName] = useState(""); // Matches Backend DTO casing
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState([]);
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordError(validatePassword(value));
+
+    if (confirmPassword && value !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+
+    if (value !== password) {
+      setConfirmPasswordError("Passwords do not match");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,8 +96,9 @@ export default function Register() {
           icon={Lock} 
           type="password" 
           value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          placeholder="••••••••" 
+          onChange={handlePasswordChange} 
+          placeholder="••••••••"
+          error={passwordError} 
           required 
         />
         <AuthInput 
@@ -79,12 +106,13 @@ export default function Register() {
           icon={Lock} 
           type="password" 
           value={confirmPassword} 
-          onChange={(e) => setConfirmPassword(e.target.value)} 
-          placeholder="••••••••" 
+          onChange={handleConfirmPasswordChange} 
+          placeholder="••••••••"
+          error={confirmPasswordError} 
           required 
         />
-        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold mt-4 hover:opacity-90 transition-opacity">
-          CREATE ACCOUNT
+        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold mt-4 hover:bg-secondary transition-opacity">
+          Sign Up
         </button>
       </form>
     </AuthCard>

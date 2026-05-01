@@ -27,7 +27,9 @@ export default function PostHeader({ post, fullscreenImage, setFullscreenImage, 
               <button className="flex gap-2 p-3 w-full hover:bg-muted/50 items-center">
                 <Bookmark className="w-4 h-4"/> Save
               </button>
-              <button className="flex gap-2 p-3 w-full hover:bg-muted/50 items-center">
+              <button 
+                onClick={() => openModal("share", post)}
+                className="flex gap-2 p-3 w-full hover:bg-muted/50 items-center">
                 <LucideShare className="w-4 h-4"/> Share
               </button>
               <button 

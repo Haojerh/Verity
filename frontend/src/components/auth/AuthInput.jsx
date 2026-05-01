@@ -31,7 +31,7 @@ export default function AuthInput({
           value={value}
           onChange={onChange}
           className={`w-full ${Icon ? "pl-10" : "px-4"} pr-10 py-2.5 bg-background border rounded-xl focus:outline-none focus:ring-2 transition-all text-sm text-foreground ${
-            error 
+            error && value.length > 0
             ? "border-destructive focus:ring-destructive/20" 
             : "border-border focus:ring-primary/20 focus:border-primary"
           }`}
@@ -51,7 +51,7 @@ export default function AuthInput({
           </button>
         )}
       </div>
-      {error && <p className="text-xs text-destructive mt-1 ml-1">{error}</p>}
+      {(error && value.length > 0) && <p className="text-xs text-destructive mt-1 ml-1">{error}</p>}
     </div>
   );
 }
