@@ -75,4 +75,10 @@ public class UserController {
         var User = userServices.getUserByEmail(userPrincipal.getUsername());
         return ResponseEntity.ok().body(getResponse(request, Map.of("User", User), "User found.", OK));
     }
+
+    @GetMapping("/api/users")
+    public ResponseEntity<Response> getAllUsers(HttpServletRequest request) {
+        var users = userServices.getAllUsers();
+        return ResponseEntity.ok(getResponse(request, Map.of("users", users), "Users Retrieved", OK));
+    }
 }

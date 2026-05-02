@@ -1,20 +1,38 @@
 import { z } from "zod";
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
 export const topicSchema = z.object({
-  title: z.string()
+  name: z.string()
     .min(1, "Title is required")
     .max(20, "Title cannot exceed 20 characters"),
 
   description: z.string()
     .min(1, "Description is required"),
 
-  avatar: z.any().refine(val => val !== null && val !== undefined, {
-    message: "Avatar is required",
-  }),
+  avatar: z
+    .any()
+    .refine((file) => file !== null && file !== undefined, {
+      message: "Avatar is required",
+    })
+    .refine((file) => file instanceof File, {
+      message: "Avatar must be a file",
+    })
+    .refine((file) => file?.size <= MAX_FILE_SIZE, {
+      message: "Avatar cannot exceed 10MB",
+    }),
 
-  banner: z.any().refine(val => val !== null && val !== undefined, {
-    message: "Banner is required",
-  }),
+  banner: z
+    .any()
+    .refine((file) => file !== null && file !== undefined, {
+      message: "Banner is required",
+    })
+    .refine((file) => file instanceof File, {
+      message: "Banner must be a file",
+    })
+    .refine((file) => file?.size <= MAX_FILE_SIZE, {
+      message: "Banner cannot exceed 10MB",
+    }),
 });
 
 export const registerSchema = z

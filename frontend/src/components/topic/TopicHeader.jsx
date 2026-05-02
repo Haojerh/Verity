@@ -5,8 +5,8 @@ export default function TopicHeader({ topic }) {
       <div className="relative h-24 md:h-36 lg:h-48 w-full">
         <img
           className="w-full h-full object-cover"
-          src={topic.cover}
-          alt={topic.coverAlt}
+          src={topic.banner}
+          alt="Banner"
         />
       </div>
 
@@ -24,7 +24,7 @@ export default function TopicHeader({ topic }) {
 
           {/* Title + Desc */}
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-1">
-              {topic.title}
+              {topic.name}
           </h1>
         </div>
 

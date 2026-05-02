@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { topicSchema } from "../../utils/Schema";
 
-export default function NewTopicModal({ onClose }) {
+export default function NewTopicModal({ onClose, setTopics }) {
   const {
     register,
     handleSubmit,
@@ -29,6 +29,10 @@ export default function NewTopicModal({ onClose }) {
       await createTopic(data);
       console.log("Created:", data);
       onClose();
+      setTopics((prev) => [
+        ...prev,
+        { name: data.name, description: data.description, avatar: URL.createObjectURL(data.avatar), banner: URL.createObjectURL(data.banner) }
+      ]);
     } catch (err) {
       console.error("Error creating topic:", err);
     }
@@ -43,7 +47,7 @@ export default function NewTopicModal({ onClose }) {
           label="Enter Title"
           placeholder="Enter topic title..."
           error={errors.title?.message}
-          {...register("title")}
+          {...register("name")}
         />
 
         <TextBox
@@ -73,7 +77,7 @@ export default function NewTopicModal({ onClose }) {
 
       {/* Footer */}
       <ModalFooter 
-        buttonText="Confirm Add"
+        buttonText={isSubmitting ? "Creating..." : "Confirm Add"}
         buttonColor="primary"
         onSubmit={handleSubmit(onSubmit)}
         onClose={onClose} 

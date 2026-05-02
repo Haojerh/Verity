@@ -22,6 +22,8 @@ public class TopicEntity extends Auditable{
     private String name;
 
     private String description;
+    private String avatar;
+    private String banner;
 
     @PrePersist
     public void beforePersist() { setTopicID("CAT-" + RandomString.make(10));}

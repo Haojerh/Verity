@@ -6,7 +6,7 @@ const TextBox = React.forwardRef(
     ref
   ) => {
     const baseClasses =
-      "w-full appearance-none bg-muted/70 border text-muted-foreground rounded-xl py-3.5 px-4 text-sm font-medium transition-all";
+      "w-full appearance-none bg-muted/70 border text-foreground rounded-xl py-3.5 px-4 text-sm font-medium transition-all";
 
     const borderClasses =
       error ? "outline-destructive border-destructive focus:border-destructive" : "";

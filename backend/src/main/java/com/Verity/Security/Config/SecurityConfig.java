@@ -51,7 +51,8 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .requestMatchers("/register").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .httpBasic (Customizer.withDefaults())
                 .build();

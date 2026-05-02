@@ -1,20 +1,20 @@
 package com.Verity.Service;
 
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.Verity.DTO.Credential;
 import com.Verity.DTO.UserDTO;
 import com.Verity.DTO.UserRequest;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Exceptions.ApiException;
 import com.Verity.Repo.UserRepo;
-import lombok.NoArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +41,18 @@ public class UserServices {
         UserEntity userEntity = getUserByEmail(userRequest.getEmail());
         userEntity.setSYSISDELETED(true);
         userRepo.save(userEntity);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepo.findAll()
+            .stream()
+            .filter(user -> !Boolean.TRUE.equals(user.getSYSISDELETED()))
+            .map(user -> {
+                UserDTO userDTO = new UserDTO();
+                BeanUtils.copyProperties(user, userDTO);
+                return userDTO;
+            })
+            .toList();
     }
 
     public UserEntity getUserByEmail(String email){
