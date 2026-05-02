@@ -6,51 +6,78 @@ import TextBox from "../ui/TextBox";
 import ImageUpload from "../ui/ImageUpload";
 import ModalFooter from "../ui/ModalFooter";
 import ModalHeader from "../ui/ModalHeader";
+import { createTopic } from "../../services/TopicService";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { topicSchema } from "../../utils/Schema";
 
 export default function NewTopicModal({ onClose }) {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    avatar: null,
-    banner: null,
-  });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(topicSchema),
+    mode: "onChange",
+    reValidateMode: "onChange"
+});
+
+  const onSubmit = async (data) => {
+    try {
+      await createTopic(data);
+      console.log("Created:", data);
+      onClose();
+    } catch (err) {
+      console.error("Error creating topic:", err);
+    }
+  };
 
   return (
     <Modal onClose={onClose}>
       <ModalHeader text="New Topic" color="primary" icon={CirclePlus} onClose={onClose}/>
-
+      
       <div className="px-8 pb-8 space-y-6 overflow-y-auto flex-1">
         <TextBox
           label="Enter Title"
           placeholder="Enter topic title..."
-          value={formData.title}
-          onChange={(val) => setFormData(prev => ({ ...prev, title: val }))} 
+          error={errors.title?.message}
+          {...register("title")}
         />
 
         <TextBox
           multiline
           label="Enter Description"
           placeholder="Enter description..."
-          value={formData.description}
-          onChange={(val) => setFormData(prev => ({ ...prev, description: val }))}
+          error={errors.description?.message}
+          {...register("description")}
         />
 
-        <ImageUpload 
-          label="Upload Topic Avatar"
-          value={formData.avatar}
-          onChange={(file) => setFormData(prev => ({ ...prev, avatar: file }))}
+        <ImageUpload
+          label="Upload Avatar"
+          value={watch("avatar")}
+          onChange={(file) => setValue("avatar", file, { shouldValidate: true })}
+          error={errors.avatar?.message}
           type="avatar"
         />
 
-        <ImageUpload 
-          label="Upload Topic Banner"
-          value={formData.banner}
-          onChange={(file) => setFormData(prev => ({ ...prev, banner: file }))}
+        <ImageUpload
+          label="Upload Banner"
+          value={watch("banner")}
+          onChange={(file) => setValue("banner", file, { shouldValidate: true })}
+          error={errors.banner?.message}
+          type="banner"
         />
       </div>
 
       {/* Footer */}
-      <ModalFooter buttonText="Confirm Add" buttonColor="primary" onClose={onClose} />
+      <ModalFooter 
+        buttonText="Confirm Add"
+        buttonColor="primary"
+        onSubmit={handleSubmit(onSubmit)}
+        onClose={onClose} 
+      />
     </Modal>
   );
 }

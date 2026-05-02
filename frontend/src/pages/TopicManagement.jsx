@@ -8,6 +8,17 @@ import EditTopicModal from "../components/topic/EditTopicModal";
 import DeleteTopicModal from "../components/topic/DeleteTopicModal";
 
 export default function TopicManagement() {
+  // const [topics, setTopics] = useState(null);
+
+  // const handleAddTopic = (newTopic) => {
+  //   setTopics((prev) => [
+  //     ...prev,
+  //     {
+  //       ...newTopic
+  //     },
+  //   ]);
+  // };
+
   const topics = [
     {
       id: 1,
@@ -86,9 +97,9 @@ export default function TopicManagement() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {filteredTopics.map((topic) => (
           <TopicCard
-          key={topic.id}
-          topic={topic}
-          onAction={openModal}
+            key={topic.id}
+            topic={topic}
+            onAction={openModal}
           />
         ))}
       </div>

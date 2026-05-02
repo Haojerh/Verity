@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { CloudUpload, Trash2 } from "lucide-react";
 
-export default function ImageUpload({ value, onChange, label, type="banner" }) {
+export default function ImageUpload({ value, onChange, label, type, error }) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -43,8 +43,8 @@ export default function ImageUpload({ value, onChange, label, type="banner" }) {
   const isBanner = type === "banner";
   
   return (
-    <div className="space-y-2">
-      <label className="block text-xs font-bold uppercase tracking-widest ml-1 text-muted-foreground">
+    <div className="flex flex-col">
+      <label className="block text-xs font-bold uppercase tracking-widest ml-1 text-muted-foreground mb-2">
         {label}
       </label>
 
@@ -55,7 +55,12 @@ export default function ImageUpload({ value, onChange, label, type="banner" }) {
         onDrop={onDrop}
         className={`
           relative flex flex-col items-center justify-center w-full transition-all cursor-pointer overflow-hidden min-h-40 rounded-2xl
-          ${previewUrl ? "border-transparent" : "bg-muted/70 border-2 border-dashed border-muted-foreground/20 hover:bg-muted/50"}
+          ${error
+            ? "border-2 border-destructive bg-destructive/5 border-dashed"
+            : previewUrl
+            ? "border-transparent"
+            : "bg-muted/70 border-2 border-dashed border-muted-foreground/20 hover:bg-muted/50"
+          }
           ${isDragging ? "border-primary bg-primary/5" : ""}
         `}
       >
@@ -104,6 +109,8 @@ export default function ImageUpload({ value, onChange, label, type="banner" }) {
           </div>
         )}
       </div>
+
+      {error && <span className="text-xs text-destructive mt-1">{error}</span>}
     </div>
   );
 }
