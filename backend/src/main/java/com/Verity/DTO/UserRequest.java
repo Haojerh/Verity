@@ -30,8 +30,6 @@ public class UserRequest {
 
     private String name;
 
-    private String userStatus;
-
     private List<UserNotiEntity> userNotiEntityList;
 
     private List<UserFavTopicEntity> userFavTopicEntityList;

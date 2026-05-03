@@ -31,8 +31,6 @@ public class UserDTO {
 
     private String name;
 
-    private String userStatus;
-
     private List<UserNotiEntity> userNotiEntityList;
 
     private List<UserFavTopicEntity> userFavTopicEntityList;
