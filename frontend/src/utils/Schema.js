@@ -37,7 +37,7 @@ export const topicSchema = z.object({
 
 export const registerSchema = z
   .object({
-    userName: z.string().min(1, "Name is required"),
+    name: z.string().min(1, "Name is required"),
 
     email: z.string().email("Invalid email format"),
 

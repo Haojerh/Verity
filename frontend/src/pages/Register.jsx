@@ -6,6 +6,7 @@ import api from "../services/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../utils/Schema";
+import { registerUser } from "../services/auth";
 
 export default function Register() {
     const {
@@ -17,23 +18,33 @@ export default function Register() {
       mode: "onChange",
     });
 
-    const onSubmit = async (data) => {
-      try {
-        await api.post("/register", {
-          userName: data.userName,
-          email: data.email,
-          password: data.password,
-          userRole: "basic",
-          userStatus: "ACTIVE",
-        });
+    // const onSubmit = async (data) => {
+    //   try {
+    //     await api.post("/register", {
+    //       userName: data.userName,
+    //       email: data.email,
+    //       password: data.password,
+    //       userRole: "basic",
+    //       userStatus: "ACTIVE",
+    //     });
 
-        alert("Account created successfully!");
-        window.location.href = "/login";
-      } catch (error) {
-        console.error(error);
-        alert(error.response?.data?.message || "Registration failed");
-      }
-    };
+    //     alert("Account created successfully!");
+    //     window.location.href = "/login";
+    //   } catch (error) {
+    //     console.error(error);
+    //     alert(error.response?.data?.message || "Registration failed");
+    //   }
+    // };
+
+    const onSubmit = async (data) => {
+    try {
+      await registerUser(data);
+      alert("Account created successfully!");
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
+  };
 
   return (
     <AuthCard 

@@ -1,3 +1,46 @@
+import axios from 'axios';
+
+const client = axios.create({
+    baseURL: 'http://localhost:8080',
+    withCredentials: true,  
+    headers: {
+        'Content-Type': 'application/json',
+    }
+});
+
+export const request = (method, url, data) => {
+    return client({
+        method: method,
+        url: url,
+        data: data,
+    });
+};
+
+export const logout = async () => {
+    try {
+        await request('POST', '/logout'); 
+    } finally {
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("display_name");
+        window.location.href = '/login'; 
+    }
+};
+
+client.interceptors.response.use(
+    (response) => {
+        return response.data.data ? response.data.data : response.data;
+    },
+    (error) => {
+        const status = error.response?.status;
+
+        if (status === 401) {
+            logout();
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 // import axios from 'axios';
 
 // axios.defaults.baseURL = 'http://localhost:8080';
@@ -5,20 +48,9 @@
 // axios.defaults.headers.get["Content-Type"] = 'application/json';
 
 
-// function getCookie(name) {
-//   const value = `; ${document.cookie}`;
-//   const parts = value.split(`; ${name}=`);
-//   if (parts.length === 2) return parts.pop().split(';').shift();
-//   return null;
-// }
-
-// export const getAuthToken = () => {
-//     return localStorage.getItem('auth_token');
-// };
-
-// export const setAuthHeader = (token) => {
+// export const setAuthHeader = () => {
 //     const token = getCookie("Token");
-//     localStorage.setItem('auth_token', token);   
+//     localStorage.setItem('auth_token', token.Value);   
 // };
 
 // export const setLogout =()=>{
@@ -29,16 +61,12 @@
 // }
 
 // export const request = (method, url, data) => {
-//     let headers = {};
-//     if (getAuthToken() !== null && getAuthToken() !== "null") {
-//         headers = {'Authorization': Bearer ${getAuthToken()}};        
-//     }
-    
 //     return axios({
 //         method: method,
 //         url: url,
-//         headers: headers,
-//         data: data});
+//         data: data,
+//         withCredentials: true
+//     });
 // };
 
 // axios.interceptors.response.use(function (response) {
@@ -57,3 +85,4 @@
 //         return Promise.reject(error);
 //     }        
 // });
+

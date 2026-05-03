@@ -6,7 +6,7 @@ export default function ProtectedRoute({ children }) {
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
-    api.get("/auth/status")
+    api.get("/api/users")
       .then(() => {
         setStatus("authenticated");
       })

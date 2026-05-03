@@ -65,7 +65,6 @@ public class SecurityConfig {
                             response.setStatus(HttpServletResponse.SC_OK);
                         })
                 )
-//                .httpBasic (Customizer.withDefaults())
                 .build();
     }
 

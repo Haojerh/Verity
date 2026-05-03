@@ -28,7 +28,7 @@ public class UserRequest {
 
     private String userRole;
 
-    private String userName;
+    private String name;
 
     private String userStatus;
 

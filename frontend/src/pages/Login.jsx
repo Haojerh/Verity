@@ -5,7 +5,8 @@ import { Mail, Lock } from "lucide-react";
 import AuthCard from "../components/auth/AuthCard";
 import AuthInput from "../components/auth/AuthInput";
 import { loginSchema } from "../utils/Schema";
-import api from "../services/api";
+// import api from "../services/api";
+import { loginUser } from "../services/auth"
 
 export default function Login() {
   const {
@@ -17,22 +18,32 @@ export default function Login() {
     mode: "onChange",
   });
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await api.post("/login", {
-        username: data.email,
-        password: data.password,
-      });
+  // const onSubmit = async (data) => {
+  //   try {
+  //     const response = await api.post("/login", {
+  //       username: data.email,
+  //       password: data.password,
+  //     });
 
-      console.log("Login successful:", response.data);
+  //     console.log("Login successful:", response.data);
+  //     window.location.href = "/";
+  //   } catch (error) {
+  //     console.log(error);
+  //     alert(
+  //       error.response?.data?.message ||
+  //         error.message ||
+  //         "Connection to server failed"
+  //     );
+  //   }
+  // };
+
+  const onSubmit = async (values) => {
+    try {
+      await loginUser(values.email, values.password);
+      
       window.location.href = "/";
     } catch (error) {
-      console.log(error);
-      alert(
-        error.response?.data?.message ||
-          error.message ||
-          "Connection to server failed"
-      );
+      console.error("Login failed:", error);
     }
   };
 

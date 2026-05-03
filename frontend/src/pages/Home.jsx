@@ -3,36 +3,36 @@ import { useLocation } from "react-router-dom";
 import DebateCard from "../components/homeDebate/DebateCard";
 import Header from "../components/ui/Header";
 import { Http } from "../constant/http.method";
-import { request } from "../request/request";
+import { request } from "../services/request";
 
 
 export default function Home() {
   const [debates, setDebates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const location = useLocation();
+  // const location = useLocation();
 
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
 
-  async function getData() {
-        request(
-            Http.GET,
-            "/profile",
-            {
-            }
-        ).then((response) => {
-            console.log("Response :", JSON.stringify(response))
+  // async function getData() {
+  //       request(
+  //           Http.GET,
+  //           "/profile",
+  //           {
+  //           }
+  //       ).then((response) => {
+  //           console.log("Response :", JSON.stringify(response))
 
-            //setData(response.data[0]);
-            // setAuditLog(response.data[1]);
-            // console.log(response.data[1]);
-            // window.localStorage.setItem("display_name", response.username)
-        }).catch((error) => {
-            console.log(error);
-        })
-    }
+  //           //setData(response.data[0]);
+  //           // setAuditLog(response.data[1]);
+  //           // console.log(response.data[1]);
+  //           // window.localStorage.setItem("display_name", response.username)
+  //       }).catch((error) => {
+  //           console.log(error);
+  //       })
+  //   }
 
-    getData();
+  //   getData();
   
   // // Sanitize the search query
   // const getSafeQuery = () => {
