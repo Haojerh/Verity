@@ -6,6 +6,7 @@ import CommentSection from "../components/debate/CommentSection";
 import DebateMenu from "../components/homeDebate/DebateMenu";
 import { Bookmark, Flag, LucideShare } from "lucide-react";
 import ReportModal from "../components/debate/ReportModal";
+import ShareModal from "../components/debate/ShareModal";
 
 const initialPost = {
   author: "debate_pioneer",
@@ -131,6 +132,13 @@ export default function PostPage() {
         <ReportModal
           post={modal.entity}
           type="commentReport"
+          onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "share" && (
+        <ShareModal
+          post={modal.entity}
           onClose={closeModal}
         />
       )}

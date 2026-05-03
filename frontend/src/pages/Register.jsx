@@ -3,39 +3,37 @@ import { Mail, Lock, User } from "lucide-react";
 import AuthCard from "../components/auth/AuthCard";
 import AuthInput from "../components/auth/AuthInput";
 import api from "../services/api"; 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "../utils/Schema";
 
 export default function Register() {
-  const [userName, setUserName] = useState(""); 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+    const {
+      register,
+      handleSubmit,
+      formState: { errors, isSubmitting },
+    } = useForm({
+      resolver: zodResolver(registerSchema),
+      mode: "onChange",
+    });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const onSubmit = async (data) => {
+      try {
+        await api.post("/register", {
+          userName: data.userName,
+          email: data.email,
+          password: data.password,
+          userRole: "basic",
+          userStatus: "ACTIVE",
+        });
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    try {
-      const response = await api.post('/register', {
-        userName: userName, 
-        email: email,
-        password: password,
-        userRole: "basic",
-        userStatus: "ACTIVE"
-      });
-      
-      console.log("Registration successful:", response.data);
-      alert("Account created successfully! Please sign in.");
-      window.location.href = '/login'; 
-    } catch (error) {
-      console.error("Registration Error:", error.response?.data);
-      const errorMessage = error.response?.data?.message || "Registration failed. Ensure your backend is running.";
-      alert(errorMessage);
-    }
-  };
+        alert("Account created successfully!");
+        window.location.href = "/login";
+      } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.message || "Registration failed");
+      }
+    };
 
   return (
     <AuthCard 
@@ -45,45 +43,41 @@ export default function Register() {
       linkText="Sign in instead"
       linkTo="/login"
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <AuthInput 
           label="Full Name" 
           icon={User} 
           type="text" 
-          value={userName} 
-          onChange={(e) => setUserName(e.target.value)} 
           placeholder="John Doe" 
-          required 
+          {...register("userName")}
+          error={errors.userName?.message}
         />
         <AuthInput 
           label="Email Address" 
           icon={Mail} 
           type="email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
           placeholder="name@email.com" 
-          required 
+          {...register("email")}
+          error={errors.email?.message}
         />
         <AuthInput 
           label="Password" 
           icon={Lock} 
           type="password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          placeholder="••••••••" 
-          required 
+          placeholder="••••••••"
+          {...register("password")}
+          error={errors.password?.message}
         />
         <AuthInput 
           label="Confirm Password" 
           icon={Lock} 
           type="password" 
-          value={confirmPassword} 
-          onChange={(e) => setConfirmPassword(e.target.value)} 
-          placeholder="••••••••" 
-          required 
+          placeholder="••••••••"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
         />
-        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold mt-4 hover:opacity-90 transition-opacity">
-          CREATE ACCOUNT
+        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold mt-4 hover:bg-secondary transition-opacity">
+          {isSubmitting ? "Creating..." : "Sign Up"}
         </button>
       </form>
     </AuthCard>

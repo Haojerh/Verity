@@ -1,5 +1,21 @@
 package com.Verity.Controller;
 
+import static java.net.URI.create;
+import static java.util.Collections.emptyMap;
+import java.util.Map;
+
+import static org.apache.tomcat.util.http.SameSiteCookies.NONE;
+import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.Verity.DTO.Credential;
 import com.Verity.DTO.UserDTO;
 import com.Verity.DTO.UserRequest;
@@ -9,27 +25,13 @@ import com.Verity.Security.Utils.ApiLogoutHandler;
 import com.Verity.Security.Utils.UserAuthenticationProvider;
 import com.Verity.Security.Utils.UserPrincipal;
 import com.Verity.Service.UserServices;
+import static com.Verity.Utils.RequestUtils.getResponse;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import javax.sql.RowSet;
-import java.security.AuthProvider;
-import java.util.Map;
-import static com.Verity.Utils.RequestUtils.getResponse;
-import static java.net.URI.create;
-import static java.util.Collections.emptyMap;
-import static org.apache.tomcat.util.http.SameSiteCookies.NONE;
-import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,16 +79,9 @@ public class UserController {
         return ResponseEntity.ok().body(getResponse(request, Map.of("User", userDTO), "User found.", OK));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Response> logout (HttpServletRequest request, HttpServletResponse response, Authentication authentication){
-
-        apiLogoutHandler.logout(request, response, authentication);
-        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "You've logged out successfully.", OK));
+    @GetMapping("/api/users")
+    public ResponseEntity<Response> getAllUsers(HttpServletRequest request) {
+        var users = userServices.getAllUsers();
+        return ResponseEntity.ok(getResponse(request, Map.of("users", users), "Users Retrieved", OK));
     }
-
-    @GetMapping("/auth/status")
-    public ResponseEntity<Void> checkStatus() {
-        return ResponseEntity.ok().build();
-    }
-
 }

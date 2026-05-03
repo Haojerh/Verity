@@ -1,35 +1,38 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock } from "lucide-react";
 import AuthCard from "../components/auth/AuthCard";
 import AuthInput from "../components/auth/AuthInput";
-import { request } from "../request/request";
-import { Http } from "../constant/http.method";
+import { loginSchema } from "../utils/Schema";
+import api from "../services/api";
 
 export default function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
+  });
 
   const onSubmit = async (data) => {
     try {
-      const response = await request(
-        Http.POST,
-        "/login",
-        {
-          username: data.email,
-          password: data.password
-        }
-      );
-      
-      if (response.status === 200) {
-        // Handle user metadata storage
-        const { name, email, userRole } = response.data
+      const response = await api.post("/login", {
+        username: data.email,
+        password: data.password,
+      });
 
-        window.localStorage.setItem('display_name', name);
-        window.localStorage.setItem('user_role', userRole)
-
-        window.location.href = '/';
-      }
+      console.log("Login successful:", response.data);
+      window.location.href = "/";
     } catch (error) {
-      console.error("Login Error:", error);
+      console.log(error);
+      alert(
+        error.response?.data?.message ||
+          error.message ||
+          "Connection to server failed"
+      );
     }
   };
 
@@ -46,8 +49,9 @@ export default function Login() {
           label="Email Address" 
           icon={Mail} 
           type="email" 
-          placeholder="name@email.com" 
-          {...register("email", { required: "Email is required" })}
+          placeholder="name@email.com"
+          {...register("email")}
+          error={errors.email?.message}
         />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
 
@@ -55,13 +59,12 @@ export default function Login() {
           label="Password" 
           icon={Lock} 
           type="password" 
-          placeholder="••••••••" 
-          {...register("password", { required: "Password is required" })}
+          placeholder="••••••••"
+          {...register("password")}
+          error={errors.password?.message}
         />
-        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-
-        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold hover:opacity-90 transition-opacity mt-4">
-          SIGN IN
+        <button type="submit" className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold hover:bg-secondary transition-opacity mt-4">
+          {isSubmitting ? "Signing in..." : "Sign In"}
         </button>
       </form>
     </AuthCard>

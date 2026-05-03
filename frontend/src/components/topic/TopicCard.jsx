@@ -14,15 +14,15 @@ export default function TopicCard({ topic, onAction=null }) {
       <div className="h-40 relative">
         <img
           className="w-full h-full object-cover"
-          src={topic.cover}
-          alt={topic.coverAlt}
+          src={topic.banner}
+          alt="Banner"
         />
 
         <div className="absolute -bottom-6 left-6 p-1 rounded-full">
           <img
             className="w-12 h-12 rounded-full outline-3 outline-white object-cover"
             src={topic.avatar}
-            alt={topic.avatarAlt}
+            alt="Avatar"
           />
         </div>
       </div>
@@ -30,7 +30,7 @@ export default function TopicCard({ topic, onAction=null }) {
       <div className="pt-10 pb-6 px-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold tracking-tight">
-            {topic.title}
+            {topic.name}
           </h3>
 
           {!onAction && (

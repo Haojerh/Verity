@@ -4,8 +4,23 @@ import ConfirmDisplay from "../ui/ConfirmDisplay";
 import ModalFooter from "../ui/ModalFooter";
 import ModalHeader from "../ui/ModalHeader";
 import { Trash2 } from "lucide-react";
+import { deleteTopic } from "../../services/TopicService";
 
-export default function DeleteTopicModal({ topic, onClose }) {
+export default function DeleteTopicModal({ topic, onClose, setTopics }) {
+  const handleDelete = async () => {
+    try {
+      await deleteTopic(topic.topicID);
+
+      setTopics((prev) =>
+        prev.filter((t) => t.topicID !== topic.topicID)
+      );
+
+      onClose();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
+
   return (
     <Modal onClose={onClose}>
       <ModalHeader text="Delete Topic" color="red" icon={Trash2} onClose={onClose}/>
@@ -15,7 +30,12 @@ export default function DeleteTopicModal({ topic, onClose }) {
       </div>
 
       {/* Footer */}
-      <ModalFooter buttonText="Confirm Delete" buttonColor="red" onClose={onClose} />
+      <ModalFooter
+        buttonText={isSubmitting ? "Deleting..." : "Confirm Delete"} 
+        buttonColor="red" 
+        onClose={onClose} 
+        onSubmit={handleDelete}
+      />
     </Modal>
   );
 }

@@ -55,8 +55,8 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/register").permitAll()
-                        .requestMatchers("/auth/status").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

@@ -1,26 +1,22 @@
 spring:
   application:
     name: Verity
+
   datasource:
-    # Replace 'db_name' with your actual database name
     url: jdbc:mysql://localhost:3306/Verity?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: root
-    # Optional: Spring Boot can usually detect the driver automatically
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      # Options: update, create, create-drop, validate, none
       ddl-auto: update
     show-sql: false
     properties:
       hibernate:
         format_sql: true
-        # Recommended to let Spring Boot detect the dialect automatically
 
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
