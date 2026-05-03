@@ -9,6 +9,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,7 +35,8 @@ public class UserAuthenticationProvider {
 
     public String createToken(String Username) {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 3_200_000);
+        //Date validity = new Date(now.getTime() + 3_200_000);
+        Date validity = new Date(now.getTime() + 7_200_000);
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
@@ -48,16 +50,10 @@ public class UserAuthenticationProvider {
     }
 
     public Authentication validateToken(String token) {
-
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
-
         JWTVerifier verifier = JWT.require(algorithm).build();
-
         DecodedJWT decoded = verifier.verify(token);
-
         UserEntity userEntity = userServices.getUserByEmail(decoded.getSubject());
-
-
-        return new UsernamePasswordAuthenticationToken(userEntity, null, Collections.emptyList());
+        return new UsernamePasswordAuthenticationToken(new UserPrincipal(userEntity), null, Collections.emptyList());
     }
 }

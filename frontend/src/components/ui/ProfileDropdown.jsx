@@ -1,7 +1,20 @@
 import { Link } from "react-router-dom";
 import { User, Settings, LogOut, Contrast } from "lucide-react";
+import api from "../../services/api"; 
 
 export default function ProfileDropdown({ onClose, onToggle }) {
+  const handleLogout = async () => {
+    try {
+      await api.post("/logout"); 
+      
+      onClose();
+      
+      window.location.href = "/login"; 
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div className="absolute right-0 top-10 mt-2 w-48 bg-card border rounded-lg shadow-lg dark-shadow-dark-lg overflow-hidden z-50">
       <Link
@@ -36,7 +49,7 @@ export default function ProfileDropdown({ onClose, onToggle }) {
       <hr className="border-border" />
 
       <button
-        onClick={onClose}
+        onClick={handleLogout}
         className="w-full p-3 text-left hover:bg-muted transition-colors flex items-center gap-3 text-sm text-red-600"
       >
         <LogOut className="w-4 h-4"/>

@@ -29,9 +29,7 @@ public class UserDTO {
 
     private String userRole;
 
-    private String userName;
-
-    private String password;
+    private String name;
 
     private String userStatus;
 

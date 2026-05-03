@@ -1,8 +1,11 @@
 package com.Verity.Security.Config;
 
 import com.Verity.Security.Filter.JwtAuthFilter;
+import com.Verity.Security.Utils.ApiLogoutHandler;
 import com.Verity.Security.Utils.UserAuthenticationEntryPoint;
 import com.Verity.Security.Utils.UserAuthenticationProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -37,6 +41,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
     private final UserAuthenticationProvider userAuthenticationProvider;
+    private final ApiLogoutHandler apiLogoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -49,11 +54,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/logout").permitAll()
                         .requestMatchers("/register").permitAll()
+                        .requestMatchers("/auth/status").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic (Customizer.withDefaults())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .addLogoutHandler(apiLogoutHandler)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                )
+//                .httpBasic (Customizer.withDefaults())
                 .build();
     }
 

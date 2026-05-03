@@ -23,7 +23,7 @@
 //
 //
 //    @Autowired
-////    private DebateRepository debateRepository;
+//    private DebateRepository debateRepository;
 //
 //
 //    @GetMapping

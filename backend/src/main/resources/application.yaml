@@ -1,5 +1,5 @@
 spring:
-  qpplication:
+  application:
     name: Verity
   datasource:
     # Replace 'db_name' with your actual database name
@@ -13,8 +13,14 @@ spring:
     hibernate:
       # Options: update, create, create-drop, validate, none
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
         # Recommended to let Spring Boot detect the dialect automatically
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

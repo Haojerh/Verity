@@ -5,7 +5,7 @@ import AuthInput from "../components/auth/AuthInput";
 import api from "../services/api"; 
 
 export default function Register() {
-  const [userName, setUserName] = useState(""); // Matches Backend DTO casing
+  const [userName, setUserName] = useState(""); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +19,6 @@ export default function Register() {
     }
 
     try {
-      // Sending payload to your Spring Boot /register endpoint
       const response = await api.post('/register', {
         userName: userName, 
         email: email,
