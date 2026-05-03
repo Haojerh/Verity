@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class UserServices {
 
     private final UserRepo userRepo;
-
     private final PasswordEncoder passwordEncoder;
+    private final PunishmentLogService punishmentLogService;
 
     public void createUser(UserRequest userRequest) {
         UserEntity userEntity = new UserEntity();
@@ -48,9 +48,40 @@ public class UserServices {
             .stream()
             .filter(user -> !Boolean.TRUE.equals(user.getSYSISDELETED()))
             .map(user -> {
-                UserDTO userDTO = new UserDTO();
-                BeanUtils.copyProperties(user, userDTO);
-                return userDTO;
+                UserDTO dto = new UserDTO();
+                BeanUtils.copyProperties(user, dto);
+
+                dto.setBanned(
+                    punishmentLogService.isUserPunished(user.getUserID(), "BAN")
+                );
+
+                dto.setMuted(
+                    punishmentLogService.isUserPunished(user.getUserID(), "MUTE")
+                );
+
+                return dto;
+            })
+            .toList();
+    }
+
+    public List<UserDTO> getAllModerators() {
+        return userRepo.findAll()
+            .stream()
+            .filter(user -> !Boolean.TRUE.equals(user.getSYSISDELETED()))
+            .filter(user -> "MODERATOR".equalsIgnoreCase(user.getUserRole()))
+            .map(user -> {
+                UserDTO dto = new UserDTO();
+                BeanUtils.copyProperties(user, dto);
+
+                dto.setBanned(
+                    punishmentLogService.isUserPunished(user.getUserID(), "BAN")
+                );
+
+                dto.setMuted(
+                    punishmentLogService.isUserPunished(user.getUserID(), "MUTE")
+                );
+
+                return dto;
             })
             .toList();
     }
@@ -61,6 +92,10 @@ public class UserServices {
 
     private UserEntity getUserByID(String id) {
         return userRepo.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found."));
+    }
+
+    public boolean isUserBanned(String userId) {
+        return punishmentLogService.isUserPunished(userId, "BAN");
     }
 
     public UserDTO authenticate(Credential credential) {

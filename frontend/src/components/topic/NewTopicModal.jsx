@@ -31,7 +31,7 @@ export default function NewTopicModal({ onClose, setTopics }) {
       onClose();
       setTopics((prev) => [
         ...prev,
-        { name: data.name, description: data.description, avatar: URL.createObjectURL(data.avatar), banner: URL.createObjectURL(data.banner) }
+        { topicID: data.topicID, name: data.name, description: data.description, avatar: URL.createObjectURL(data.avatar), banner: URL.createObjectURL(data.banner) }
       ]);
     } catch (err) {
       console.error("Error creating topic:", err);
@@ -46,7 +46,7 @@ export default function NewTopicModal({ onClose, setTopics }) {
         <TextBox
           label="Enter Title"
           placeholder="Enter topic title..."
-          error={errors.title?.message}
+          error={errors.name?.message}
           {...register("name")}
         />
 

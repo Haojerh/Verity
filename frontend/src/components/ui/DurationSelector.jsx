@@ -1,16 +1,11 @@
-export default function DurationSelector({ value, type="default", onChange }) {
-  const allOptions = [
-    { value: "24h", title: "24 Hours", subtitle: "Temporary" },
-    { value: "7d", title: "7 Days", subtitle: "Warning" },
-    { value: "30d", title: "30 Days", subtitle: "Severe" },
-    { value: "perm", title: "Permanent", subtitle: "Final" },
-  ];
+import { allOptions } from "../../constant/Constants";
 
-  const options = type === "all" ? allOptions : allOptions.filter((opt) => opt.value !== "perm");
+export default function DurationSelector({ value, type="default", onChange, error }) {
+  const options = type === "all" ? allOptions : allOptions.filter((opt) => opt.value !== -1);
 
   return (
-    <div className="space-y-3">
-      <label className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant ml-1">
+    <div className="flex flex-col">
+      <label className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant ml-1 mb-2">
         Select Duration
       </label>
 
@@ -26,14 +21,15 @@ export default function DurationSelector({ value, type="default", onChange }) {
               className="hidden peer"
             />
 
-            <div className="
+            <div className={`
               px-4 py-3 rounded-xl border borer-box
               bg-muted/70 peer-checked:bg-destructive/30
               peer-checked:border-2 peer-checked:text-destructive
               peer-checked:border-destructive transition-all 
               group-hover:bg-destructive/5 group-hover:border-destructive/15
               flex flex-col items-center gap-1
-            ">
+              ${error ? 'border-destructive' : ''}
+            `}>
               <span className="font-bold text-sm">{opt.title}</span>
               <span className="text-[10px] uppercase tracking-wide opacity-70">
                 {opt.subtitle}
@@ -42,6 +38,7 @@ export default function DurationSelector({ value, type="default", onChange }) {
           </label>
         ))}
       </div>
+      {error && <span className="text-xs text-destructive mt-1">{error}</span>}
     </div>
   );
 }

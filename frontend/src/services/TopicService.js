@@ -1,4 +1,5 @@
 import axios from "axios";
+import { request } from './Request';
 
 const API_URL = "http://localhost:8080/api/topics";
 
@@ -10,13 +11,11 @@ export const createTopic = async (formData) => {
   form.append("avatar", formData.avatar);
   form.append("banner", formData.banner);
 
-  const res = await axios.post(API_URL, form, {
+  return await request("POST", "/api/topics", form, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
-
-  return res.data;
 };
 
 export const updateTopic = async (id, formData) => {
@@ -27,19 +26,17 @@ export const updateTopic = async (id, formData) => {
   form.append("avatar", formData.avatar);
   form.append("banner", formData.banner);
 
-  const res = await axios.put(`${API_URL}/${id}`, form, {
+  return await request("PUT", `/api/topics/${id}`, form, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
-
-  return res.data;
 };
 
 export const getTopics = async () => {
-  return await axios.get(API_URL);
+  return await request('GET', `/api/topics`);
 };
 
-export const deleteTopic = (id) => {
-  return axios.delete(`${API_URL}/${id}`);
+export const deleteTopic = async (id) => {
+  return await request('DELETE', `/api/topics/${id}`);
 };

@@ -5,17 +5,43 @@ import ConfirmDisplay from "../ui/ConfirmDisplay";
 import ModalFooter from "../ui/ModalFooter";
 import ModalHeader from "../ui/ModalHeader";
 import { TriangleAlert } from "lucide-react";
+import { reasonOptions } from "../../constant/Constants";
+import { createPunishment } from "../../services/PunishmentLogsService";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { WarnSchema } from "../../utils/Schema";
 
 export default function WarnModal({ user, onClose, roleType="default" }) {
-  const [reason, setReason] = useState("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(WarnSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
+    defaultValues: {
+      reason: ""
+    }
+  });
 
-  const reasonOptions = [
-    { value: "spam", label: "Spamming / Self-Promotion" },
-    { value: "harassment", label: "Harassment / Toxicity" },
-    { value: "misinfo", label: "Spreading Misinformation" },
-    { value: "tos", label: "Violation of Terms of Service" },
-    { value: "other", label: "Other" },
-  ];
+  const onSubmit = async (data) => {
+    try {
+      await createPunishment({
+        userID: user.userID,
+        type: "WARN",
+        reason: data.reason,
+        duration: null
+      });
+
+      console.log("Punishment created:", data);
+      onClose();
+    } catch (err) {
+      console.error("Error creating punishment:", err);
+    }
+  };
 
   return (
     <Modal onClose={onClose}>
@@ -26,14 +52,20 @@ export default function WarnModal({ user, onClose, roleType="default" }) {
         <SelectBox
           label="Select Reason"
           options={reasonOptions}
-          value={reason}
-          onChange={setReason}
+          value={watch("reason")}
+          onChange={(val) => setValue("reason", val, { shouldValidate: true })}
           placeholder="Choose a violation reason..."
+          error={errors.reason?.message}
         />
       </div>
 
       {/* Footer */}
-      <ModalFooter buttonText="Confirm Warn" buttonColor="red" onClose={onClose} />
+      <ModalFooter 
+        buttonText={isSubmitting ? "Warning..." : "Confirm Warning"}
+        buttonColor="red"
+        onClose={onClose}
+        onSubmit={handleSubmit(onSubmit)}
+      />
     </Modal>
   );
 }

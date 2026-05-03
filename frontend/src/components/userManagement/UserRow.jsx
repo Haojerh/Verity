@@ -1,35 +1,36 @@
 import { useState } from "react";
 import { ChevronDown, History } from "lucide-react";
+import Avatar from "../ui/Avatar";
 
 export default function UserRow({ user, onAction }) {
   const [open, setOpen] = useState(false);
 
   return (
     <tr className="border-t hover:bg-muted/30">
-      <td className="p-4">#{user.id}</td>
+      <td className="p-4 text-xs">#{user.userID}</td>
 
       <td className="p-4">
         <div className="flex items-center gap-2">
-            <img src={user.avatar} className="w-8 h-8 rounded-full" />
-            {user.name}
+          <Avatar name={user.name} size="sm" imageUrl={user.avatar} />
+          {user.name}
         </div>
       </td>
 
       <td className="hidden lg:table-cell p-4">{user.email}</td>
 
-      <td className="hidden md:table-cell p-4 text-center">
+      <td className="hidden lg:table-cell p-4 text-center">
         <span className={`px-2 py-1 text-xs rounded-full ${
-          user.isBanned ? "bg-red-200 text-red-700" : "bg-muted"
+          user.banned ? "bg-red-200 text-red-700" : "bg-muted"
         }`}>
-          {user.isBanned ? "Yes" : "No"}
+          {user.banned ? "Yes" : "No"}
         </span>
       </td>
 
-      <td className="hidden md:table-cell p-4 text-center">
+      <td className="hidden lg:table-cell p-4 text-center">
         <span className={`px-2 py-1 text-xs rounded-full ${
-          user.isMuted ? "bg-yellow-200 text-yellow-700" : "bg-muted"
+          user.muted ? "bg-yellow-200 text-yellow-700" : "bg-muted"
         }`}>
-          {user.isMuted ? "Yes" : "No"}
+          {user.muted ? "Yes" : "No"}
         </span>
       </td>
 
@@ -61,18 +62,18 @@ export default function UserRow({ user, onAction }) {
             
             {/* BAN / UNBAN */}
             <button
-              onClick={() => onAction(user.isBanned ? "unban" : "ban", user)}
+              onClick={() => onAction(user.banned ? "unban" : "ban", user)}
               className="w-full text-left px-3 py-2 text-xs hover:bg-muted/50"
             >
-              {user.isBanned ? "Unban" : "Ban"}
+              {user.banned ? "Unban" : "Ban"}
             </button>
 
             {/* MUTE / UNMUTE */}
             <button
-              onClick={() => onAction(user.isMuted ? "unmute" : "mute", user)}
+              onClick={() => onAction(user.muted ? "unmute" : "mute", user)}
               className="w-full text-left px-3 py-2 text-xs rounded-b-md hover:bg-muted/50"
             >
-              {user.isMuted ? "Unmute" : "Mute"}
+              {user.muted ? "Unmute" : "Mute"}
             </button>
           </div>
         )}

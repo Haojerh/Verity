@@ -31,7 +31,7 @@ export default function DeleteTopicModal({ topic, onClose, setTopics }) {
 
       {/* Footer */}
       <ModalFooter
-        buttonText={isSubmitting ? "Deleting..." : "Confirm Delete"} 
+        buttonText="Confirm Delete"
         buttonColor="red" 
         onClose={onClose} 
         onSubmit={handleDelete}

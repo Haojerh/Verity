@@ -33,7 +33,7 @@ export default function EditTopicModal({ topic, onClose, setTopics }) {
   const onSubmit = async (data) => {
     try {
       const res = await updateTopic(topic.topicID, data);
-      const updated = res.data.topic;
+      const updated = res.topic;
       console.log("Updated:", data);
       onClose();
       setTopics((prev) =>
@@ -41,6 +41,7 @@ export default function EditTopicModal({ topic, onClose, setTopics }) {
           t.topicID === topic.topicID
             ? {
                 ...t,
+                topicID: updated.topicID,
                 name: updated.name,
                 description: updated.description,
                 avatar: `http://localhost:8080/api/uploads/topics/${updated.avatar}`,

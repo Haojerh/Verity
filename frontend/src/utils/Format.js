@@ -1,0 +1,27 @@
+export const formatDateTime = (isoString) => {
+  const date = new Date(isoString);
+
+  const pad = (n) => String(n).padStart(2, "0");
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+         `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
+
+export const formatDuration = (minutes) => {
+  if (minutes === -1) return "Permanent";
+
+  const totalHours = Math.floor(minutes / 60);
+  const days = Math.floor(totalHours / 24);
+  const months = Math.floor(days / 30);
+
+  const remainingDays = days % 30;
+  const remainingHours = totalHours % 24;
+
+  let result = [];
+
+  if (months > 0) result.push(`${months} Month${months > 1 ? "s" : ""}`);
+  if (remainingDays > 0) result.push(`${remainingDays} Day${remainingDays > 1 ? "s" : ""}`);
+  if (remainingHours > 0) result.push(`${remainingHours} Hour${remainingHours > 1 ? "s" : ""}`);
+
+  return result.length ? result.join(" ") : "0 Hour";
+};
