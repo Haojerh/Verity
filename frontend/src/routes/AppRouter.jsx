@@ -10,6 +10,7 @@ import ExploreDetail from "../pages/ExploreDetail";
 import TopicManagement from "../pages/TopicManagement";
 import PostPage from "../pages/PostPage";
 import ProtectedRoute from "../routes/ProtectedRoute";
+import CreatePost from "../pages/CreatePost";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,15 +23,17 @@ export const router = createBrowserRouter(
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="user_management" element={<UserManagement />} />
-          <Route path="moderator_management" element={<ModeratorManagement />} />
+          <Route path="user-management" element={<UserManagement />} />
+          <Route path="moderator-management" element={<ModeratorManagement />} />
+
+          <Route path="create-post" element={<CreatePost />} />
           
           <Route path="explore">
             <Route index element={<Explore />} />
             <Route path=":id" element={<ExploreDetail />} />
           </Route>
 
-          <Route path="topic_management" element={<TopicManagement />} />
+          <Route path="topic-management" element={<TopicManagement />} />
           <Route path="post" element={<PostPage />} />
         </Route>
       </Route>

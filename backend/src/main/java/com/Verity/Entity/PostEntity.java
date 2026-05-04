@@ -17,10 +17,11 @@ public class PostEntity extends Auditable {
     private String description;
     private String proLabel = "Pro";
     private String conLabel = "Con";
+    private String imagePath;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topicID")
-    private TopicEntity topicID;
+    private TopicEntity topic;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorID")
