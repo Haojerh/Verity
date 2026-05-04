@@ -1,12 +1,13 @@
 package com.Verity.DTO;
 
 
-import com.Verity.Entity.UserFavTopicEntity;
-import com.Verity.Entity.UserNotiEntity;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.Verity.Entity.UserFavTopicEntity;
+import com.Verity.Entity.UserNotiEntity;
+
+import lombok.Data;
 
 
 @Data
@@ -30,6 +31,10 @@ public class UserDTO {
     private String userRole;
 
     private String name;
+
+    private boolean banned;
+    
+    private boolean muted;
 
     private List<UserNotiEntity> userNotiEntityList;
 
