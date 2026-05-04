@@ -8,6 +8,7 @@ export const loginUser = async (email, password) => {
     });
     
     window.localStorage.setItem('display_name', data.name); 
+    window.localStorage.setItem('user_id', data.userID);
     
     return data;
 };

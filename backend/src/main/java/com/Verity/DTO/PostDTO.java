@@ -19,4 +19,6 @@ public class PostDTO {
     private LocalDateTime SYSCREATEDDATE;
     private String topicName;
     private String topicID;
+    private String authorID;
+    private String authorName;
 }
