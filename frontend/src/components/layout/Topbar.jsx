@@ -6,15 +6,30 @@ import logoImage from "../../assets/Verity.svg";
 import logoImageDark from "../../assets/VerityDark.svg";
 import Avatar from "../ui/Avatar";
 import ProfileDropdown from "../ui/ProfileDropdown";
+import { useAuth } from "../../context/AuthContext";
+import { getCurrentUser } from "../../services/userService";
 // import NotificationPanel from "../notification/NotificationPanel";
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const currentUser = "currentUser123";
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { user, setUser } = useAuth();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getCurrentUser();
+        setUser(res.user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, [setUser]);
   
   // // Fetch unread notification count
   // const fetchUnreadCount = async () => {
@@ -130,7 +145,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
           {/* Profile */}
           <div className="relative">
             <button onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-              <Avatar name={currentUser} />
+              <Avatar name={user?.name} />
             </button>
             {profileMenuOpen && (
               <ProfileDropdown 

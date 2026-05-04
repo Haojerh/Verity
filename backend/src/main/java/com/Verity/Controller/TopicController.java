@@ -6,8 +6,6 @@ import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-
-import com.Verity.Service.TopicService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.Verity.DTO.TopicDTO;
 import com.Verity.DTO.TopicRequest;
 import com.Verity.Domain.Response;
-
+import com.Verity.Service.TopicService;
 import static com.Verity.Utils.RequestUtils.getResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +41,13 @@ public class TopicController {
         var topics = topicService.getAllTopics();
         return ResponseEntity.ok(getResponse(request, Map.of("topics", topics), "Topics Retrieved", OK));
     }
+
+    @GetMapping("/api/topics/{id}")
+    public ResponseEntity<Response> getCurrentTopic(@PathVariable String id, HttpServletRequest request) {
+        var topic = topicService.retrieveTopicById(id);
+        return ResponseEntity.ok(getResponse(request, Map.of("topic", topic), "Topic Retrieved", OK));
+    }
+    
 
     @DeleteMapping("/api/topics/{id}")
     public ResponseEntity<Response> deleteTopic(@PathVariable String id, HttpServletRequest request) {

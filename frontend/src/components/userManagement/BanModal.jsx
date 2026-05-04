@@ -10,7 +10,7 @@ import { reasonOptions } from "../../constant/Constants";
 import { createPunishment } from "../../services/PunishmentLogsService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BanSchema } from "../../utils/Schema";
+import { BanMuteSchema } from "../../utils/Schema";
 
 export default function BanModal({ user, onClose, setUserData }) {
   const {
@@ -20,7 +20,7 @@ export default function BanModal({ user, onClose, setUserData }) {
       setValue,
       formState: { errors, isSubmitting }
     } = useForm({
-      resolver: zodResolver(BanSchema),
+      resolver: zodResolver(BanMuteSchema),
       mode: "onChange",
       reValidateMode: "onChange",
       defaultValues: {
@@ -67,7 +67,6 @@ export default function BanModal({ user, onClose, setUserData }) {
         />
         <DurationSelector
           value={watch("duration")}
-          type="all"
           onChange={(val) => setValue("duration", val, { shouldValidate: true })}
           error={errors.duration?.message}
         />

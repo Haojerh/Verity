@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -140,5 +141,14 @@ public class TopicService {
 
     public TopicEntity getTopicById(String topicID){
         return topicRepo.findById(topicID).orElseThrow(() -> new RuntimeException("Error - Topic not found."));
+    }
+
+    public TopicDTO retrieveTopicById(String topicID) {
+        TopicEntity topic = topicRepo.findById(topicID)
+                .orElseThrow(() -> new RuntimeException("Error - Topic not found."));
+
+        TopicDTO dto = new TopicDTO();
+        BeanUtils.copyProperties(topic, dto);
+        return dto;
     }
 }

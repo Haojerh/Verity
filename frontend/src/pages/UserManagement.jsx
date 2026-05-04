@@ -129,6 +129,7 @@ export default function UserManagement() {
         <UnbanModal
           user={modal.user}
           onClose={closeModal}
+          setUserData={setUserData}
         />
       )}
 
@@ -136,6 +137,7 @@ export default function UserManagement() {
         <MuteModal
           user={modal.user}
           onClose={closeModal}
+          setUserData={setUserData}
         />
       )}
 
@@ -143,6 +145,7 @@ export default function UserManagement() {
         <UnmuteModal
           user={modal.user}
           onClose={closeModal}
+          setUserData={setUserData}
         />
       )}
     </div>

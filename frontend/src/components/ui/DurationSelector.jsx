@@ -1,8 +1,6 @@
 import { allOptions } from "../../constant/Constants";
 
-export default function DurationSelector({ value, type="default", onChange, error }) {
-  const options = type === "all" ? allOptions : allOptions.filter((opt) => opt.value !== -1);
-
+export default function DurationSelector({ value, onChange, error }) {
   return (
     <div className="flex flex-col">
       <label className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant ml-1 mb-2">
@@ -10,7 +8,7 @@ export default function DurationSelector({ value, type="default", onChange, erro
       </label>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {options.map((opt) => (
+        {allOptions.map((opt) => (
           <label key={opt.value} className="cursor-pointer group">
             <input
               type="radio"

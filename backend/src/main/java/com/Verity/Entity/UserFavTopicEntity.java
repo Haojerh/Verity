@@ -19,11 +19,13 @@ public class UserFavTopicEntity extends Auditable {
     @Column(name = "userFavID", nullable = false, unique = true, length = 20)
     private String userFavID;
 
-    @Column(name = "postID", nullable = true, unique = false, length = 20)
-    private String postID;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userID")
+    private UserEntity user;
 
-    @Column(name = "threadID", nullable = true, unique = false, length = 20)
-    private String threadID;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "topicID")
+    private TopicEntity topic;
 
     @PrePersist
     public void beforePersist() { setUserFavID("USRFAV-" + RandomString.make(10));}

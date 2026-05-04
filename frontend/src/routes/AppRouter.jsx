@@ -11,6 +11,8 @@ import TopicManagement from "../pages/TopicManagement";
 import PostPage from "../pages/PostPage";
 import ProtectedRoute from "../routes/ProtectedRoute";
 import CreatePost from "../pages/CreatePost";
+import Profile from "../pages/Profile";
+import Settings from "../pages/Settings";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +37,8 @@ export const router = createBrowserRouter(
 
           <Route path="topic-management" element={<TopicManagement />} />
           <Route path="post" element={<PostPage />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Route>
 

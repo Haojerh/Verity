@@ -35,10 +35,6 @@ public class UserEntity extends Auditable {
 
     @Column(name = "password", nullable = false, unique = false, length = 256)
     private String password;
-
-    @Column(length = 20)
-    private String userStatus = "ACTIVE"; // ACTIVE, BANNED, SUSPENDED
-
 //    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "userID", referencedColumnName = "userID", nullable = true)
 //    private List<UserNotiEntity> userNotiEntityList;

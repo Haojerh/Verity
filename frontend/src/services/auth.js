@@ -17,7 +17,6 @@ export const registerUser = async (userData) => {
         name: userData.name,
         email: userData.email,
         password: userData.password,
-        userRole: "basic",
-        userStatus: "ACTIVE",
+        userRole: "basic"
     });
 };

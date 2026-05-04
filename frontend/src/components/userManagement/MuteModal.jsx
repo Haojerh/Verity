@@ -6,18 +6,50 @@ import ConfirmDisplay from "../ui/ConfirmDisplay";
 import ModalFooter from "../ui/ModalFooter";
 import { VolumeOff } from "lucide-react";
 import ModalHeader from "../ui/ModalHeader";
+import { reasonOptions } from "../../constant/Constants";
+import { createPunishment } from "../../services/PunishmentLogsService";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { BanMuteSchema } from "../../utils/Schema";
 
-export default function MuteModal({ user, onClose }) {
-  const [reason, setReason] = useState("");
-  const [duration, setDuration] = useState("30d");
+export default function MuteModal({ user, onClose, setUserData }) {
+  const {
+      register,
+      handleSubmit,
+      watch,
+      setValue,
+      formState: { errors, isSubmitting }
+    } = useForm({
+      resolver: zodResolver(BanMuteSchema),
+      mode: "onChange",
+      reValidateMode: "onChange",
+      defaultValues: {
+        reason: "",
+        duration: 0
+      }
+  });
 
-  const reasonOptions = [
-    { value: "spam", label: "Spamming / Self-Promotion" },
-    { value: "harassment", label: "Harassment / Toxicity" },
-    { value: "misinfo", label: "Spreading Misinformation" },
-    { value: "tos", label: "Violation of Terms of Service" },
-    { value: "other", label: "Other" },
-  ];
+  const onSubmit = async (data) => {
+    try {
+      await createPunishment({
+        userID: user.userID,
+        type: "MUTE",
+        reason: data.reason,
+        duration: data.duration
+      });
+      setUserData((prev) =>
+        prev.map((u) =>
+          u.userID === user.userID
+            ? { ...u, muted: true }
+            : u
+        )
+      );
+      console.log("Punishment created:", data);
+      onClose();
+    } catch (err) {
+      console.error("Error creating punishment:", err);
+    }
+  };
 
   return (
     <Modal onClose={onClose}>
@@ -30,19 +62,26 @@ export default function MuteModal({ user, onClose }) {
         <SelectBox
           label="Select Reason"
           options={reasonOptions}
-          value={reason}
-          onChange={setReason}
+          value={watch("reason")}
+          onChange={(val) => setValue("reason", val, { shouldValidate: true })}
           placeholder="Choose a violation reason..."
+          error={errors.reason?.message}
         />
 
         <DurationSelector
-          value={duration}
-          onChange={setDuration}
+          value={watch("duration")}
+          onChange={(val) => setValue("duration", val, { shouldValidate: true })}
+          error={errors.duration?.message}
         />
       </div>
 
       {/* Footer */}
-      <ModalFooter buttonText="Confirm Mute" buttonColor="red" onClose={onClose} />
+      <ModalFooter
+        buttonText={isSubmitting ? "Muting..." : "Confirm Mute"}
+        buttonColor="red"
+        onClose={onClose}
+        onSubmit={handleSubmit(onSubmit)}
+      />
     </Modal>
   );
 }
