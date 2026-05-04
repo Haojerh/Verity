@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Pagination from "../components/ui/Pagination";
 import SearchBar from "../components/ui/SearchBar";
 import ModeratorTable from "../components/moderatorManagement/ModeratorTable";
@@ -6,64 +6,31 @@ import PunishmentLogs from "../components/userManagement/PunishmentLogs";
 import WarnModal from "../components/userManagement/WarnModal";
 import DemoteModal from "../components/moderatorManagement/DemoteModal";
 import Header from "../components/ui/Header";
+import { getModerators } from "../services/userService";
 
 export default function ModeratorManagement() {
-  const userData = [
-    {
-      id: 1,
-      name: "An1me12",
-      avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCHDkKdo1YaS_glFrItElFdnnhBPAJs2R5awn8N1seMrvvZy3XV3VVdhk_t6TKnaof4EYd2EQ7yGChbnYpWCBEK06YFY9lvE8kwev30zJ3MJPleIJqSMkjOOrrsrSJE0d_RGMVADnWCVXFexTCUc5prjxPdBWWK95utOUrsdQXb5f_cljBLbY2soZqpiqWdCmNfSz0tyCXtF61yICu3aGOqb0rxTyChYSJQu-VBNgktmcenAcIbRSy_UzxBrwu5Xb1HrjZNJDoSWjQ",
-      email: "an1me123@gmail.com"
-    },
-    {
-      id: 2,
-      name: "Zhen Hao",
-      avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCHDkKdo1YaS_glFrItElFdnnhBPAJs2R5awn8N1seMrvvZy3XV3VVdhk_t6TKnaof4EYd2EQ7yGChbnYpWCBEK06YFY9lvE8kwev30zJ3MJPleIJqSMkjOOrrsrSJE0d_RGMVADnWCVXFexTCUc5prjxPdBWWK95utOUrsdQXb5f_cljBLbY2soZqpiqWdCmNfSz0tyCXtF61yICu3aGOqb0rxTyChYSJQu-VBNgktmcenAcIbRSy_UzxBrwu5Xb1HrjZNJDoSWjQ",
-      email: "zhenhao123@gmail.com"
-    },
-    {
-      id: 3,
-      name: "Heng Tao",
-      avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCHDkKdo1YaS_glFrItElFdnnhBPAJs2R5awn8N1seMrvvZy3XV3VVdhk_t6TKnaof4EYd2EQ7yGChbnYpWCBEK06YFY9lvE8kwev30zJ3MJPleIJqSMkjOOrrsrSJE0d_RGMVADnWCVXFexTCUc5prjxPdBWWK95utOUrsdQXb5f_cljBLbY2soZqpiqWdCmNfSz0tyCXtF61yICu3aGOqb0rxTyChYSJQu-VBNgktmcenAcIbRSy_UzxBrwu5Xb1HrjZNJDoSWjQ",
-      email: "hengtaong@gmail.com"
-    }
-  ];
-
-  const fakeLogs = [
-    {
-        user: "An1me12",
-        moderator: "Admin_Zora",
-        time: "2023-11-20 14:30",
-        type: "Banned",
-        duration: "Permanent",
-        moderator: "Admin_Zora",
-        reason: "Repeated hate speech",
-    },
-    {
-        user: "An1me12",
-        moderator: "Mod_Kael",
-        time: "2023-10-05 09:15",
-        type: "Muted",
-        duration: "7 Days",
-        reason: "Spamming discussion threads",
-    },
-    {
-        user: "An1me12",
-        moderator: "System_Bot",
-        time: "2023-08-12 18:45",
-        type: "Warned",
-        duration: "N/A",
-        reason: "Harassment of community members",
-    },
-  ];
-
-  // 🔥 state
+  // state
+  const [moderatorData, setModeratorData] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [modal, setModal] = useState({
       type: null,
       user: null
   });
+
+  useEffect(() => {
+    const fetchModerators = async () => {
+      try {
+        const res = await getModerators();
+        setModeratorData(res.moderators);
+        setCurrentPage(1);
+      } catch (error) {
+        console.error("Error fetching moderators:", error);
+      }
+    };
+
+    fetchModerators();
+  }, []);
   
   // modal control
   const openModal = useCallback((type, user) => {
@@ -74,17 +41,11 @@ export default function ModeratorManagement() {
     setModal({ type: null, user: null });
   }, []);
 
-  // filtering logic
-  const filteredUsers = userData.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase()) ||
-    user.email.toLowerCase().includes(search.toLowerCase())
-  );
-
   // pagination
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const totalPages = Math.ceil(moderatorData.length / itemsPerPage);
 
-  const paginatedUsers = filteredUsers.slice(
+  const paginatedUsers = moderatorData.slice(
   (currentPage - 1) * itemsPerPage,
   currentPage * itemsPerPage
   );
@@ -110,7 +71,7 @@ export default function ModeratorManagement() {
       currentPage={currentPage}
       totalPages={totalPages}
       onPageChange={setCurrentPage}
-      totalItems={filteredUsers.length}
+      totalItems={moderatorData.length}
       itemsPerPage={itemsPerPage}
       />
 
@@ -118,7 +79,7 @@ export default function ModeratorManagement() {
       {modal.type === "logs" && (
         <PunishmentLogs
           roleType="mod"
-          logs={fakeLogs}
+          user={modal.user}
           onClose={closeModal}
         />
       )}
@@ -126,7 +87,7 @@ export default function ModeratorManagement() {
       {modal.type === "warn" && (
         <WarnModal
           user={modal.user}
-          roleType="moderator"
+          roleType="mod"
           onClose={closeModal}
         />
       )}
@@ -135,6 +96,7 @@ export default function ModeratorManagement() {
         <DemoteModal
           user={modal.user}
           onClose={closeModal}
+          setModeratorData={setModeratorData}
         />
       )}
 

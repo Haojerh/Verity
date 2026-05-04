@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.Verity.DTO.Credential;
 import com.Verity.DTO.UserDTO;
@@ -26,6 +27,7 @@ import com.Verity.Exceptions.ApiException;
 import com.Verity.Security.Utils.ApiLogoutHandler;
 import com.Verity.Security.Utils.UserAuthenticationProvider;
 import com.Verity.Security.Utils.UserPrincipal;
+import com.Verity.Service.PunishmentLogService;
 import com.Verity.Service.UserServices;
 import static com.Verity.Utils.RequestUtils.getResponse;
 
@@ -40,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserServices userServices;
+    private final PunishmentLogService punishmentLogService;
     private final ApiLogoutHandler apiLogoutHandler;
     private final UserAuthenticationProvider userAuthenticationProvider;
 
@@ -57,8 +60,14 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody Credential credential, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
-        try{
+        try {
             UserDTO userDTO = userServices.authenticate(credential);
+
+            if (userServices.isUserBanned(userDTO.getUserID())) {
+                int remainingMinutes = punishmentLogService.getRemainingBanMinutes(userDTO.getUserID());
+                return ResponseEntity.ok(getResponse(request, Map.of( "banned", true, "remaining", remainingMinutes,"User", userDTO), "Your account has been banned.", OK));
+            }
+
             String token = userAuthenticationProvider.createToken(userDTO.getEmail());
             var cookie = new Cookie("Token", token);
             cookie.setHttpOnly(true);
@@ -85,5 +94,11 @@ public class UserController {
     public ResponseEntity<Response> getAllUsers(HttpServletRequest request) {
         var users = userServices.getAllUsers();
         return ResponseEntity.ok(getResponse(request, Map.of("users", users), "Users Retrieved", OK));
+    }
+
+    @GetMapping("/api/moderators")
+    public ResponseEntity<Response> getAllModerators(HttpServletRequest request) {
+        var moderators = userServices.getAllModerators();
+        return ResponseEntity.ok(getResponse(request, Map.of("moderators", moderators), "Moderators Retrieved", OK));
     }
 }

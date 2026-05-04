@@ -9,8 +9,8 @@ export default function UserTable({ users, onAction }) {
             <th className="p-4 text-left">ID</th>
             <th className="p-4 text-left">Name</th>
             <th className="hidden lg:table-cell p-4 text-left">Email</th>
-            <th className="hidden md:table-cell p-4">Banned</th>
-            <th className="hidden md:table-cell p-4">Muted</th>
+            <th className="hidden lg:table-cell p-4">Banned</th>
+            <th className="hidden lg:table-cell p-4">Muted</th>
             <th className="hidden md:table-cell p-4">Logs</th>
             <th className="p-4">Action</th>
           </tr>
@@ -18,7 +18,7 @@ export default function UserTable({ users, onAction }) {
 
         <tbody>
           {users.map((user) => (
-            <UserRow key={user.id} user={user} onAction={onAction} />
+            <UserRow key={user.userID} user={user} onAction={onAction} />
           ))}
         </tbody>
       </table>

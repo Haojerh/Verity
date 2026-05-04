@@ -20,7 +20,7 @@ export default function TopicManagement() {
     const fetchTopics = async () => {
       try {
         const res = await getTopics();
-        const topicsArray = res.data.data.topics;
+        const topicsArray = res.topics;
         const updated = topicsArray.map((topic) => ({
           ...topic,
           avatar: `http://localhost:8080/api/uploads/topics/${topic.avatar}`,
@@ -65,7 +65,7 @@ export default function TopicManagement() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {filteredTopics.map((topic) => (
           <TopicCard
-            key={topic.id}
+            key={topic.topicID}
             topic={topic}
             onAction={openModal}
           />

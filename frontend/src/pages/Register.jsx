@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Mail, Lock, User } from "lucide-react";
 import AuthCard from "../components/auth/AuthCard";
 import AuthInput from "../components/auth/AuthInput";
-import api from "../services/api"; 
+import api from "../services/Api"; 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../utils/Schema";
-import { registerUser } from "../services/auth";
+import { registerUser } from "../services/Auth";
 
 export default function Register() {
     const {
@@ -60,8 +60,8 @@ export default function Register() {
           icon={User} 
           type="text" 
           placeholder="John Doe" 
-          {...register("userName")}
-          error={errors.userName?.message}
+          {...register("name")}
+          error={errors.name?.message}
         />
         <AuthInput 
           label="Email Address" 

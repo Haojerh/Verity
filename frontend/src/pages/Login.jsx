@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock } from "lucide-react";
@@ -6,7 +6,8 @@ import AuthCard from "../components/auth/AuthCard";
 import AuthInput from "../components/auth/AuthInput";
 import { loginSchema } from "../utils/Schema";
 // import api from "../services/api";
-import { loginUser } from "../services/auth"
+import { loginUser } from "../services/Auth"
+import LoginModal from "../components/auth/LoginModal";
 
 export default function Login() {
   const {
@@ -16,6 +17,12 @@ export default function Login() {
   } = useForm({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
+  });
+
+  const [modal, setModal] = useState({
+    open: false,
+    remaining: null,
+    user: null
   });
 
   // const onSubmit = async (data) => {
@@ -39,15 +46,31 @@ export default function Login() {
 
   const onSubmit = async (values) => {
     try {
-      await loginUser(values.email, values.password);
-      
+      const res = await loginUser(values.email, values.password);
+      const data = res.User;
+
+      if (res.banned) {
+        openModal(true, res.remaining, data)
+        return;
+      }
+
       window.location.href = "/";
     } catch (error) {
       console.error("Login failed:", error);
     }
   };
 
+  // modal control
+  const openModal = useCallback((open, remaining, user) => {
+    setModal({ open, remaining, user });
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setModal({ open: false, remaining: null, user: null });
+  }, []);
+
   return (
+    <>
     <AuthCard 
       title="Welcome Back" 
       subtitle="Enter your credentials to access your account"
@@ -64,7 +87,6 @@ export default function Login() {
           {...register("email")}
           error={errors.email?.message}
         />
-        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
 
         <AuthInput 
           label="Password" 
@@ -79,6 +101,14 @@ export default function Login() {
         </button>
       </form>
     </AuthCard>
+    {modal.open && 
+      <LoginModal
+        user={modal.user}
+        remaining={modal.remaining}
+        onClose={closeModal}
+      />
+    }
+    </>
   );
 }
 

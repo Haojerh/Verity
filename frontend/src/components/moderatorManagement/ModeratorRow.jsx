@@ -1,13 +1,14 @@
 import { History } from "lucide-react";
+import Avatar from "../ui/Avatar";
 
 export default function ModeratorRow({ user, onAction }) {
   return (
     <tr className="border-t hover:bg-muted/30">
-      <td className="p-4">#{user.id}</td>
+      <td className="p-4 text-xs">#{user.userID}</td>
 
       <td className="p-4">
         <div className="flex items-center gap-2">
-            <img src={user.avatar} className="w-8 h-8 rounded-full" />
+            <Avatar name={user.name} size="sm" imageUrl={user.avatar} />
             {user.name}
         </div>
       </td>

@@ -6,18 +6,50 @@ import ConfirmDisplay from "../ui/ConfirmDisplay";
 import ModalFooter from "../ui/ModalFooter";
 import { Ban } from "lucide-react";
 import ModalHeader from "../ui/ModalHeader";
+import { reasonOptions } from "../../constant/Constants";
+import { createPunishment } from "../../services/PunishmentLogsService";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { BanSchema } from "../../utils/Schema";
 
-export default function BanModal({ user, onClose }) {
-  const [reason, setReason] = useState("");
-  const [duration, setDuration] = useState("30d");
+export default function BanModal({ user, onClose, setUserData }) {
+  const {
+      register,
+      handleSubmit,
+      watch,
+      setValue,
+      formState: { errors, isSubmitting }
+    } = useForm({
+      resolver: zodResolver(BanSchema),
+      mode: "onChange",
+      reValidateMode: "onChange",
+      defaultValues: {
+        reason: "",
+        duration: 0
+      }
+  });
 
-  const reasonOptions = [
-    { value: "spam", label: "Spamming / Self-Promotion" },
-    { value: "harassment", label: "Harassment / Toxicity" },
-    { value: "misinfo", label: "Spreading Misinformation" },
-    { value: "tos", label: "Violation of Terms of Service" },
-    { value: "other", label: "Other" },
-  ];
+  const onSubmit = async (data) => {
+    try {
+      await createPunishment({
+        userID: user.userID,
+        type: "BAN",
+        reason: data.reason,
+        duration: data.duration
+      });
+      setUserData((prev) =>
+        prev.map((u) =>
+          u.userID === user.userID
+            ? { ...u, banned: true }
+            : u
+        )
+      );
+      console.log("Punishment created:", data);
+      onClose();
+    } catch (err) {
+      console.error("Error creating punishment:", err);
+    }
+  };
 
   return (
     <Modal onClose={onClose}>
@@ -28,19 +60,26 @@ export default function BanModal({ user, onClose }) {
         <SelectBox
           label="Select Reason"
           options={reasonOptions}
-          value={reason}
-          onChange={setReason}
+          value={watch("reason")}
+          onChange={(val) => setValue("reason", val, { shouldValidate: true })}
           placeholder="Choose a violation reason..."
+          error={errors.reason?.message}
         />
         <DurationSelector
-          value={duration}
+          value={watch("duration")}
           type="all"
-          onChange={setDuration}
+          onChange={(val) => setValue("duration", val, { shouldValidate: true })}
+          error={errors.duration?.message}
         />
       </div>
 
       {/* Footer */}
-      <ModalFooter buttonText="Confirm Ban" buttonColor="red" onClose={onClose} />
+      <ModalFooter
+        buttonText={isSubmitting ? "Banning..." : "Confirm Ban"}
+        buttonColor="red"
+        onClose={onClose}
+        onSubmit={handleSubmit(onSubmit)}
+      />
     </Modal>
   );
 }

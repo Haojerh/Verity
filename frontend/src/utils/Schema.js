@@ -70,3 +70,19 @@ export const postSchema = z.object({
   proLabel: z.string().default("Pro"),
   conLabel: z.string().default("Con"),
 });
+
+export const WarnSchema = z.object({
+  reason: z.string().min(1, "Reason is required")
+});
+
+export const BanSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+  duration: z
+    .number({
+      required_error: "Duration is required",
+      invalid_type_error: "Duration must be a number",
+    })
+    .refine((val) => val > 0 || val === -1, {
+      message: "Invalid duration",
+    }),
+});

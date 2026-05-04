@@ -8,12 +8,13 @@ const client = axios.create({
     }
 });
 
-export const request = (method, url, data) => {
-    return client({
-        method: method,
-        url: url,
-        data: data,
-    });
+export const request = (method, url, data, config = {}) => {
+  return client({
+    method,
+    url,
+    data,
+    ...config,
+  });
 };
 
 export const logout = async () => {
@@ -34,6 +35,7 @@ client.interceptors.response.use(
         const status = error.response?.status;
 
         if (status === 401) {
+            console.log("Unauthorized - token invalid or missing");
             logout();
         }
 
