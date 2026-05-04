@@ -90,6 +90,15 @@ export const postSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters"),
   proLabel: z.string().default("Pro"),
   conLabel: z.string().default("Con"),
+  image: z
+    .any()
+    .optional()
+    .refine((file) => file == null || file instanceof File, {
+      message: "Image must be a file",
+    })
+    .refine((file) => file == null || file?.size <= MAX_FILE_SIZE, {
+      message: "Image cannot exceed 10MB",
+    }),
 });
 
 export const WarnSchema = z.object({

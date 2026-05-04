@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Mail, Lock, User } from "lucide-react";
 import AuthCard from "../components/auth/AuthCard";
-import AuthInput from "../components/auth/AuthInput";
+import TextBox from "../components/ui/TextBox";
 import api from "../services/Api"; 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,33 +54,29 @@ export default function Register() {
       linkTo="/login"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <AuthInput 
+        <TextBox 
           label="Full Name" 
-          icon={User} 
           type="text" 
           placeholder="John Doe" 
           {...register("name")}
           error={errors.name?.message}
         />
-        <AuthInput 
+        <TextBox 
           label="Email Address" 
-          icon={Mail} 
           type="email" 
           placeholder="name@email.com" 
           {...register("email")}
           error={errors.email?.message}
         />
-        <AuthInput 
+        <TextBox 
           label="Password" 
-          icon={Lock} 
           type="password" 
           placeholder="••••••••"
           {...register("password")}
           error={errors.password?.message}
         />
-        <AuthInput 
+        <TextBox 
           label="Confirm Password" 
-          icon={Lock} 
           type="password" 
           placeholder="••••••••"
           {...register("confirmPassword")}

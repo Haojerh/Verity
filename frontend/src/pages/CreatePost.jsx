@@ -24,21 +24,21 @@ export default function CreatePost() {
     fetchTopics();
     }, []);
 
-  const handleCreatePost = async (formData) => {
-    const data = new FormData();
-    data.append('title', formData.title);
-    data.append('description', formData.description);
-    data.append('topicID', formData.topicID);
-    
-    if (formData.image) {
-      data.append('image', formData.image); 
+  const handleCreatePost = async (data) => {
+    const formData = new FormData();
+
+    formData.append('title', data.title);
+    formData.append('description', data.description);
+    formData.append('topicID', data.topicID);
+    formData.append('proLabel', data.proLabel || "Pro");
+    formData.append('conLabel', data.conLabel || "Con");
+
+    if (data.image) {
+      formData.append('image', data.image);
     }
 
     try {
-      // We pass the header override as the 'config' object
-      await request(Http.POST, "/api/posts", data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await request(Http.POST, "/api/posts", formData);
       navigate("/");
     } catch (err) {
       console.error("Upload failed", err);
@@ -46,9 +46,8 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center py-12 px-4">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-foreground mb-8">Start a New Discussion</h1>
+    <div className="min-h-screen bg-background w-full py-6 px-6">
+      <div className="w-full max-w-6xl mx-auto">
         <PostForm onSubmit={handleCreatePost} topics={topics} />
       </div>
     </div>

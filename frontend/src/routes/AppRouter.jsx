@@ -36,9 +36,9 @@ export const router = createBrowserRouter(
           </Route>
 
           <Route path="topic-management" element={<TopicManagement />} />
-          <Route path="post" element={<PostPage />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="post/:id" element={<PostPage />} />
         </Route>
       </Route>
 

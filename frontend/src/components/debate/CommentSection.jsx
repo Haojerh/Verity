@@ -6,7 +6,10 @@ export default function CommentSection({
   userSide, 
   activeTab, 
   setActiveTab, 
-  discussionData,
+  comments,
+  commentText,
+  setCommentText,
+  onSubmitComment,
   openModal
 }) {
   return (
@@ -21,7 +24,7 @@ export default function CommentSection({
           <div className="flex items-center justify-center gap-2">
             <span>Team {post.prosLabel}</span>
             <span className="px-2 rounded-full bg-primary/20 text-primary text-sm">
-              {discussionData.filter((c) => c.side === "pros").length}
+              {comments.filter((c) => c.side === "pros").length}
             </span>
           </div>
         </button>
@@ -35,7 +38,7 @@ export default function CommentSection({
           <div className="flex items-center justify-center gap-2">
             <span>Team {post.consLabel}</span>
             <span className="px-2 rounded-full bg-destructive/20 text-destructive text-sm">
-              {discussionData.filter((c) => c.side === "cons").length}
+              {comments.filter((c) => c.side === "cons").length}
             </span>
           </div>
         </button>
@@ -43,7 +46,14 @@ export default function CommentSection({
 
       <div className="p-6">
         {!userSide && <CommentInput userSide={null} />}
-        {userSide && activeTab === userSide && <CommentInput userSide={userSide} />}
+        {userSide && activeTab === userSide && (
+          <CommentInput
+            userSide={userSide}
+            value={commentText}
+            onChange={setCommentText}
+            onSubmit={onSubmitComment}
+          />
+        )}
 
         {userSide && activeTab !== userSide && (
           <div className="p-4 bg-muted/20 rounded-2xl text-center border border-border mb-6">
@@ -55,7 +65,7 @@ export default function CommentSection({
         )}
 
         <div className="space-y-4">
-          {discussionData
+          {comments
             .filter((comment) => comment.side === activeTab)
             .map((comment) => (
               <ThreadItem key={comment.id} comment={comment} openModal={openModal} />

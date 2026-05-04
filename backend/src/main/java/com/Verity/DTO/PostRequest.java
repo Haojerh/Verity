@@ -9,5 +9,4 @@ public class PostRequest {
     private String proLabel;
     private String conLabel;
     private String topicID;
-    private String imagePath;
 }

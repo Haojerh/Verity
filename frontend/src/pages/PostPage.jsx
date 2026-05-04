@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import VotingSection from "../components/debate/VotingSection";
 import StatsRow from "../components/debate/StatsRow";
 import PostHeader from "../components/debate/PostHeader";
@@ -7,6 +8,8 @@ import DebateMenu from "../components/homeDebate/DebateMenu";
 import { Bookmark, Flag, LucideShare } from "lucide-react";
 import ReportModal from "../components/debate/ReportModal";
 import ShareModal from "../components/debate/ShareModal";
+import { getPostComments, createPostComment } from "../services/CommentService";
+import { usePostPage } from "../services/usePostPage";
 
 const initialPost = {
   author: "debate_pioneer",
@@ -26,75 +29,54 @@ const initialPost = {
   },
 };
 
-const discussionData = [
-  {
-    id: 1, side: "pros", user: "art_lover", text: "Creativity is about the tool used, and AI is just a complex brush.", date: "2024-04-27",
-    replies: [
-      { id: 2, side: "cons", user: "purist_99", text: "A brush doesn't decide the composition for you based on a prompt.", date: "2024-04-29",
-        replies: [{ id: 3, side: "pros", user: "tech_optimist", text: "The prompt IS the composition.", date: "2024-04-29", replies: [] }],
-      },
-    ],
-  },
-  { id: 4, side: "cons", user: "traditionalist", text: "Art is a human-to-human connection that AI simply cannot replicate.", replies: [] },
-];
+// const discussionData = [
+//   {
+//     id: 1, side: "pros", user: "art_lover", text: "Creativity is about the tool used, and AI is just a complex brush.", date: "2024-04-27",
+//     replies: [
+//       { id: 2, side: "cons", user: "purist_99", text: "A brush doesn't decide the composition for you based on a prompt.", date: "2024-04-29",
+//         replies: [{ id: 3, side: "pros", user: "tech_optimist", text: "The prompt IS the composition.", date: "2024-04-29", replies: [] }],
+//       },
+//     ],
+//   },
+//   { id: 4, side: "cons", user: "traditionalist", text: "Art is a human-to-human connection that AI simply cannot replicate.", replies: [] },
+// ];
 
 export default function PostPage() {
-  const [userSide, setUserSide] = useState(null);
-  const [activeTab, setActiveTab] = useState("pros");
-  const [fullscreenImage, setFullscreenImage] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [modal, setModal] = useState({
-      type: null,
-      entity: null
-  });
-  const [post, setPost] = useState(initialPost);
+  const { id: postID } = useParams();
+  const {
+    post, comments, commentText, setCommentText,
+    userSide, activeTab, setActiveTab, modal,
+    handleSelectSide, handleSubmitComment, openModal, closeModal
+  } = usePostPage(postID);
 
-  const openModal = useCallback((type, entity) => {
-    setModal({ type, entity });
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setModal({ type: null, entity: null });
-  }, []);
-
-  const handleSelectSide = (side) => {
-    if (userSide) return;
-
-    setUserSide(side);
-    setActiveTab(side);
-
-    setPost((prev) => {
-      const updated = { ...prev };
-      const stats = { ...updated.statistics };
-
-      if (side === "pros") {
-        stats.prosVotes += 1;
-      } else {
-        stats.consVotes += 1;
-      }
-
-      stats.totalParticipants += 1;
-      updated.statistics = stats;
-      return updated;
-    });
+  // A simple helper to resolve the image source
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800";
+    if (imagePath.startsWith("http")) return imagePath; // It's mock data
+    return `http://localhost:8080/uploads/posts/${imagePath}`; // It's live data
   };
+  
+
+  if (!post) return <div className="text-center py-10">Loading debate...</div>;
+
+  console.log("Current Post Data:", post);
 
   return (
     <div className="max-w-4xl mx-auto w-full">
       <PostHeader
-        post={post}
-        fullscreenImage={fullscreenImage}
-        setFullscreenImage={setFullscreenImage}
+        post={initialPost}
+        fullscreenImage={getImageUrl}
+        setFullscreenImage={getImageUrl}
         setMenuOpen={setMenuOpen}
         menuOpen={menuOpen}
         openModal={openModal}
       />
       
-      <VotingSection 
+      {/* <VotingSection 
         post={post} 
         userSide={userSide} 
         handleSelectSide={handleSelectSide} 
-      />
+      /> */}
 
       <section className="bg-card border border-border rounded-lg p-6 mb-6">
         <h3 className="mb-3">Debate Summary</h3>
@@ -105,17 +87,20 @@ export default function PostPage() {
         </p>
       </section>
 
-      <StatsRow
-        statistics={post.statistics} 
-        commentCount={discussionData.length} 
-      />
+      {/* <StatsRow
+        statistics={post.statistics}
+        commentCount={comments.length}
+      /> */}
 
       <CommentSection
         post={post}
         userSide={userSide}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        discussionData={discussionData}
+        comments={comments}
+        commentText={commentText}
+        setCommentText={setCommentText}
+        onSubmitComment={handleSubmitComment}
         openModal={openModal}
       />
 

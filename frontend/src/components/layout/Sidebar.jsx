@@ -67,10 +67,17 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         <hr className="my-2 border-border" />
 
         {/* Start Discussion */}
-        <button className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary text-white hover:bg-secondary transition-colors w-full">
+        <Link 
+          to="/create-post" 
+          className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors w-full ${
+            location.pathname === "/create-post" 
+              ? "bg-secondary text-white font-medium shadow-inner" 
+              : "bg-primary text-white hover:bg-secondary"
+          }`}
+        >
           <Plus className="w-5 h-5" />
           <span>Start A Discussion</span>
-        </button>
+        </Link>
 
         <hr className="my-2 border-border" />
 
