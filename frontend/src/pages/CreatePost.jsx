@@ -25,27 +25,25 @@ export default function CreatePost() {
     }, []);
 
   const handleCreatePost = async (formData) => {
-  const data = new FormData();
-  data.append('title', formData.title);
-  data.append('description', formData.description);
-  data.append('topicID', formData.topicID);
-  data.append('proLabel', formData.proLabel || ""); 
-  data.append('conLabel', formData.conLabel || "");
+    const data = new FormData();
+    data.append('title', formData.title);
+    data.append('description', formData.description);
+    data.append('topicID', formData.topicID);
+    
+    if (formData.image) {
+      data.append('image', formData.image); 
+    }
 
-  if (formData.image) {
-    data.append('image', formData.image); 
-  }
-
-  try {
-    await axios.post("http://localhost:8080/api/posts", data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      withCredentials: true
-    });
-    navigate("/");
-  } catch (err) {
-    console.error("Upload failed", err);
-  }
-};
+    try {
+      // We pass the header override as the 'config' object
+      await request(Http.POST, "/api/posts", data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      navigate("/");
+    } catch (err) {
+      console.error("Upload failed", err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center py-12 px-4">
