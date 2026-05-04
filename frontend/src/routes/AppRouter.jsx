@@ -34,7 +34,7 @@ export const router = createBrowserRouter(
           </Route>
 
           <Route path="topic-management" element={<TopicManagement />} />
-          <Route path="post" element={<PostPage />} />
+          <Route path="post/:id" element={<PostPage />} />
         </Route>
       </Route>
 

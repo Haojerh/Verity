@@ -21,4 +21,5 @@ public class PostDTO {
     private String topicID;
     private String authorID;
     private String authorName;
+    private PostStatsDTO statistics;
 }

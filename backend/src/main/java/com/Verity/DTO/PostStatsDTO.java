@@ -1,4 +1,12 @@
 package com.Verity.DTO;
 
-public class PostStanceDTO {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class PostStatsDTO {
+    private long prosVotes;
+    private long consVotes;
+    private long totalParticipants;
 }

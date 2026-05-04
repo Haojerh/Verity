@@ -2,11 +2,13 @@ package com.Verity.Service;
 
 import com.Verity.DTO.PostDTO;
 import com.Verity.DTO.PostRequest;
+import com.Verity.DTO.PostStatsDTO;
 import com.Verity.DTO.UserDTO;
 import com.Verity.Entity.PostEntity;
 import com.Verity.Entity.TopicEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Repo.PostRepo;
+import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.TopicRepo;
 import com.Verity.Repo.UserRepo;
 import com.Verity.Utils.FileUtil; // Using the new utility
@@ -24,6 +26,7 @@ public class PostService {
     private final PostRepo postRepo;
     private final TopicRepo topicRepo;
     private final UserRepo userRepo;
+    private final PostStanceRepo postStanceRepo;
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/posts/";
 
     public PostDTO createPost(PostRequest request, MultipartFile image, String authorEmail) throws IOException {
@@ -62,6 +65,12 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    public PostDTO getPostById(String postID) {
+        PostEntity post = postRepo.findById(postID)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        return mapToDTO(post);
+    }
+
     private PostDTO mapToDTO(PostEntity entity) {
         PostDTO dto = new PostDTO();
 
@@ -83,6 +92,11 @@ public class PostService {
             dto.setAuthorID(entity.getAuthor().getUserID());
             dto.setAuthorName(entity.getAuthor().getName());
         }
+
+        long pros = postStanceRepo.countByPostIDAndChosenStance(entity, "pros");
+        long cons = postStanceRepo.countByPostIDAndChosenStance(entity, "cons");
+
+        dto.setStatistics(new PostStatsDTO(pros, cons, pros + cons));
 
         return dto;
     }
