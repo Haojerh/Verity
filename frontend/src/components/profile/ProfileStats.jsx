@@ -1,9 +1,9 @@
-export default function ProfileStats({ user }) {
+export default function ProfileStats({ user, followers }) {
   return (
     <div className="flex gap-6 justify-center sm:justify-start">
       <div>
         <div className="font-semibold">
-          {user.followers ? user.followers.toLocaleString() : 0}
+          {followers.toLocaleString()}
         </div>
         <div className="text-sm text-muted-foreground">Followers</div>
       </div>

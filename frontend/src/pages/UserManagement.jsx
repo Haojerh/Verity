@@ -27,7 +27,15 @@ export default function UserManagement() {
     const fetchUsers = async () => {
       try {
         const res = await getUsers();
-        setUserData(res.users);
+
+        const formattedUsers = res.users.map((user) => ({
+          ...user,
+          avatar: user.avatar
+            ? `http://localhost:8080/uploads/users/${user.avatar}`
+            : null,
+        }));
+
+        setUserData(formattedUsers);
         setCurrentPage(1);
       } catch (error) {
         console.error("Error fetching users:", error);

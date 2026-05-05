@@ -9,23 +9,27 @@ import UnbanModal from "../components/userManagement/UnbanModal";
 import MuteModal from "../components/userManagement/MuteModal";
 import UnmuteModal from "../components/userManagement/UnmuteModal";
 import { useAuth } from "../context/AuthContext";
+import { getFollowerCount } from "../services/FollowService.js";
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState("posts");
+  const [followers, setFollowers] = useState(0);
   const { user } = useAuth();
 
-//   const [modal, setModal] = useState({
-//     type: null,
-//     user: null 
-//   });
+  useEffect(() => {
+    if (!user?.userID) return;
 
-//   const openModal = useCallback((type, user) => {
-//     setModal({ type, user });
-//   }, []);
+    const fetchFollowers = async () => {
+        try {
+        const res = await getFollowerCount(user.userID);
+        setFollowers(res);
+        } catch (err) {
+        console.error(err);
+        }
+    };
 
-//   const closeModal = useCallback(() => {
-//     setModal({ user: null, type: null });
-//   }, []);
+    fetchFollowers();
+  }, [user?.userID]);
 
   const mockPosts = [];
   const mockSaved = [];
@@ -36,9 +40,7 @@ export default function Profile() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <ProfileHeader user={user} isOwnProfile={true} />
-
-      {/* <PunishButtons user={user} openModal={openModal} /> */}
+      <ProfileHeader user={user} isOwnProfile={true} followers={followers} />
 
       <ProfileTabs
         activeTab={activeTab}
@@ -47,27 +49,6 @@ export default function Profile() {
         saved={mockSaved}
         hasSaved={true}
       />
-
-      {/* MODALS */}
-      {/* {modal.type === "warn" && (
-        <WarnModal user={modal.user} onClose={closeModal} />
-      )}
-
-      {modal.type === "ban" && (
-        <BanModal user={modal.user} onClose={closeModal} />
-      )}
-
-      {modal.type === "unban" && (
-        <UnbanModal user={modal.user} onClose={closeModal} />
-      )}
-
-      {modal.type === "mute" && (
-        <MuteModal user={modal.user} onClose={closeModal} />
-      )}
-
-      {modal.type === "unmute" && (
-        <UnmuteModal user={modal.user} onClose={closeModal} />
-      )} */}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { request } from './Request';
+import { request } from './request';
 
 const API_URL = "http://localhost:8080/api/topics";
 

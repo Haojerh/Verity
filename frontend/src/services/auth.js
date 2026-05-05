@@ -1,4 +1,4 @@
-import { request } from './Request';
+import { request } from './request';
 import { Http } from '../constant/http.method';
 
 export const loginUser = async (email, password) => {

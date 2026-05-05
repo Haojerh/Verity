@@ -35,6 +35,9 @@ public class UserEntity extends Auditable {
 
     @Column(name = "password", nullable = false, unique = false, length = 256)
     private String password;
+
+    @Column(name = "avatar", nullable = true, unique = false, length = 256)
+    private String avatar;
 //    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "userID", referencedColumnName = "userID", nullable = true)
 //    private List<UserNotiEntity> userNotiEntityList;

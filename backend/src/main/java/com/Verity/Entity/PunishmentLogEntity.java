@@ -47,6 +47,8 @@ public class PunishmentLogEntity extends Auditable {
     public boolean isActive() {
         if (getSYSCREATEDDATE() == null) return false;
 
+        if (duration != null && duration == -1) return true;
+
         LocalDateTime endTime = getSYSCREATEDDATE().plusMinutes(duration);
         return endTime.isAfter(LocalDateTime.now());
     }

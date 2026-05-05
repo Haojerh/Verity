@@ -11,8 +11,9 @@ import { createPunishment } from "../../services/PunishmentLogsService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BanMuteSchema } from "../../utils/Schema";
+import { useToast } from "../../context/ToastContext";
 
-export default function MuteModal({ user, onClose, setUserData }) {
+export default function MuteModal({ user, onClose, setUserData, isProfile=false }) {
   const {
       register,
       handleSubmit,
@@ -29,6 +30,8 @@ export default function MuteModal({ user, onClose, setUserData }) {
       }
   });
 
+  const { showToast } = useToast();
+
   const onSubmit = async (data) => {
     try {
       await createPunishment({
@@ -37,17 +40,26 @@ export default function MuteModal({ user, onClose, setUserData }) {
         reason: data.reason,
         duration: data.duration
       });
-      setUserData((prev) =>
-        prev.map((u) =>
-          u.userID === user.userID
-            ? { ...u, muted: true }
-            : u
-        )
-      );
-      console.log("Punishment created:", data);
+
+      if (isProfile) {
+        setUserData((prev) => ({
+          ...prev,
+          muted: true,
+        }));
+      } else {
+        setUserData((prev) =>
+          prev.map((u) =>
+            u.userID === user.userID
+              ? { ...u, muted: true }
+              : u
+          )
+        );
+      }
+
+      showToast("User Muted");
       onClose();
     } catch (err) {
-      console.error("Error creating punishment:", err);
+      showToast("Error creating punishment:", err);
     }
   };
 

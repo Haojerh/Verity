@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,7 @@ import com.Verity.Security.Utils.UserPrincipal;
 import com.Verity.Service.PunishmentLogService;
 import com.Verity.Service.UserServices;
 import static com.Verity.Utils.RequestUtils.getResponse;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -98,6 +101,12 @@ public class UserController {
         return ResponseEntity.ok(getResponse(request, Map.of("user", user), "Current User Retrieved", OK));
     }
 
+    @GetMapping("/api/user/{id}")
+    public ResponseEntity<Response> getUserById(@PathVariable String id, HttpServletRequest request) {
+        var user = userServices.getUserByIdDTO(id);
+        return ResponseEntity.ok(getResponse(request, Map.of("user", user), "User found", OK));
+    }
+
     @PutMapping("/api/user")
     public ResponseEntity<Response> updateUser(@RequestBody UserRequest userRequest, HttpServletRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -109,6 +118,32 @@ public class UserController {
         String email = auth.getName();
         userServices.updateUser(email, userRequest);
         return ResponseEntity.ok(getResponse(request, emptyMap(), "User updated", OK));
+    }
+
+    @DeleteMapping("/api/user")
+    public ResponseEntity<Response> deleteAccount(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not logged in");
+        }
+
+        String email = auth.getName();
+        userServices.deleteUser(email);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "Account deleted", OK));
+    }
+
+    @PutMapping("/api/user/avatar")
+    public ResponseEntity<Response> updateAvatar(@ModelAttribute UserRequest request, HttpServletRequest httpRequest) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not logged in");
+        }
+
+        String email = auth.getName();
+        userServices.updateAvatar(email, request);
+        return ResponseEntity.ok(getResponse(httpRequest, emptyMap(), "Profile updated", OK));
     }
 
     @GetMapping("/api/moderators")

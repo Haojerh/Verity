@@ -8,10 +8,10 @@ export default function PunishButtons({
     <div className="flex flex-wrap gap-3 mb-6">
 
       {/* BAN / UNBAN */}
-      {user.isBanned ? (
+      {user.banned ? (
         <button
           onClick={() => openModal("unban", user)}
-          className="flex items-center gap-2 px-4 py-2 border border-green-600 text-green-600 rounded-md hover:bg-green-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-primary text-primary rounded-md hover:bg-primary/10 transition-colors"
         >
           <Ban className="w-4 h-4" />
           Unban
@@ -27,10 +27,10 @@ export default function PunishButtons({
       )}
 
       {/* MUTE / UNMUTE */}
-      {user.isMuted ? (
+      {user.muted ? (
         <button
           onClick={() => openModal("unmute", user)}
-          className="flex items-center gap-2 px-4 py-2 border border-green-600 text-green-600 rounded-md hover:bg-green-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-primary text-primary rounded-md hover:bg-primary/10 transition-colors"
         >
           <VolumeX className="w-4 h-4" />
           Unmute
@@ -38,7 +38,7 @@ export default function PunishButtons({
       ) : (
         <button
           onClick={() => openModal("mute", user)}
-          className="flex items-center gap-2 px-4 py-2 border border-orange-600 text-orange-600 rounded-md hover:bg-orange-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-orange-600 text-orange-600 rounded-md hover:bg-orange-600/10 transition-colors"
         >
           <VolumeX className="w-4 h-4" />
           Mute
@@ -48,7 +48,7 @@ export default function PunishButtons({
       {/* WARN */}
       <button
         onClick={() => openModal("warn", user)}
-        className="flex items-center gap-2 px-4 py-2 border border-yellow-600 text-yellow-600 rounded-md hover:bg-yellow-50 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 border border-yellow-600 text-yellow-600 rounded-md hover:bg-yellow-600/10 transition-colors"
       >
         <AlertTriangle className="w-4 h-4" />
         Warn

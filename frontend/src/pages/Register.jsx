@@ -1,12 +1,13 @@
 import { useState } from "react";
 import AuthCard from "../components/auth/AuthCard";
 import TextBox from "../components/ui/TextBox";
-import api from "../services/Api"; 
+import api from "../services/api"; 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../utils/Schema";
-import { registerUser } from "../services/Auth";
+import { registerUser } from "../services/auth";
 import PasswordBox from "../components/ui/PasswordBox";
+import { useToast } from "../context/ToastContext";
 
 export default function Register() {
     const {
@@ -17,6 +18,8 @@ export default function Register() {
       resolver: zodResolver(registerSchema),
       mode: "onChange",
     });
+
+    const { showToast } = useToast();
 
     // const onSubmit = async (data) => {
     //   try {
@@ -39,10 +42,10 @@ export default function Register() {
     const onSubmit = async (data) => {
     try {
       await registerUser(data);
-      alert("Account created successfully!");
+      showToast("Account created successfully!");
       window.location.href = "/login";
     } catch (error) {
-      console.error("Registration error:", error);
+      showToast("Registration error:", error);
     }
   };
 

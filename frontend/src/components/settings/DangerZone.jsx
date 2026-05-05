@@ -1,5 +1,3 @@
-import { Save } from "lucide-react";
-
 export default function DangerZone({ setModal }) {
   return (
     <div className="bg-card border border-destructive/30 rounded-lg p-6">
