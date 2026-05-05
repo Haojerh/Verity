@@ -3,6 +3,8 @@ package com.Verity.Service;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,6 +66,23 @@ public class UserServices {
             .toList();
     }
 
+    public UserDTO getCurrentUserDTO() {
+        UserEntity userEntity = getCurrentUser();
+
+        UserDTO dto = new UserDTO();
+        BeanUtils.copyProperties(userEntity, dto);
+
+        dto.setBanned(
+            punishmentLogService.isUserPunished(userEntity.getUserID(), "BAN")
+        );
+
+        dto.setMuted(
+            punishmentLogService.isUserPunished(userEntity.getUserID(), "MUTE")
+        );
+
+        return dto;
+    }
+
     public List<UserDTO> getAllModerators() {
         return userRepo.findAll()
             .stream()
@@ -106,5 +125,13 @@ public class UserServices {
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(userEntity, userDTO);
         return userDTO;
+    }
+
+    public UserEntity getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        return userRepo.findUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

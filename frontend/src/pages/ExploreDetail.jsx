@@ -1,80 +1,67 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import TopicHeader from "../components/topic/TopicHeader";
 import DebateCard from "../components/homeDebate/DebateCard";
+import { getTopicById } from "../services/TopicService";
+import { useState, useEffect } from "react";
+import { getFavorites, deleteFavorite, createFavorite } from "../services/FavoriteService";
 
 export default function ExploreDetail() {
-  const recommendedDebates = [
-    {
-        id: 1,
-        title: "iOS vs Android",
-        description: "Which mobile operating system provides the better overall experience for users in 2026?",
-        poster: "debateMaster2026",
-        date: "2026-04-01",
-        prosVotes: 1247,
-        consVotes: 1589,
-        prosSide: "iOS",
-        consSide: "Android",
-        commentCount: 47,
-        images: [
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800",
-        "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800"
-        ]
-    },
-    {
-        id: 2,
-        title: "Remote Work vs Office Work",
-        description: "Is working from home more productive than traditional office environments?",
-        poster: "workLifeGuru",
-        date: "2026-04-03",
-        prosVotes: 2341,
-        consVotes: 1876,
-        prosSide: "Remote",
-        consSide: "Office",
-        commentCount: 89,
-        images: [
-        "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?w=800"
-        ]
-    },
-    {
-        id: 3,
-        title: "Electric Cars vs Gas Cars",
-        description: "Are electric vehicles truly the future of transportation?",
-        poster: "autoEnthusiast",
-        date: "2026-04-04",
-        prosVotes: 1823,
-        consVotes: 1456,
-        prosSide: "Electric",
-        consSide: "Gas",
-        commentCount: 62
-    },
-    {
-        id: 4,
-        title: "Coffee vs Tea",
-        description: "Which is the superior morning beverage?",
-        poster: "caffeineAddict",
-        date: "2026-04-05",
-        prosVotes: 987,
-        consVotes: 1123,
-        prosSide: "Coffee",
-        consSide: "Tea",
-        commentCount: 34,
-        images: [
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800",
-        "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=800",
-        "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800"
-        ]
-    }
-  ];
-  const { state: topic } = useLocation();
+    const { id } = useParams();
+    const [topic, setTopic] = useState(null);
+    const [isFollowed, setIsFollowed] = useState(false);
 
-  return (
-    <div className="max-w-4xl mx-auto w-full space-y-6">
-        <TopicHeader topic={topic} />
-        <div className="space-y-4">
-            {recommendedDebates.map((debate) => (
-                <DebateCard key={debate.id} debate={debate} />
-            ))}
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+            const [topicRes, favRes] = await Promise.all([
+                getTopicById(id),
+                getFavorites(),
+            ]);
+
+            const topicData = {
+                ...topicRes.topic,
+                avatar: `http://localhost:8080/api/uploads/topics/${topicRes.topic.avatar}`,
+                banner: `http://localhost:8080/api/uploads/topics/${topicRes.topic.banner}`,
+            };
+
+            setTopic(topicData);
+    
+            const favIds = new Set(favRes.favorites.map(f => f.topicID));
+            setIsFollowed(favIds.has(id));
+            } catch (err) {
+            console.error("Error fetching data:", err);
+            }
+        };
+    
+        fetchData();
+    }, [id]);
+
+    const handleFollowToggle = async () => {
+        const previous = isFollowed;
+
+        setIsFollowed(!previous);
+
+        try {
+            if (previous) {
+                await deleteFavorite(id);
+            } else {
+                await createFavorite(id);
+            }
+        } catch (err) {
+            console.error("Follow toggle failed:", err);
+            setIsFollowed(previous); // rollback
+        }
+    };
+
+    if (!topic) return <div>Loading...</div>;
+
+    return (
+        <div>
+            <TopicHeader 
+              topic={topic}
+              isFollowed={isFollowed}
+              onFollowToggle={handleFollowToggle}
+            />
         </div>
-    </div>
-  )
+    );
 }

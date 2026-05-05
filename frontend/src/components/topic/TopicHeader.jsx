@@ -1,4 +1,4 @@
-export default function TopicHeader({ topic }) {
+export default function TopicHeader({ topic, onFollowToggle, isFollowed }) {
   return (
     <div className="mt-4 overflow-hidden rounded-xl border">
       {/* Banner Image */}
@@ -30,8 +30,16 @@ export default function TopicHeader({ topic }) {
 
         {/* Follow Button */}
         <div className="mb-1">
-          <button className="px-3 py-1 sm:px-4 sm:py-1.5 md:px-6 md:py-2 border-2 font-bold rounded-full text-sm active:scale-95 transition-all border-primary text-primary hover:bg-primary/5">
-            + Follow
+          <button
+            onClick={onFollowToggle}
+            className={`px-3 py-1 sm:px-4 sm:py-1.5 md:px-6 md:py-2 border-2 font-bold rounded-full text-sm active:scale-95 transition-all
+              ${
+                isFollowed
+                  ? "border-destructive text-destructive hover:bg-destructive/5"
+                  : "border-primary text-primary hover:bg-primary/5"
+              }`}
+          >
+            {isFollowed ? "- Unfollow" : "+ Follow"}
           </button>
         </div>
       </div>

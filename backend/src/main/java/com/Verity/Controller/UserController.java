@@ -5,9 +5,7 @@ import static java.util.Collections.emptyMap;
 import java.util.Map;
 
 import static org.apache.tomcat.util.http.SameSiteCookies.NONE;
-
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.Verity.DTO.Credential;
 import com.Verity.DTO.UserDTO;
@@ -94,6 +91,12 @@ public class UserController {
     public ResponseEntity<Response> getAllUsers(HttpServletRequest request) {
         var users = userServices.getAllUsers();
         return ResponseEntity.ok(getResponse(request, Map.of("users", users), "Users Retrieved", OK));
+    }
+
+    @GetMapping("/api/user")
+    public ResponseEntity<Response> getCurrentUser(HttpServletRequest request) {
+        var user = userServices.getCurrentUserDTO();
+        return ResponseEntity.ok(getResponse(request, Map.of("user", user), "Current User Retrieved", OK));
     }
 
     @GetMapping("/api/moderators")

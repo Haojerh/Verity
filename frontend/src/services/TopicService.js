@@ -40,3 +40,7 @@ export const getTopics = async () => {
 export const deleteTopic = async (id) => {
   return await request('DELETE', `/api/topics/${id}`);
 };
+
+export const getTopicById = async (id) => {
+  return await request('GET', `/api/topics/${id}`);
+};

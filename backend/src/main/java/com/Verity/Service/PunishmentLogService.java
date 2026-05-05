@@ -76,6 +76,40 @@ public class PunishmentLogService {
         punishmentLogRepo.save(log);
     }
 
+    public void unmuteUser(String userId) {
+        List<PunishmentLogEntity> logs =
+            punishmentLogRepo.findByUserAndType(userId, "MUTE");
+
+        if (logs.isEmpty()) {
+            throw new RuntimeException("No mute found");
+        }
+
+        for (PunishmentLogEntity log : logs) {
+            if (log.isActive()) {
+                log.setSYSISDELETED(true);
+            }
+        }
+
+        punishmentLogRepo.saveAll(logs);
+    }
+
+    public void unbanUser(String userId) {
+        List<PunishmentLogEntity> logs =
+            punishmentLogRepo.findByUserAndType(userId, "BAN");
+
+        if (logs.isEmpty()) {
+            throw new RuntimeException("No ban found");
+        }
+
+        for (PunishmentLogEntity log : logs) {
+            if (log.isActive()) {
+                log.setSYSISDELETED(true);
+            }
+        }
+
+        punishmentLogRepo.saveAll(logs);
+    }
+
     public List<PunishmentLogDTO> getAllPunishments() {
         return punishmentLogRepo.findAll()
             .stream()

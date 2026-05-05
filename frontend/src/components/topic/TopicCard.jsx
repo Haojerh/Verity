@@ -2,13 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import TopicActions from "./TopicActions";
 
-export default function TopicCard({ topic, onAction=null }) {
+export default function TopicCard({ topic, onAction=null, onFollowToggle }) {
   const navigate = useNavigate();
-  const [follow, setFollow] = useState(false);
 
   return (
     <div
-      onClick={() => navigate(`/explore/${topic.id}`, { state: topic })}
+      onClick={() => navigate(`/explore/${topic.topicID}`)}
       className="border rounded-xl overflow-hidden group hover:shadow-xl dark:hover:shadow-dark-xl transition-all duration-300 transform hover:-translate-y-1"
     >
       <div className="h-40 relative">
@@ -37,16 +36,16 @@ export default function TopicCard({ topic, onAction=null }) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setFollow(!follow);
+                onFollowToggle(topic.topicID);
               }}
               className={`px-4 py-1.5 border-2 font-bold rounded-full text-sm active:scale-95 transition-all 
               ${
-                follow
+                topic.isFollowed
                   ? "border-destructive text-destructive hover:bg-destructive/5"
                   : "border-primary text-primary hover:bg-primary/5"
               }`}
             >
-              {follow ? "- Unfollow" : "+ Follow"}
+              {topic.isFollowed ? "- Unfollow" : "+ Follow"}
             </button>
           )}
         </div>

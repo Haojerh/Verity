@@ -63,6 +63,27 @@ export const loginSchema = z.object({
     .min(1, "Password is required"),
 });
 
+export const personalInfoSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email format"),
+});
+
+export const passwordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+
+  password: z
+    .string()
+    .min(8, "At least 8 characters required")
+    .regex(/[A-Z]/, "Must contain 1 uppercase letter")
+    .regex(/[0-9]/, "Must contain 1 number")
+    .regex(/[!@#$%^&*]/, "Must contain 1 special character"),
+
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
 export const postSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters").max(100),
   topicID: z.string().min(1, "Please select a topic"),
@@ -84,7 +105,7 @@ export const WarnSchema = z.object({
   reason: z.string().min(1, "Reason is required")
 });
 
-export const BanSchema = z.object({
+export const BanMuteSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
   duration: z
     .number({

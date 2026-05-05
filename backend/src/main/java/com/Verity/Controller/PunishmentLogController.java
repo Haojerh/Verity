@@ -4,6 +4,7 @@ import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,18 @@ public class PunishmentLogController {
     public ResponseEntity<Response> createPunishment(@RequestBody PunishmentLogRequest punishmentLogRequest, HttpServletRequest request) {
         punishmentLogService.createPunishment(punishmentLogRequest);
         return ResponseEntity.ok(getResponse(request, emptyMap(), "Punishment created", OK));
+    }
+
+    @DeleteMapping("/api/punishments/unmute/{id}")
+    public ResponseEntity<Response> unmuteUser(@PathVariable String id, HttpServletRequest request) {
+        punishmentLogService.unmuteUser(id);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "User Unmuted", OK));
+    }
+
+    @DeleteMapping("/api/punishments/unban/{id}")
+    public ResponseEntity<Response> unbanUser(@PathVariable String id, HttpServletRequest request) {
+        punishmentLogService.unbanUser(id);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "User Unbanned", OK));
     }
 
     @PostMapping("/api/moderators/demote/{id}")

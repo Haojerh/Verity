@@ -33,7 +33,8 @@ export default function Avatar({ name, size = "md", imageUrl }) {
   const sizeClasses = {
     sm: 'w-8 h-8 text-sm',
     md: 'w-10 h-10 text-base',
-    lg: 'w-12 h-12 text-lg'
+    lg: 'w-12 h-12 text-lg',
+    xl: 'w-24 h-24 text-4xl',
   };
 
   if (imageUrl) {
