@@ -9,28 +9,31 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping({"/api/uploads", "/uploads"})
 public class FileController {
 
-    @GetMapping("/api/uploads/{folder}/{filename:.+}")
+    @GetMapping("/{folder}/{filename:.+}")
     public ResponseEntity<Resource> getFile(
             @PathVariable String folder,
             @PathVariable String filename) {
 
         try {
-            Path file = Paths.get(System.getProperty("user.dir"))
+            Path baseDir = Paths.get(System.getProperty("user.dir"))
                     .resolve("uploads")
                     .resolve(folder)
-                    .resolve(filename);
+                    .normalize();
 
-            Resource resource = new UrlResource(file.toUri());
+            Path file = baseDir.resolve(filename).normalize();
 
-            if (!resource.exists() || !resource.isReadable()) {
+            if (!file.startsWith(baseDir) || !Files.exists(file) || !Files.isReadable(file)) {
                 return ResponseEntity.notFound().build();
             }
 
+            Resource resource = new UrlResource(file.toUri());
             String contentType = Files.probeContentType(file);
 
             return ResponseEntity.ok()

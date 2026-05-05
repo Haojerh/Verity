@@ -1,15 +1,28 @@
 export default function VotingSection({ post, userSide, handleSelectSide }) {
-  const prosPercentage = (
-    (post.statistics.prosVotes /
-      (post.statistics.prosVotes + post.statistics.consVotes)) *
-    100
-  ).toFixed(1);
+  const { statistics, proLabel, conLabel } = post; // Destructure normalized properties
+  const { prosVotes, consVotes } = statistics;
 
-  const consPercentage = (
-    (post.statistics.consVotes /
-      (post.statistics.prosVotes + post.statistics.consVotes)) *
-    100
-  ).toFixed(1);
+  const totalVotes = prosVotes + consVotes;
+
+  const prosPercentage = totalVotes > 0 
+    ? ((prosVotes / totalVotes) * 100).toFixed(1) 
+    : "50.0";
+
+  const consPercentage = totalVotes > 0 
+    ? ((consVotes / totalVotes) * 100).toFixed(1) 
+    : "50.0";
+
+  // const prosPercentage = (
+  //   (post.statistics.prosVotes /
+  //     (post.statistics.prosVotes + post.statistics.consVotes)) *
+  //   100
+  // ).toFixed(1);
+
+  // const consPercentage = (
+  //   (post.statistics.consVotes /
+  //     (post.statistics.prosVotes + post.statistics.consVotes)) *
+  //   100
+  // ).toFixed(1);
 
   return (
     <section className="bg-card border border-border rounded-lg p-6 mb-6">
@@ -27,8 +40,9 @@ export default function VotingSection({ post, userSide, handleSelectSide }) {
           }`}
         >
           <div className="text-center space-y-1">
-            <div className="text-xs text-muted-foreground">Position Pro:</div>
-            <div className="mb-1">Team {post.prosLabel}</div>
+            <div className="text-xs text-muted-foreground">Choose Side:</div>
+            {/* <div className="mb-1">Team {post.prosLabel}</div> */}
+            <div className="mb-1">Team {proLabel}</div>
           </div>
         </button>
 
@@ -44,8 +58,8 @@ export default function VotingSection({ post, userSide, handleSelectSide }) {
           }`}
         >
           <div className="text-center space-y-1">
-            <div className="text-xs text-muted-foreground">Position Con:</div>
-            <div className="mb-1">Team {post.consLabel}</div>
+            <div className="text-xs text-muted-foreground">Choose Side:</div>
+            <div className="mb-1">Team {conLabel}</div>
           </div>
         </button>
       </div>

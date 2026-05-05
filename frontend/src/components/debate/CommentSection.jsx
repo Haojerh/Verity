@@ -10,11 +10,15 @@ export default function CommentSection({
   commentText,
   setCommentText,
   onSubmitComment,
-  openModal
+  openModal,
 }) {
+
+  const { proLabel, conLabel } = post;
+
   return (
     <section className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="border-b border-border flex">
+        {/* Team Pros */}
         <button
           onClick={() => setActiveTab("pros")}
           className={`flex-1 px-6 py-4 transition-colors ${
@@ -22,13 +26,14 @@ export default function CommentSection({
           }`}
         >
           <div className="flex items-center justify-center gap-2">
-            <span>Team {post.prosLabel}</span>
+            <span>Team {proLabel}</span>
             <span className="px-2 rounded-full bg-primary/20 text-primary text-sm">
               {comments.filter((c) => c.side === "pros").length}
             </span>
           </div>
         </button>
 
+        {/* Team Cons */}
         <button
           onClick={() => setActiveTab("cons")}
           className={`flex-1 px-6 py-4 transition-colors ${
@@ -36,7 +41,7 @@ export default function CommentSection({
           }`}
         >
           <div className="flex items-center justify-center gap-2">
-            <span>Team {post.consLabel}</span>
+            <span>Team {conLabel}</span>
             <span className="px-2 rounded-full bg-destructive/20 text-destructive text-sm">
               {comments.filter((c) => c.side === "cons").length}
             </span>
@@ -58,8 +63,8 @@ export default function CommentSection({
         {userSide && activeTab !== userSide && (
           <div className="p-4 bg-muted/20 rounded-2xl text-center border border-border mb-6">
             <p className="text-sm text-muted-foreground">
-              You can only contribute arguments on Team{" "}
-              {userSide === "pros" ? post.prosLabel : post.consLabel}.
+              You can only reply on Team {" "}
+              {activeTab === "pros" ? proLabel : conLabel}.
             </p>
           </div>
         )}

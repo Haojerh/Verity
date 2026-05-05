@@ -12,14 +12,23 @@ export default function PostPage() {
   const {
     post, comments, commentText, setCommentText,
     userSide, activeTab, setActiveTab, modal,
-    handleSelectSide, handleSubmitComment, openModal, closeModal
+    handleSelectSide, handleSubmitComment, openModal, closeModal,
+    fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
 
-if (!post) return <div className="text-center py-10">Loading debate...</div>;
+  console.log("Post data:", post);
+
+  if (!post) return <div className="text-center py-10">Loading debate...</div>;
 
   return (
     <div className="max-w-4xl mx-auto w-full">
-      <PostHeader post={post} openModal={openModal} />
+      <PostHeader 
+        post={post} 
+        openModal={openModal}
+        fullscreenImageIndex={fullscreenImageIndex}
+        openFullscreenImage={openFullscreenImage}
+        closeFullscreenImage={closeFullscreenImage}
+      />
       
       <VotingSection 
         post={post} 
@@ -27,10 +36,10 @@ if (!post) return <div className="text-center py-10">Loading debate...</div>;
         handleSelectSide={handleSelectSide} 
       />
 
-      <section className="bg-card border border-border rounded-lg p-6 mb-6">
+      {/* <section className="bg-card border border-border rounded-lg p-6 mb-6">
         <h3 className="mb-3">Debate Summary</h3>
-        <p className="text-muted-foreground">{post.description || post.content}</p>
-      </section>
+        <p className="text-muted-foreground">{post.description}</p>
+      </section> */}
 
       <StatsRow
         statistics={post.statistics}

@@ -9,34 +9,65 @@ export const usePostPage = (postID) => {
   const [userSide, setUserSide] = useState(null);
   const [activeTab, setActiveTab] = useState("pros");
   const [modal, setModal] = useState({ type: null, entity: null });
+  const [fullscreenImageIndex, setFullscreenImageIndex] = useState(null);
 
   const fetchData = useCallback(async () => {
     if (!postID) return;
+
     try {
       const [postData, commentData] = await Promise.all([
         getPostById(postID),
         getPostComments(postID)
       ]);
 
-      const normalizeImagePath = (imagePath) => {
-        if (!imagePath) return null;
-        if (typeof imagePath !== "string") return imagePath;
-        return imagePath.startsWith("http")
-          ? imagePath
-          : `http://localhost:8080/uploads/posts/${imagePath}`;
+      const normalizeImageSource = (source) => {
+        if (!source) return null;
+
+        if (typeof source === "string") {
+          return source.startsWith("http")
+            ? source
+            : `http://localhost:8080/api/uploads/posts/${source.replace(/^\/+/, "")}`;
+        }
+
+        if (typeof source === "object") {
+          const candidate = source.url || source.path || source.imagePath || source.src || source.publicUrl;
+          return normalizeImageSource(candidate);
+        }
+
+        return null;
+      };
+
+      const normalizeArraySources = (sources) => {
+        if (!Array.isArray(sources)) return [];
+        return sources
+          .map(normalizeImageSource)
+          .filter(Boolean);
+      };
+
+      const formatDate = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }).format(date);
       };
 
       const normalizedPost = {
         ...postData,
-        author: postData.author || postData.authorName,
-        content: postData.content || postData.description,
-        date: postData.date || postData.SYSCREATEDDATE,
-        prosLabel: postData.prosLabel || postData.proLabel,
-        consLabel: postData.consLabel || postData.conLabel,
+        title: postData.title,
+        description: postData.description,
+        content: postData.description,
+        author: postData.authorName,
+        date: formatDate(postData.SYSCREATEDDATE),
+        topicName: postData.topicName || "General",
+        proLabel: postData.proLabel || "Pros",
+        conLabel: postData.conLabel || "Cons",
         images: postData.images
-          ? postData.images.map(normalizeImagePath)
-          : postData.imagePath
-          ? [normalizeImagePath(postData.imagePath)]
+          ? normalizeArraySources(postData.images)
+          : normalizeImageSource(postData.imagePath)
+          ? [normalizeImageSource(postData.imagePath)]
           : undefined,
       };
 
@@ -86,10 +117,13 @@ export const usePostPage = (postID) => {
 
   const openModal = useCallback((type, entity) => setModal({ type, entity }), []);
   const closeModal = useCallback(() => setModal({ type: null, entity: null }), []);
+  const openFullscreenImage = useCallback((index) => setFullscreenImageIndex(index), []);
+  const closeFullscreenImage = useCallback(() => setFullscreenImageIndex(null), []);
 
   return {
     post, comments, commentText, setCommentText,
     userSide, activeTab, setActiveTab, modal,
-    handleSelectSide, handleSubmitComment, openModal, closeModal
+    handleSelectSide, handleSubmitComment, openModal, closeModal,
+    fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   };
 };

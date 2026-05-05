@@ -4,30 +4,30 @@ import { Bookmark, Flag, LucideShare, MoreVertical } from "lucide-react";
 import DebateImages from "../ui/DebateImages";
 import ImageModal from "../ui/ImageModal";
 
-export default function PostHeader({ post, openModal }) {
+export default function PostHeader({ 
+  post, 
+  openModal,
+  fullscreenImageIndex,
+  openFullscreenImage,
+  closeFullscreenImage
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [fullscreenImage, setFullscreenImage] = useState(null);
-  const author = post.author || post.authorName;
-  const bodyText = post.content || post.description;
-  const images = post.images || (post.imagePath ? [post.imagePath] : undefined);
-  const date = post.date || post.SYSCREATEDDATE;
-
-  const formatImageUrl = (imagePath) => {
-    if (!imagePath) return null;
-    if (imagePath.startsWith("http")) return imagePath;
-    return `http://localhost:8080/uploads/posts/${imagePath}`;
-  };
-
-  const normalizedImages = images
-    ? images.map((image) => formatImageUrl(image)).filter(Boolean)
-    : undefined;
-
+  const { 
+    author, 
+    content, 
+    images, 
+    date, 
+    topicName, 
+    title,
+    authorImageUrl
+  } = post;
+  
   return (
     <section className="space-y-3 mb-10">
       <div className="flex justify-between gap-2">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
           <button className="text-primary border border-secondary px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-primary/5 hover:scale-105 transition-all">
-            Philosophy
+            {topicName}
           </button>
           <span>•</span>
           <span>{date}</span>
@@ -61,37 +61,38 @@ export default function PostHeader({ post, openModal }) {
       </div>
 
       <h1 className="text-5xl sm:text-6xl font-serif font-bold text-foreground tracking-tight leading-[1.1] pb-8 border-b-2 border-muted">
-        {post.title}
+        {title}
       </h1>
 
       <div className="space-y-2 pt-4">
         <div className="flex gap-2 items-center text-xs">
-          <Avatar name={author} size="sm" />
+          <Avatar name={author} size="sm" imageUrl={authorImageUrl} />
           <span className="text-xs font-bold text-secondary uppercase tracking-tighter">
             @{author}
           </span>
         </div>
 
         <p className="text-xl font-serif text-muted-foreground leading-relaxed italic">
-          {bodyText}
+          {content}
         </p>
 
-        {normalizedImages && (
+        {images && (
           <>
             <DebateImages 
-              images={normalizedImages} 
-              onImageClick={(i) => setFullscreenImage(i)} 
+              images={images} 
+              onImageClick={(i) => openFullscreenImage(i)} 
               type="thread"
             />
 
             <ImageModal
-              images={normalizedImages}
-              index={fullscreenImage}
-              setIndex={setFullscreenImage}
-              onClose={() => setFullscreenImage(null)}
+              images={images}
+              index={fullscreenImageIndex}
+              setIndex={openFullscreenImage}
+              onClose={closeFullscreenImage}
             />
           </>
         )}
+
       </div>
     </section>
   );

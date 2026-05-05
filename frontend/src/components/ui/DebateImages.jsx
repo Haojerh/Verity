@@ -11,6 +11,7 @@ export default function DebateImages({ images = [], onImageClick, type="home" })
       <img
         src={images[0]}
         className="w-full h-48 object-cover rounded-lg mb-4"
+        onClick={() => onImageClick?.(0)} // Pass index 0
       />
     );
   }
