@@ -6,17 +6,20 @@ import CommentSection from "../components/debate/CommentSection";
 import ReportModal from "../components/debate/ReportModal";
 import ShareModal from "../components/debate/ShareModal";
 import { usePostPage } from "../services/usePostPage";
+import { countAllComments } from "../services/CommentService";
+import { getCurrentUserID } from "../services/UserService";
+import { useEffect, useState } from "react";
 
 export default function PostPage() {
   const { id: postID } = useParams();
   const {
-    post, comments, commentText, setCommentText,
-    userSide, activeTab, setActiveTab, modal,
-    handleSelectSide, handleSubmitComment, handleSubmitReply, openModal, closeModal,
+    post, comments, commentText, totalComments, totalParticipants, setCommentText,
+    userSide, activeTab, setActiveTab, modal, stats,
+    handleStanceChange, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
 
-  console.log("Post data:", post);
+  console.log("PostID data:", post);
 
   if (!post) return <div className="text-center py-10">Loading debate...</div>;
 
@@ -33,7 +36,8 @@ export default function PostPage() {
       <VotingSection 
         post={post} 
         userSide={userSide} 
-        handleSelectSide={handleSelectSide} 
+        handleStanceChange={handleStanceChange} 
+        stats={stats}
       />
 
       {/* <section className="bg-card border border-border rounded-lg p-6 mb-6">
@@ -42,8 +46,8 @@ export default function PostPage() {
       </section> */}
 
       <StatsRow
-        statistics={post.statistics}
-        commentCount={comments.length}
+        counts={{ totalParticipants, totalComments }}
+        mvp={post?.mvp || "you_self12"}
       />
 
       <CommentSection

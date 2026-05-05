@@ -20,6 +20,21 @@ export const getAllPosts = async () => {
   }
 };
 
+export const getPostStats = (postID) => {
+    return request(Http.GET, `/api/posts/${postID}/stats`);
+};
+
+export const updatePostStance = (postID, userID, stance) => {
+    return request(Http.POST, `/api/posts/${postID}/stance`, {
+        userID: userID,
+        chosenStance: stance
+    });
+};
+
+export const getUserStance = (postID) => {
+    return request(Http.GET, `/api/posts/${postID}/stance`);
+};
+
 export const createPost = async (postData, imageFile) => {
   try {
     const formData = new FormData();

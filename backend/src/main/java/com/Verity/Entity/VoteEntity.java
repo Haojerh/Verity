@@ -9,7 +9,7 @@ import net.bytebuddy.utility.RandomString;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "vote", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"threadID", "voterID"})
+        @UniqueConstraint(columnNames = {"commentID", "voterID"})
 })
 public class VoteEntity extends Auditable {
 
@@ -19,8 +19,8 @@ public class VoteEntity extends Auditable {
 
     // Many votes belong to one thread
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "threadID", referencedColumnName = "threadID", nullable = false)
-    private ThreadEntity thread;
+    @JoinColumn(name = "commentID", referencedColumnName = "commentID", nullable = false)
+    private CommentEntity comment;
 
     // Many votes can be cast by one user
     @ManyToOne(fetch = FetchType.LAZY)

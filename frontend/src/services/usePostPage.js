@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { getPostComments, createPostComment } from "../services/CommentService";
-import { getPostById } from "../services/PostService";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { getPostComments, createPostComment, countAllComments } from "../services/CommentService";
+import { getPostById, getPostStats, updatePostStance, getUserStance } from "../services/PostService";
+import { getCurrentUserID } from "../services/UserService";
 
 export const usePostPage = (postID) => {
   const [post, setPost] = useState(null);
@@ -10,14 +11,18 @@ export const usePostPage = (postID) => {
   const [activeTab, setActiveTab] = useState("pros");
   const [modal, setModal] = useState({ type: null, entity: null });
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(null);
+  const [stats, setStats] = useState({ totalParticipants: 0, prosVotes: 0, consVotes: 0 });
+  const [user, setUser] = useState(null); 
+
 
   const fetchData = useCallback(async () => {
     if (!postID) return;
 
     try {
-      const [postData, commentData] = await Promise.all([
+      const [postData, commentData, statsData] = await Promise.all([
         getPostById(postID),
-        getPostComments(postID)
+        getPostComments(postID),
+        getPostStats(postID)
       ]);
 
       const normalizeImageSource = (source) => {
@@ -73,6 +78,7 @@ export const usePostPage = (postID) => {
 
       setPost(normalizedPost);
       setComments(commentData.comments ?? commentData ?? []);
+      setStats(statsData);
     } catch (err) {
       console.error("Fetch failed:", err);
     }
@@ -81,28 +87,6 @@ export const usePostPage = (postID) => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const handleSelectSide = (side) => {
-    if (userSide) return;
-
-    setUserSide(side);
-    setActiveTab(side);
-
-    setPost((prev) => {
-      const updated = { ...prev };
-      const stats = { ...updated.statistics };
-
-      if (side === "pros") {
-        stats.prosVotes += 1;
-      } else {
-        stats.consVotes += 1;
-      }
-
-      stats.totalParticipants += 1;
-      updated.statistics = stats;
-      return updated;
-    });
-  };
 
   const handleSubmitComment = async () => {
     if (!commentText.trim() || !userSide) return;
@@ -129,15 +113,79 @@ export const usePostPage = (postID) => {
     }
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const [userID, userStance] = await Promise.all([
+          getCurrentUserID(),
+          getUserStance(postID)
+        ]);
+        setUser(userID);
+        setUserSide(userStance.stance || null);
+        setActiveTab(userStance.stance || "pros");
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    if (postID) fetchUser();
+  }, [postID]);
+
+  const handleStanceChange = async (newStance) => {
+    if (!user) {
+      console.error("User ID not available");
+      return;
+    }
+
+    try {
+      // Check if user has already voted
+      const currentStance = await getUserStance(postID);
+      if (currentStance.stance) {
+        console.log("User has already voted and cannot change stance");
+        setUserSide(currentStance.stance);
+        setActiveTab(currentStance.stance);
+        return;
+      }
+
+      await updatePostStance(postID, user, newStance);
+
+      const updatedStats = await getPostStats(postID);
+      setStats(updatedStats);
+      setUserSide(newStance);
+      setActiveTab(newStance);
+    } catch (error) {
+      console.error("Failed to save stance:", error);
+    }
+  };
+
+  const totalComments = useMemo(() => {
+    return countAllComments(comments);
+  }, [comments]);
+
   const openModal = useCallback((type, entity) => setModal({ type, entity }), []);
   const closeModal = useCallback(() => setModal({ type: null, entity: null }), []);
   const openFullscreenImage = useCallback((index) => setFullscreenImageIndex(index), []);
   const closeFullscreenImage = useCallback(() => setFullscreenImageIndex(null), []);
 
   return {
-    post, comments, commentText, setCommentText,
-    userSide, activeTab, setActiveTab, modal,
-    handleSelectSide, handleSubmitComment, handleSubmitReply, openModal, closeModal,
-    fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
+    post,
+    comments,
+    commentText,
+    totalComments,
+    totalParticipants: stats.totalParticipants, 
+    setCommentText,
+    userSide,
+    activeTab,
+    setActiveTab,
+    modal,
+    stats,
+    handleStanceChange, 
+    handleSubmitComment,
+    handleSubmitReply,
+    openModal,
+    closeModal,
+    fullscreenImageIndex,
+    openFullscreenImage,
+    closeFullscreenImage,
   };
 };

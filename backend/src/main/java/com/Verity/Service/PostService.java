@@ -2,9 +2,10 @@ package com.Verity.Service;
 
 import com.Verity.DTO.PostDTO;
 import com.Verity.DTO.PostRequest;
-import com.Verity.DTO.PostStatsDTO;
-import com.Verity.DTO.UserDTO;
+import com.Verity.DTO.PostStanceDTO;
+import com.Verity.DTO.PostStanceRequest;
 import com.Verity.Entity.PostEntity;
+import com.Verity.Entity.PostStanceEntity;
 import com.Verity.Entity.TopicEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Repo.PostRepo;
@@ -12,6 +13,7 @@ import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.TopicRepo;
 import com.Verity.Repo.UserRepo;
 import com.Verity.Utils.FileUtil; // Using the new utility
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,22 +36,18 @@ public class PostService {
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
 
-        // Ensure labels default if request is empty
         post.setProLabel(request.getProLabel() != null ? request.getProLabel() : "Pro");
         post.setConLabel(request.getConLabel() != null ? request.getConLabel() : "Con");
 
-        // 1. Handle File Upload and set the path in the entity
         if (image != null && !image.isEmpty()) {
             String fileName = FileUtil.saveFile(image, uploadDir, "PST");
-            post.setImagePath(fileName); // This saves the filename to the database column
+            post.setImagePath(fileName);
         }
 
-        // 2. Link Topic
         TopicEntity topic = topicRepo.findById(request.getTopicID())
                 .orElseThrow(() -> new RuntimeException("Topic not found"));
         post.setTopic(topic);
 
-        // 3. Link Author from the authenticated user
         UserEntity author = userRepo.findUserByEmail(authorEmail)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
         post.setAuthor(author);
@@ -69,6 +67,35 @@ public class PostService {
         PostEntity post = postRepo.findById(postID)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         return mapToDTO(post);
+    }
+
+    public PostStanceDTO getPostStats(String postID) {
+        PostEntity post = postRepo.findById(postID)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        long pros = postStanceRepo.countByPostIDAndChosenStance(post, "pros");
+        long cons = postStanceRepo.countByPostIDAndChosenStance(post, "cons");
+        long participants = postStanceRepo.countUniqueParticipants(postID);
+
+        return new PostStanceDTO(pros, cons, participants);
+    }
+
+    @Transactional
+    public void saveOrUpdateStance(String postID, PostStanceRequest request) {
+        PostEntity post = postRepo.findById(postID)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        UserEntity user = userRepo.findById(request.getUserID())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        PostStanceEntity stance = postStanceRepo.findByPostIDAndUser(post, user)
+                .orElse(new PostStanceEntity());
+
+        stance.setPostID(post);
+        stance.setUser(user);
+        stance.setChosenStance(request.getChosenStance());
+
+        postStanceRepo.save(stance);
     }
 
     private PostDTO mapToDTO(PostEntity entity) {
@@ -96,7 +123,7 @@ public class PostService {
         long pros = postStanceRepo.countByPostIDAndChosenStance(entity, "pros");
         long cons = postStanceRepo.countByPostIDAndChosenStance(entity, "cons");
 
-        dto.setStatistics(new PostStatsDTO(pros, cons, pros + cons));
+        dto.setStatistics(new PostStanceDTO(pros, cons, pros + cons));
 
         return dto;
     }

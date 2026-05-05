@@ -28,17 +28,4 @@ public class UserNotiEntity extends Auditable {
 
     @PrePersist
     public void beforePersist() { setNotiID("USRNOT-" + RandomString.make(10));}
-
-    //    @Id
-//    @Column(name = "notiID", nullable = false, unique = true, length = 20)
-//    private String notiID;
-//
-//    @Column(name = "message", nullable = false)
-//    private String message;
-//
-//    @Column(name = "topicID", nullable = true, unique = false, length = 20)
-//    private String topicID;
-//
-//    @Column(name = "threadID", nullable = true, unique = false, length = 20)
-//    private String threadID;
 }

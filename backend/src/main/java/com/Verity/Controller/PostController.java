@@ -1,10 +1,13 @@
 package com.Verity.Controller;
 
-import com.Verity.DTO.CommentDTO;
-import com.Verity.DTO.CommentRequest;
-import com.Verity.DTO.PostDTO;
-import com.Verity.DTO.PostRequest;
+import com.Verity.DTO.*;
 import com.Verity.Domain.Response;
+import com.Verity.Entity.PostEntity;
+import com.Verity.Entity.PostStanceEntity;
+import com.Verity.Entity.UserEntity;
+import com.Verity.Repo.PostRepo;
+import com.Verity.Repo.PostStanceRepo;
+import com.Verity.Repo.UserRepo;
 import com.Verity.Security.Utils.UserPrincipal;
 import com.Verity.Service.CommentService;
 import com.Verity.Service.PostService;
@@ -22,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.Verity.Utils.RequestUtils.getResponse;
 
@@ -31,6 +35,9 @@ import static com.Verity.Utils.RequestUtils.getResponse;
 public class PostController {
     private final PostService postService;
     private final CommentService commentService;
+    private final PostRepo postRepo;
+    private final UserRepo userRepo;
+    private final PostStanceRepo postStanceRepo;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Response> createPost(
@@ -73,5 +80,30 @@ public class PostController {
         CommentDTO comment = commentService.createComment(postID, commentRequest, userPrincipal.getUsername());
         return ResponseEntity.status(CREATED)
                 .body(getResponse(request, Map.of("comment", comment), "Comment posted successfully", CREATED));
+    }
+
+    @GetMapping("/{postID}/stats")
+    public ResponseEntity<PostStanceDTO> getPostStats(@PathVariable String postID) {
+        PostStanceDTO stats = postService.getPostStats(postID);
+        return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/{postID}/stance")
+    public ResponseEntity<Response> getUserStance(@PathVariable String postID, @AuthenticationPrincipal UserPrincipal userPrincipal, HttpServletRequest request) {
+        String userEmail = userPrincipal.getUsername();
+        UserEntity user = userRepo.findUserByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        PostEntity post = postRepo.findById(postID).orElseThrow(() -> new RuntimeException("Post not found"));
+        Optional<PostStanceEntity> stance = postStanceRepo.findByPostIDAndUser(post, user);
+        String chosenStance = stance.map(PostStanceEntity::getChosenStance).orElse(null);
+        return ResponseEntity.ok(getResponse(request, Map.of("stance", chosenStance), "User stance retrieved", OK));
+    }
+
+    @PostMapping("/{postID}/stance")
+    public ResponseEntity<Void> updateStance(
+            @PathVariable String postID,
+            @RequestBody PostStanceRequest request
+    ) {
+        postService.saveOrUpdateStance(postID, request);
+        return ResponseEntity.ok().build();
     }
 }

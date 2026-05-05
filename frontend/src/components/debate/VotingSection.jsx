@@ -1,6 +1,6 @@
-export default function VotingSection({ post, userSide, handleSelectSide }) {
-  const { statistics, proLabel, conLabel } = post; // Destructure normalized properties
-  const { prosVotes, consVotes } = statistics;
+export default function VotingSection({ post, userSide, handleStanceChange, stats}) {
+  const { proLabel, conLabel } = post; 
+  const { prosVotes, consVotes } = stats;
 
   const totalVotes = prosVotes + consVotes;
 
@@ -12,24 +12,12 @@ export default function VotingSection({ post, userSide, handleSelectSide }) {
     ? ((consVotes / totalVotes) * 100).toFixed(1) 
     : "50.0";
 
-  // const prosPercentage = (
-  //   (post.statistics.prosVotes /
-  //     (post.statistics.prosVotes + post.statistics.consVotes)) *
-  //   100
-  // ).toFixed(1);
-
-  // const consPercentage = (
-  //   (post.statistics.consVotes /
-  //     (post.statistics.prosVotes + post.statistics.consVotes)) *
-  //   100
-  // ).toFixed(1);
-
   return (
     <section className="bg-card border border-border rounded-lg p-6 mb-6">
       <h3 className="mb-4">Choose Your Side</h3>
       <div className="grid grid-cols-2 gap-4 mb-5">
         <button
-          onClick={() => handleSelectSide("pros")}
+          onClick={() => handleStanceChange("pros")}
           disabled={userSide !== null}
           className={`p-4 rounded-lg border-2 transition-all ${
             userSide === "pros"
@@ -46,7 +34,7 @@ export default function VotingSection({ post, userSide, handleSelectSide }) {
         </button>
 
         <button
-          onClick={() => handleSelectSide("cons")}
+          onClick={() => handleStanceChange("cons")}
           disabled={userSide !== null}
           className={`p-4 rounded-lg border-2 transition-all ${
             userSide === "cons"
@@ -81,8 +69,8 @@ export default function VotingSection({ post, userSide, handleSelectSide }) {
       </div>
 
       <div className="flex justify-between text-sm text-muted-foreground">
-        <span>Team {proLabel}: {post.statistics.prosVotes} votes</span>
-        <span>Team {conLabel}: {post.statistics.consVotes} votes</span>
+        <span>Team {proLabel}: {prosVotes} votes</span>
+        <span>Team {conLabel}: {consVotes} votes</span>
       </div>
     </section>
   );

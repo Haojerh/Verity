@@ -31,6 +31,6 @@ public class ReportEntity {
 
     // Optional: If the report is against a specific thread/reply
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "targetThreadID", referencedColumnName = "threadID")
-    private ThreadEntity targetThread;
+    @JoinColumn(name = "targetCommentID", referencedColumnName = "commentID")
+    private CommentEntity targetComment;
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PostStatsDTO {
+public class PostStanceDTO {
     private long prosVotes;
     private long consVotes;
     private long totalParticipants;
