@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../utils/Schema";
 import { registerUser } from "../services/Auth";
+import PasswordBox from "../components/ui/PasswordBox";
 
 export default function Register() {
     const {
@@ -68,16 +69,14 @@ export default function Register() {
           {...register("email")}
           error={errors.email?.message}
         />
-        <TextBox 
+        <PasswordBox
           label="Password" 
-          type="password" 
           placeholder="••••••••"
           {...register("password")}
           error={errors.password?.message}
         />
-        <TextBox 
+        <PasswordBox 
           label="Confirm Password" 
-          type="password" 
           placeholder="••••••••"
           {...register("confirmPassword")}
           error={errors.confirmPassword?.message}

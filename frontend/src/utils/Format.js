@@ -16,12 +16,14 @@ export const formatDuration = (minutes) => {
 
   const remainingDays = days % 30;
   const remainingHours = totalHours % 24;
+  const remainingMinutes = minutes % 60;
 
   let result = [];
 
   if (months > 0) result.push(`${months} Month${months > 1 ? "s" : ""}`);
   if (remainingDays > 0) result.push(`${remainingDays} Day${remainingDays > 1 ? "s" : ""}`);
   if (remainingHours > 0) result.push(`${remainingHours} Hour${remainingHours > 1 ? "s" : ""}`);
+  if (remainingMinutes > 0) result.push(`${remainingMinutes} Minute${remainingMinutes > 1 ? "s" : ""}`);
 
-  return result.length ? result.join(" ") : "0 Hour";
+  return result.length ? result.join(" ") : "0 Minute";
 };

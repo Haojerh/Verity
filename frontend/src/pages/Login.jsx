@@ -6,6 +6,7 @@ import TextBox from "../components/ui/TextBox";
 import { loginSchema } from "../utils/Schema";
 import { loginUser } from "../services/Auth"
 import LoginModal from "../components/auth/LoginModal";
+import PasswordBox from "../components/ui/PasswordBox";
 
 export default function Login() {
   const {
@@ -65,9 +66,8 @@ export default function Login() {
           error={errors.email?.message}
         />
 
-        <TextBox 
+        <PasswordBox
           label="Password" 
-          type="password" 
           placeholder="••••••••"
           {...register("password")}
           error={errors.password?.message}
@@ -77,6 +77,7 @@ export default function Login() {
         </button>
       </form>
     </AuthCard>
+
     {modal.open && 
       <LoginModal
         user={modal.user}

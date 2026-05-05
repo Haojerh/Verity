@@ -6,16 +6,21 @@ import java.util.Map;
 
 import static org.apache.tomcat.util.http.SameSiteCookies.NONE;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.Verity.DTO.ChangePassRequest;
 import com.Verity.DTO.Credential;
 import com.Verity.DTO.UserDTO;
 import com.Verity.DTO.UserRequest;
@@ -47,12 +52,6 @@ public class UserController {
     public ResponseEntity<Response> createUser(@RequestBody UserRequest userRequest, HttpServletRequest request) {
         userServices.createUser(userRequest);
         return ResponseEntity.created(create("")).body(getResponse(request, emptyMap(), "User created", CREATED));
-    }
-
-    @PatchMapping("/update")
-    public ResponseEntity<Response> updateUser(@RequestBody UserRequest userRequest, HttpServletRequest request) {
-        userServices.createUser(userRequest);
-        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "User updated", OK));
     }
 
     @PostMapping("/login")
@@ -99,9 +98,35 @@ public class UserController {
         return ResponseEntity.ok(getResponse(request, Map.of("user", user), "Current User Retrieved", OK));
     }
 
+    @PutMapping("/api/user")
+    public ResponseEntity<Response> updateUser(@RequestBody UserRequest userRequest, HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not logged in");
+        }
+
+        String email = auth.getName();
+        userServices.updateUser(email, userRequest);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "User updated", OK));
+    }
+
     @GetMapping("/api/moderators")
     public ResponseEntity<Response> getAllModerators(HttpServletRequest request) {
         var moderators = userServices.getAllModerators();
         return ResponseEntity.ok(getResponse(request, Map.of("moderators", moderators), "Moderators Retrieved", OK));
+    }
+
+    @PutMapping("/api/change-password")
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePassRequest req, HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not logged in");
+        }
+
+        String email = auth.getName();
+        userServices.changePassword(email, req.getCurrentPassword(), req.getNewPassword());
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "Password updated successfully", OK));
     }
 }
