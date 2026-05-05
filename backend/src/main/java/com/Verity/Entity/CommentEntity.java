@@ -3,7 +3,11 @@ package com.Verity.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.bytebuddy.utility.RandomString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -27,6 +31,18 @@ public class CommentEntity extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorID")
     private UserEntity author;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentCommentID")
+    private CommentEntity parentComment;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("SYSCREATEDDATE ASC")
+    private List<CommentEntity> replies = new ArrayList<>();
 
     @PrePersist
     public void beforePersist() {

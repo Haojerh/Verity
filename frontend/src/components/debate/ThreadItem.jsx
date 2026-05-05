@@ -13,13 +13,14 @@ export default function ThreadItem({
 }) {
   const { id, side, user, text, replies = [] } = comment;
   const isPros = side === 'pros';
+  const hasReplies = replies.length > 0;
   
   const [menuOpen, setMenuOpen] = useState(false);
   const [reply, setReply] = useState({ state: false, message: "" });
+  const [collapsed, setCollapsed] = useState(false);
   const [vote, setVote] = useState(null);
   const [voteCount, setVoteCount] = useState(comment.votes || 0);
 
-  // Layout Logic: Indentation caps at depth 3 for horizontal readability
   const isDeep = depth > 3;
   const marginClass = depth === 0 ? "mt-6" : isDeep ? "ml-2 mt-2" : "ml-4 md:ml-10 mt-2";
 
@@ -35,8 +36,9 @@ export default function ThreadItem({
   };
 
   const handlePostReply = () => {
-    if (!reply.message.trim()) return;
-    if (onSubmitReply) onSubmitReply(id, reply.message);
+    const message = typeof reply.message === "string" ? reply.message : "";
+    if (!message.trim()) return;
+    if (onSubmitReply) onSubmitReply(id, message);
     setReply({ state: false, message: "" });
   };
 
@@ -118,15 +120,26 @@ export default function ThreadItem({
             </button>
           </div>
           
-          <button 
-            onClick={() => setReply(prev => ({ ...prev, state: !prev.state }))}
-            className={`flex items-center gap-2 text-xxs font-medium uppercase tracking-widest transition-colors ${
-              reply.state ? "text-primary" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <CornerUpLeft className="w-3.5 h-3.5" />
-            {reply.state ? "Cancel" : "Reply"}
-          </button>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setReply(prev => ({ ...prev, state: !prev.state }))}
+              className={`flex items-center gap-2 text-xxs font-medium uppercase tracking-widest transition-colors ${
+                reply.state ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <CornerUpLeft className="w-3.5 h-3.5" />
+              {reply.state ? "Cancel" : "Reply"}
+            </button>
+
+            {hasReplies && (
+              <button
+                onClick={() => setCollapsed((prev) => !prev)}
+                className="text-xxs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {collapsed ? `Show ${replies.length} replies` : `Hide ${replies.length} replies`}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Reply Area using --input-background */}
@@ -135,7 +148,7 @@ export default function ThreadItem({
             <TextBox 
               placeholder={`Write a reply...`}
               value={reply.message}
-              onChange={(val) => setReply(prev => ({ ...prev, message: val }))}
+              onChange={(event) => setReply(prev => ({ ...prev, message: event.target.value }))}
               autoFocus
             />
             <div className="flex justify-end">
@@ -152,7 +165,7 @@ export default function ThreadItem({
       </div>
 
       {/* Recursive Render */}
-      {replies.length > 0 && (
+      {hasReplies && !collapsed && (
         <div className="flex flex-col">
           {replies.map((r) => (
             <ThreadItem 

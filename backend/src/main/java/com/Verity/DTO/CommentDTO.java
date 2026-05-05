@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +18,7 @@ public class CommentDTO {
     private String user;
     private String authorID;
     private String postID;
+    private String parentId;
+    private List<CommentDTO> replies = new ArrayList<>();
     private LocalDateTime SYSCREATEDDATE;
 }

@@ -11,8 +11,11 @@ import com.Verity.Repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,16 @@ public class CommentService {
         comment.setPost(post);
         comment.setAuthor(author);
 
+        if (request.getParentCommentID() != null && !request.getParentCommentID().isBlank()) {
+            CommentEntity parentComment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(request.getParentCommentID())
+                    .orElseThrow(() -> new RuntimeException("Parent comment not found"));
+
+            if (!parentComment.getPost().getPostID().equals(postID)) {
+                throw new RuntimeException("Parent comment does not belong to the same post");
+            }
+            comment.setParentComment(parentComment);
+        }
+
         CommentEntity savedComment = commentRepo.save(comment);
         return mapToDTO(savedComment);
     }
@@ -41,9 +54,28 @@ public class CommentService {
     public List<CommentDTO> getCommentsByPostID(String postID) {
         postRepo.findById(postID).orElseThrow(() -> new RuntimeException("Post not found"));
 
-        return commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        List<CommentEntity> commentEntities = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID);
+        commentEntities.sort(Comparator.comparing(CommentEntity::getSYSCREATEDDATE));
+
+        Map<String, CommentDTO> dtoMap = new HashMap<>();
+        for (CommentEntity commentEntity : commentEntities) {
+            dtoMap.put(commentEntity.getCommentID(), mapToDTO(commentEntity));
+        }
+
+        List<CommentDTO> rootComments = new ArrayList<>();
+        for (CommentEntity commentEntity : commentEntities) {
+            CommentDTO commentDto = dtoMap.get(commentEntity.getCommentID());
+            if (commentEntity.getParentComment() != null) {
+                CommentDTO parentDto = dtoMap.get(commentEntity.getParentComment().getCommentID());
+                if (parentDto != null) {
+                    parentDto.getReplies().add(commentDto);
+                    continue;
+                }
+            }
+            rootComments.add(commentDto);
+        }
+
+        return rootComments;
     }
 
     private CommentDTO mapToDTO(CommentEntity entity) {
@@ -54,6 +86,7 @@ public class CommentService {
         dto.setUser(entity.getAuthor() != null ? entity.getAuthor().getName() : null);
         dto.setAuthorID(entity.getAuthor() != null ? entity.getAuthor().getUserID() : null);
         dto.setPostID(entity.getPost() != null ? entity.getPost().getPostID() : null);
+        dto.setParentId(entity.getParentComment() != null ? entity.getParentComment().getCommentID() : null);
         dto.setSYSCREATEDDATE(entity.getSYSCREATEDDATE());
         return dto;
     }

@@ -115,6 +115,20 @@ export const usePostPage = (postID) => {
     }
   };
 
+  const handleSubmitReply = async (parentCommentID, text) => {
+    if (!text?.trim() || !userSide) return;
+    try {
+      await createPostComment(postID, {
+        text,
+        side: activeTab,
+        parentCommentID,
+      });
+      fetchData();
+    } catch (err) {
+      console.error("Reply failed:", err);
+    }
+  };
+
   const openModal = useCallback((type, entity) => setModal({ type, entity }), []);
   const closeModal = useCallback(() => setModal({ type: null, entity: null }), []);
   const openFullscreenImage = useCallback((index) => setFullscreenImageIndex(index), []);
@@ -123,7 +137,7 @@ export const usePostPage = (postID) => {
   return {
     post, comments, commentText, setCommentText,
     userSide, activeTab, setActiveTab, modal,
-    handleSelectSide, handleSubmitComment, openModal, closeModal,
+    handleSelectSide, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   };
 };

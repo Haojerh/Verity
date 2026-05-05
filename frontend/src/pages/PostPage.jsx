@@ -12,7 +12,7 @@ export default function PostPage() {
   const {
     post, comments, commentText, setCommentText,
     userSide, activeTab, setActiveTab, modal,
-    handleSelectSide, handleSubmitComment, openModal, closeModal,
+    handleSelectSide, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
 
@@ -55,6 +55,7 @@ export default function PostPage() {
         commentText={commentText}
         setCommentText={setCommentText}
         onSubmitComment={handleSubmitComment}
+        onSubmitReply={handleSubmitReply}
         openModal={openModal}
       />
 

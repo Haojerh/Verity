@@ -10,6 +10,7 @@ export default function CommentSection({
   commentText,
   setCommentText,
   onSubmitComment,
+  onSubmitReply,
   openModal,
 }) {
 
@@ -73,13 +74,13 @@ export default function CommentSection({
           {comments
             .filter((comment) => comment.side === activeTab)
             .map((comment) => (
-              // <ThreadItem key={comment.id} comment={comment} openModal={openModal} />
               <ThreadItem 
                 key={comment.id} 
                 comment={comment} 
                 openModal={openModal} 
                 proLabel={proLabel}
                 conLabel={conLabel}
+                onSubmitReply={onSubmitReply}
               />
             ))}
         </div>
