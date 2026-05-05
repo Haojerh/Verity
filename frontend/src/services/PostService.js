@@ -4,7 +4,7 @@ import { Http } from "../constant/http.method";
 export const getPostById = async (postID) => {
   try {
     const response = await request(Http.GET, `/api/posts/${postID}`);
-    return response;
+    return response.post ?? response;
   } catch (error) {
     console.error(`Error fetching post ${postID}:`, error);
     throw error;

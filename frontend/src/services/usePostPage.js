@@ -17,8 +17,31 @@ export const usePostPage = (postID) => {
         getPostById(postID),
         getPostComments(postID)
       ]);
-      setPost(postData);
-      setComments(commentData.comments ?? []);
+
+      const normalizeImagePath = (imagePath) => {
+        if (!imagePath) return null;
+        if (typeof imagePath !== "string") return imagePath;
+        return imagePath.startsWith("http")
+          ? imagePath
+          : `http://localhost:8080/uploads/posts/${imagePath}`;
+      };
+
+      const normalizedPost = {
+        ...postData,
+        author: postData.author || postData.authorName,
+        content: postData.content || postData.description,
+        date: postData.date || postData.SYSCREATEDDATE,
+        prosLabel: postData.prosLabel || postData.proLabel,
+        consLabel: postData.consLabel || postData.conLabel,
+        images: postData.images
+          ? postData.images.map(normalizeImagePath)
+          : postData.imagePath
+          ? [normalizeImagePath(postData.imagePath)]
+          : undefined,
+      };
+
+      setPost(normalizedPost);
+      setComments(commentData.comments ?? commentData ?? []);
     } catch (err) {
       console.error("Fetch failed:", err);
     }

@@ -1,9 +1,27 @@
+import { useState } from "react";
 import Avatar from "../ui/Avatar";
 import { Bookmark, Flag, LucideShare, MoreVertical } from "lucide-react";
 import DebateImages from "../ui/DebateImages";
 import ImageModal from "../ui/ImageModal";
 
-export default function PostHeader({ post, fullscreenImage, setFullscreenImage, setMenuOpen, menuOpen, openModal }) {
+export default function PostHeader({ post, openModal }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const author = post.author || post.authorName;
+  const bodyText = post.content || post.description;
+  const images = post.images || (post.imagePath ? [post.imagePath] : undefined);
+  const date = post.date || post.SYSCREATEDDATE;
+
+  const formatImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith("http")) return imagePath;
+    return `http://localhost:8080/uploads/posts/${imagePath}`;
+  };
+
+  const normalizedImages = images
+    ? images.map((image) => formatImageUrl(image)).filter(Boolean)
+    : undefined;
+
   return (
     <section className="space-y-3 mb-10">
       <div className="flex justify-between gap-2">
@@ -12,7 +30,7 @@ export default function PostHeader({ post, fullscreenImage, setFullscreenImage, 
             Philosophy
           </button>
           <span>•</span>
-          <span>{post.date}</span>
+          <span>{date}</span>
         </div>
 
         <div className="relative">
@@ -48,26 +66,26 @@ export default function PostHeader({ post, fullscreenImage, setFullscreenImage, 
 
       <div className="space-y-2 pt-4">
         <div className="flex gap-2 items-center text-xs">
-          <Avatar name={post.author} size="sm" />
+          <Avatar name={author} size="sm" />
           <span className="text-xs font-bold text-secondary uppercase tracking-tighter">
-            @{post.author}
+            @{author}
           </span>
         </div>
 
         <p className="text-xl font-serif text-muted-foreground leading-relaxed italic">
-          {post.content}
+          {bodyText}
         </p>
 
-        {post.images && (
+        {normalizedImages && (
           <>
             <DebateImages 
-              images={post.images} 
+              images={normalizedImages} 
               onImageClick={(i) => setFullscreenImage(i)} 
               type="thread"
             />
 
             <ImageModal
-              images={post.images}
+              images={normalizedImages}
               index={fullscreenImage}
               setIndex={setFullscreenImage}
               onClose={() => setFullscreenImage(null)}
