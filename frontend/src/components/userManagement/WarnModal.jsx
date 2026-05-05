@@ -10,6 +10,7 @@ import { createPunishment } from "../../services/PunishmentLogsService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { WarnSchema } from "../../utils/Schema";
+import { useToast } from "../../context/ToastContext";
 
 export default function WarnModal({ user, onClose, roleType="default" }) {
   const {
@@ -27,6 +28,8 @@ export default function WarnModal({ user, onClose, roleType="default" }) {
     }
   });
 
+  const { showToast } = useToast();
+
   const onSubmit = async (data) => {
     try {
       await createPunishment({
@@ -36,10 +39,10 @@ export default function WarnModal({ user, onClose, roleType="default" }) {
         duration: null
       });
 
-      console.log("Punishment created:", data);
+      showToast("User Warned");
       onClose();
     } catch (err) {
-      console.error("Error creating punishment:", err);
+      showToast("Error creating punishment:", err);
     }
   };
 

@@ -46,10 +46,8 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="min-h-screen bg-background w-full py-6 px-6">
-      <div className="w-full max-w-6xl mx-auto">
-        <PostForm onSubmit={handleCreatePost} topics={topics} />
-      </div>
+    <div className="max-w-4xl mx-auto">
+      <PostForm onSubmit={handleCreatePost} topics={topics} />
     </div>
   );
 }

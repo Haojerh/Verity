@@ -6,6 +6,7 @@ export default function ProfileHeader({
   isOwnProfile = false,
   isFollowed = false,
   onFollowToggle,
+  followers
 }) {
   if (!user) return null;
 
@@ -18,7 +19,7 @@ export default function ProfileHeader({
             <h2 className="text-xl font-bold text-center sm:text-left">{user.name}</h2>
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-center sm:text-left mt-4">
-                <ProfileStats user={user} />
+                <ProfileStats user={user} followers={followers} />
                 {!isOwnProfile && (
                 <button
                     onClick={onFollowToggle}

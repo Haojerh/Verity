@@ -15,6 +15,7 @@ import com.Verity.DTO.UserRequest;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Exceptions.ApiException;
 import com.Verity.Repo.UserRepo;
+import com.Verity.Utils.FileUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +26,7 @@ public class UserServices {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final PunishmentLogService punishmentLogService;
+    private final String uploadDir = System.getProperty("user.dir") + "/uploads/users/";
 
     public void createUser(UserRequest userRequest) {
         UserEntity userEntity = new UserEntity();
@@ -39,10 +41,12 @@ public class UserServices {
         userRepo.save(userEntity);
     }
 
-    public void deleteUser (UserRequest userRequest){
-        UserEntity userEntity = getUserByEmail(userRequest.getEmail());
-        userEntity.setSYSISDELETED(true);
-        userRepo.save(userEntity);
+    public void deleteUser (String email) {
+        UserEntity user = userRepo.findUserByEmail(email)
+            .orElseThrow(() -> new ApiException("User not found"));
+
+        user.setSYSISDELETED(true);
+        userRepo.save(user);
     }
 
     public List<UserDTO> getAllUsers() {
@@ -119,11 +123,57 @@ public class UserServices {
 
     public void updateUser(String email, UserRequest req) {
         UserEntity user = userRepo.findUserByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ApiException("User not found"));
+
+        // Only check for duplicate email if the email is actually changing
+        if (!user.getEmail().equals(req.getEmail())) {
+            boolean emailExists = userRepo.findUserByEmail(req.getEmail()).isPresent();
+            if (emailExists) {
+                throw new ApiException("Email already in use");
+            }
+        }
 
         user.setName(req.getName());
         user.setEmail(req.getEmail());
         userRepo.save(user);
+    }
+
+    public void updateAvatar(String email, UserRequest request) {
+        UserEntity user = userRepo.findUserByEmail(email)
+                .orElseThrow(() -> new ApiException("User not found"));
+
+        try {
+            if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
+                String oldAvatar = user.getAvatar();
+                
+                // Save new file first
+                String filename = FileUtil.saveFile(request.getAvatar(), uploadDir, "AVT");
+                
+                // Update user with new avatar
+                user.setAvatar(filename);
+                userRepo.save(user);
+
+                // Delete old file after successful save
+                if (oldAvatar != null && !oldAvatar.isBlank()) {
+                    FileUtil.deleteFile(uploadDir, oldAvatar);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new ApiException("Failed to upload avatar: " + e.getMessage());
+        }
+    }
+
+    public UserDTO getUserByIdDTO(String id) {
+        UserEntity user = getUserByID(id);
+
+        UserDTO dto = new UserDTO();
+        BeanUtils.copyProperties(user, dto);
+
+        dto.setBanned(punishmentLogService.isUserPunished(user.getUserID(), "BAN"));
+        dto.setMuted(punishmentLogService.isUserPunished(user.getUserID(), "MUTE"));
+
+        return dto;
     }
 
     public UserEntity getUserByEmail(String email){
@@ -145,6 +195,9 @@ public class UserServices {
         }
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(userEntity, userDTO);
+
+        userDTO.setBanned(punishmentLogService.isUserPunished(userEntity.getUserID(), "BAN"));
+        userDTO.setMuted(punishmentLogService.isUserPunished(userEntity.getUserID(), "MUTE"));
         return userDTO;
     }
 
@@ -153,6 +206,6 @@ public class UserServices {
         String email = authentication.getName();
 
         return userRepo.findUserByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ApiException("User not found"));
     }
 }

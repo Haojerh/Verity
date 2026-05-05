@@ -1,4 +1,4 @@
-import { request } from './Request';
+import { request } from './request';
 
 export const getFavorites = async () => {
     return await request('GET', '/api/favorites'); 

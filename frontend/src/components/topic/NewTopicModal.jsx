@@ -10,19 +10,22 @@ import { createTopic } from "../../services/TopicService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { topicSchema } from "../../utils/Schema";
+import { useToast } from "../../context/ToastContext";
 
 export default function NewTopicModal({ onClose, setTopics }) {
   const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors, isSubmitting }
-  } = useForm({
-    resolver: zodResolver(topicSchema),
-    mode: "onChange",
-    reValidateMode: "onChange"
-});
+      register,
+      handleSubmit,
+      setValue,
+      watch,
+      formState: { errors, isSubmitting }
+    } = useForm({
+      resolver: zodResolver(topicSchema),
+      mode: "onChange",
+      reValidateMode: "onChange"
+  });
+
+  const { showToast } = useToast();
 
   const onSubmit = async (data) => {
     try {
@@ -33,8 +36,9 @@ export default function NewTopicModal({ onClose, setTopics }) {
         ...prev,
         { topicID: data.topicID, name: data.name, description: data.description, avatar: URL.createObjectURL(data.avatar), banner: URL.createObjectURL(data.banner) }
       ]);
+      showToast("Topic Added");
     } catch (err) {
-      console.error("Error creating topic:", err);
+      showToast("Error creating topic:", err);
     }
   };
 

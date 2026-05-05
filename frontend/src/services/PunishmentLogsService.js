@@ -1,4 +1,4 @@
-import { request } from './Request';
+import { request } from './request';
 
 export const getLogs = async (userID) => {
     return await request('GET', `/api/users/logs/${userID}`);

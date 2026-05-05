@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AuthCard from "../components/auth/AuthCard";
 import TextBox from "../components/ui/TextBox";
 import { loginSchema } from "../utils/Schema";
-import { loginUser } from "../services/Auth"
+import { loginUser } from "../services/auth"
 import LoginModal from "../components/auth/LoginModal";
 import PasswordBox from "../components/ui/PasswordBox";
 

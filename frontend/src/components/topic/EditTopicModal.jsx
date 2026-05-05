@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { topicSchema } from "../../utils/Schema";
 import { createTopic, updateTopic } from "../../services/TopicService";
+import { useToast } from "../../context/ToastContext";
 
 export default function EditTopicModal({ topic, onClose, setTopics }) {
   const {
@@ -29,6 +30,8 @@ export default function EditTopicModal({ topic, onClose, setTopics }) {
       banner: null
     }
   });
+
+  const { showToast } = useToast();
 
   const onSubmit = async (data) => {
     try {
@@ -50,8 +53,9 @@ export default function EditTopicModal({ topic, onClose, setTopics }) {
             : t
         )
       );
+      showToast("Topic Updated");
     } catch (err) {
-      console.error("Update failed:", err);
+      showToast("Update failed:", err);
     }
   };
   

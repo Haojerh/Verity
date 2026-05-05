@@ -5,8 +5,11 @@ import ModalFooter from "../ui/ModalFooter";
 import ModalHeader from "../ui/ModalHeader";
 import { Trash2 } from "lucide-react";
 import { deleteTopic } from "../../services/TopicService";
+import { useToast } from "../../context/ToastContext";
 
 export default function DeleteTopicModal({ topic, onClose, setTopics }) {
+  const { showToast } = useToast();
+
   const handleDelete = async () => {
     try {
       await deleteTopic(topic.topicID);
@@ -15,9 +18,10 @@ export default function DeleteTopicModal({ topic, onClose, setTopics }) {
         prev.filter((t) => t.topicID !== topic.topicID)
       );
 
+      showToast("Topic Deleted");
       onClose();
     } catch (err) {
-      console.error("Delete failed:", err);
+      showToast("Delete failed:", err);
     }
   };
 

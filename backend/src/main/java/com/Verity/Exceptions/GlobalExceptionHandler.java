@@ -20,4 +20,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(RequestUtils.getResponse(request, null, ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Response> handleRuntimeException(
+            RuntimeException ex,
+            HttpServletRequest request) {
+        return ResponseEntity.internalServerError()
+                .body(RequestUtils.getResponse(request, null, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+    }
 }
+

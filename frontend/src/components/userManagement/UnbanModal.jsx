@@ -4,23 +4,34 @@ import ConfirmDisplay from "../ui/ConfirmDisplay";
 import ModalFooter from "../ui/ModalFooter";
 import ModalHeader from "../ui/ModalHeader";
 import { unbanUser } from "../../services/PunishmentLogsService";
+import { useToast } from "../../context/ToastContext";
 
-export default function UnbanModal({ user, onClose, setUserData }) {
+export default function UnbanModal({ user, onClose, setUserData, isProfile=false }) {
+  const { showToast } = useToast();
+
   const onSubmit = async () => {
     try {
       await unbanUser(user.userID);
 
-      setUserData((prev) =>
-        prev.map((u) =>
-          u.userID === user.userID
-            ? { ...u, banned: false }
-            : u
-        )
-      );
+      if (isProfile) {
+        setUserData((prev) => ({
+          ...prev,
+          banned: false,
+        }));
+      } else {
+        setUserData((prev) =>
+          prev.map((u) =>
+            u.userID === user.userID
+              ? { ...u, banned: false }
+              : u
+          )
+        );
+      }
 
+      showToast("User Unbanned");
       onClose();
     } catch (err) {
-      console.error("Error unbanning user:", err);
+      showToast("Error unbanning user:", err);
     }
   };
 

@@ -1,24 +1,37 @@
 import { useRef } from "react";
 import { Camera } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 import Avatar from "../ui/Avatar";
+import { updateAvatar } from "../../services/UserService";
 
 export default function SettingAvatar({}) {
   const fileInputRef = useRef(null);
   const { user, setUser } = useAuth();
+  const { showToast } = useToast();
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // preview instantly
     const reader = new FileReader();
     reader.onloadend = () => {
-      setProfile((prev) => ({
+      setUser((prev) => ({
         ...prev,
         avatar: reader.result,
       }));
     };
     reader.readAsDataURL(file);
+
+    // upload to backend immediately
+    try {
+      await updateAvatar(file);
+      showToast("Avatar Updated Successful")
+    } catch (err) {
+      console.error("Avatar upload failed", err);
+      showToast(err.response?.data?.message || "Update failed");
+    }
   };
 
   return (

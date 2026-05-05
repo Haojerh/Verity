@@ -32,6 +32,8 @@ public class UserDTO {
 
     private String name;
 
+    private String avatar;
+
     private boolean banned;
     
     private boolean muted;

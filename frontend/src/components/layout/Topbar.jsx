@@ -22,7 +22,13 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
     const fetchUser = async () => {
       try {
         const res = await getCurrentUser();
-        setUser(res.user);
+        const user = res.user;
+        setUser({
+          ...user,
+          avatar: user.avatar
+            ? `http://localhost:8080/api/uploads/users/${user.avatar}`
+            : null,
+        });
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -145,7 +151,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
           {/* Profile */}
           <div className="relative">
             <button onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-              <Avatar name={user?.name} />
+              <Avatar name={user?.name} imageUrl={user?.avatar} />
             </button>
             {profileMenuOpen && (
               <ProfileDropdown 

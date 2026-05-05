@@ -2,6 +2,8 @@ package com.Verity.DTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.Verity.Entity.UserFavTopicEntity;
 import com.Verity.Entity.UserNotiEntity;
 
@@ -30,6 +32,8 @@ public class UserRequest {
     private String userRole;
 
     private String name;
+
+    private MultipartFile avatar; 
 
     private List<UserNotiEntity> userNotiEntityList;
 

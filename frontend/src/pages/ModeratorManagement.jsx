@@ -22,7 +22,15 @@ export default function ModeratorManagement() {
     const fetchModerators = async () => {
       try {
         const res = await getModerators();
-        setModeratorData(res.moderators);
+
+        const formattedModerators = res.moderators.map((mod) => ({
+          ...mod,
+          avatar: mod.avatar
+            ? `http://localhost:8080/api/uploads/users/${mod.avatar}`
+            : null,
+        }));
+
+        setModeratorData(formattedModerators);
         setCurrentPage(1);
       } catch (error) {
         console.error("Error fetching moderators:", error);

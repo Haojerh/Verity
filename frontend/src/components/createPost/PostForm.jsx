@@ -1,9 +1,10 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextBox from "../ui/TextBox";
 import SelectBox from "../ui/SelectBox";
 import ImageUpload from "../ui/ImageUpload";
 import { postSchema } from "../../utils/Schema";
+import Header from "../ui/Header";
 
 export default function CreatePostPage({ onSubmit, topics }) {
   const { 
@@ -28,13 +29,13 @@ export default function CreatePostPage({ onSubmit, topics }) {
   }));
 
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Create New Post</h1>
-        <p className="text-muted-foreground">Start a new discussion in the Verity community.</p>
-      </div>
+    <div>
+      <Header
+        title="Create New Post"
+        desc="Start a new discussion in the Verity community."
+      />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-card p-8 rounded-xl border border-border shadow-dark-md">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-card p-8 rounded-xl border border-border shadow-md dark:shadow-dark-md">
         <TextBox 
           label="Title" 
           {...register("title")} 
@@ -80,9 +81,9 @@ export default function CreatePostPage({ onSubmit, topics }) {
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full bg-primary text-primary-foreground py-4 rounded-lg hover:bg-secondary transition-all disabled:opacity-50 font-bold tracking-wide shadow-lg"
+            className="w-full bg-primary text-white py-4 rounded-lg hover:bg-secondary transition-all disabled:opacity-50 font-bold tracking-wide shadow-lg"
           >
-            {isSubmitting ? "POSTING..." : "CREATE POST"}
+            {isSubmitting ? "Posting..." : "Create Post"}
           </button>
         </div>
       </form>
