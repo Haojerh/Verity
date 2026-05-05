@@ -41,7 +41,6 @@ export default function VotingSection({ post, userSide, handleSelectSide }) {
         >
           <div className="text-center space-y-1">
             <div className="text-xs text-muted-foreground">Choose Side:</div>
-            {/* <div className="mb-1">Team {post.prosLabel}</div> */}
             <div className="mb-1">Team {proLabel}</div>
           </div>
         </button>
@@ -82,8 +81,8 @@ export default function VotingSection({ post, userSide, handleSelectSide }) {
       </div>
 
       <div className="flex justify-between text-sm text-muted-foreground">
-        <span>Team {post.prosLabel}: {post.statistics.prosVotes} votes</span>
-        <span>Team {post.consLabel}: {post.statistics.consVotes} votes</span>
+        <span>Team {proLabel}: {post.statistics.prosVotes} votes</span>
+        <span>Team {conLabel}: {post.statistics.consVotes} votes</span>
       </div>
     </section>
   );
