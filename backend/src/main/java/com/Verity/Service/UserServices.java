@@ -105,6 +105,27 @@ public class UserServices {
             .toList();
     }
 
+    public void changePassword(String email, String currentPassword, String newPassword) {
+        var user = userRepo.findUserByEmail(email)
+                .orElseThrow(() -> new ApiException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new ApiException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+    }
+
+    public void updateUser(String email, UserRequest req) {
+        UserEntity user = userRepo.findUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setName(req.getName());
+        user.setEmail(req.getEmail());
+        userRepo.save(user);
+    }
+
     public UserEntity getUserByEmail(String email){
         return userRepo.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Error - User not found."));
     }

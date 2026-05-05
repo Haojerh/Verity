@@ -1,25 +1,52 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { personalInfoSchema } from "../../utils/Schema";
 import { Save } from "lucide-react";
 import TextBox from "../ui/TextBox";
+import { updateProfile } from "../../services/userService";
+import { useToast } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function PersonalInfoForm({ user }) {
+  const { showToast } = useToast();
+  const { setUser } = useAuth();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
-      name: user.name,
-      email: user.email,
+      name: "",
+      email: "",
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name,
+        email: user.email,
+      });
+    }
+  }, [user, reset]);
+
   const onSubmit = async (data) => {
-    console.log("Update profile:", data);
-    // call API here
+    try {
+      await updateProfile(data);
+      setUser((prev) => ({
+        ...prev,
+        name: data.name,
+        email: data.email,
+      }));
+      showToast("Personal Info Updated Successfully");
+    } catch (err) {
+      console.error(err);
+      showToast(err.response?.data?.message || "Update failed");
+    }
   };
 
   return (

@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordSchema } from "../../utils/Schema";
 import PasswordBox from "../ui/PasswordBox";
 import { Save } from "lucide-react";
+import { changePassword } from "../../services/userService";
+import { useToast } from "../../context/ToastContext";
 
 export default function PasswordForm() {
   const {
@@ -13,9 +15,19 @@ export default function PasswordForm() {
     resolver: zodResolver(passwordSchema),
   });
 
+  const { showToast } = useToast();
+
   const onSubmit = async (data) => {
-    console.log("Change password:", data);
-    // call API
+    try {
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.password,
+      });
+
+      showToast("Password Changed");
+    } catch (err) {
+      showToast(err.response?.data?.message || "Failed to change password");
+    }
   };
 
   return (
