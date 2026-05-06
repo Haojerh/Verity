@@ -7,6 +7,7 @@ import { loginSchema } from "../utils/Schema";
 import { loginUser } from "../services/auth"
 import LoginModal from "../components/auth/LoginModal";
 import PasswordBox from "../components/ui/PasswordBox";
+import { useToast } from "../context/ToastContext";
 
 export default function Login() {
   const {
@@ -17,6 +18,8 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
     mode: "onChange",
   });
+
+  const { showToast } = useToast();
 
   const [modal, setModal] = useState({
     open: false,
@@ -35,8 +38,9 @@ export default function Login() {
       }
 
       window.location.href = "/";
-    } catch (error) {
-      console.error("Login failed:", error);
+    } catch (err) {
+      console.error("Login failed:", err);
+      showToast("Failed to login");
     }
   };
 

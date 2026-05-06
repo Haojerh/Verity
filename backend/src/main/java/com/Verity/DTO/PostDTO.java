@@ -1,10 +1,10 @@
 package com.Verity.DTO;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -21,5 +21,6 @@ public class PostDTO {
     private String topicID;
     private String authorID;
     private String authorName;
+    private String authorAvatar;
     private PostStanceDTO statistics;
 }

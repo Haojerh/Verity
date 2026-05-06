@@ -1,7 +1,4 @@
-import axios from "axios";
 import { request } from './request';
-
-const API_URL = "http://localhost:8080/api/topics";
 
 export const createTopic = async (formData) => {
   const form = new FormData();

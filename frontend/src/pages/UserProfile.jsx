@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileTabs from "../components/profile/ProfileTabs";
 import PunishButtons from "../components/profile/PunishButtons";
@@ -11,12 +11,15 @@ import MuteModal from "../components/userManagement/MuteModal";
 import UnmuteModal from "../components/userManagement/UnmuteModal";
 import { useAuth } from "../context/AuthContext";
 import { toggleFollow, getFollowStatus, getFollowerCount } from "../services/FollowService.js";
+import { getUserPosts } from "../services/PostService.js";
 
 export default function UserProfile() {
   const { id } = useParams();
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const [profileUser, setProfileUser] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [isFollowed, setIsFollowed] = useState(false);
   const [followers, setFollowers] = useState(0);
   const [activeTab, setActiveTab] = useState("posts");
@@ -24,6 +27,12 @@ export default function UserProfile() {
     type: null,
     user: null,
   });
+
+  useEffect(() => {
+    if (currentUser?.userID === id) {
+      navigate("/profile");
+    }
+  }, [currentUser, id, navigate]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -64,6 +73,19 @@ export default function UserProfile() {
     if (id) fetchFollowStatus();
   }, [id]);
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await getUserPosts(id);
+        setPosts(res.posts);
+      } catch (err) {
+        console.error("Failed to fetch posts", err);
+      }
+    };
+
+    if (id) fetchPosts();
+  }, [id]);
+
   const handleFollowToggle = async () => {
     try {
         await toggleFollow(profileUser.userID);
@@ -83,7 +105,6 @@ export default function UserProfile() {
     setModal({ user: null, type: null });
   }, []);
 
-  const mockPosts = [];
   const mockSaved = [];
 
   if (!profileUser) {
@@ -91,6 +112,7 @@ export default function UserProfile() {
   }
 
   const isModerator = currentUser?.userRole?.toUpperCase() === "MODERATOR";
+  const isAdmin = currentUser?.userRole?.toUpperCase() === "ADMINISTRATOR";
   const isOwnProfile = currentUser?.userID === profileUser?.userID;
 
   return (
@@ -103,16 +125,16 @@ export default function UserProfile() {
         followers={followers}
       />
 
-      {isModerator && !isOwnProfile && (
+      {(isModerator || isAdmin) && !isOwnProfile && (
         <PunishButtons user={profileUser} openModal={openModal} />
       )}
 
       <ProfileTabs
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        posts={mockPosts}
+        posts={posts}
         saved={mockSaved}
-        hasSaved={isOwnProfile}
+        hasFollowed={isOwnProfile}
       />
 
       {/* MODALS */}

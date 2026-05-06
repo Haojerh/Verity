@@ -1,6 +1,34 @@
 package com.Verity.Controller;
 
-import com.Verity.DTO.*;
+import java.io.IOException;
+import java.net.URI;
+import static java.util.Collections.emptyMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.Verity.DTO.CommentDTO;
+import com.Verity.DTO.CommentRequest;
+import com.Verity.DTO.PostDTO;
+import com.Verity.DTO.PostRequest;
+import com.Verity.DTO.PostStanceDTO;
+import com.Verity.DTO.PostStanceRequest;
 import com.Verity.Domain.Response;
 import com.Verity.Entity.PostEntity;
 import com.Verity.Entity.PostStanceEntity;
@@ -12,23 +40,11 @@ import com.Verity.Security.Utils.UserPrincipal;
 import com.Verity.Service.CommentService;
 import com.Verity.Service.PostService;
 import com.Verity.Service.PostStanceLabelService;
+import static com.Verity.Utils.RequestUtils.getResponse;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.CREATED;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-
-import static com.Verity.Utils.RequestUtils.getResponse;
 
 @RestController
 @RequestMapping("api/posts")
@@ -111,5 +127,17 @@ public class PostController {
     ) {
         postService.saveOrUpdateStance(postID, request);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/takedown/{id}")
+    public ResponseEntity<Response> takedownComment(@PathVariable String id, HttpServletRequest request) {
+        postService.takedownPost(id);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "Post taken down", OK));
+    }
+
+    @GetMapping("/user/{userID}")
+    public ResponseEntity<Response> getPostByuserID(@PathVariable String userID, HttpServletRequest request) {
+        List<PostDTO> posts = postService.getPostsByUserID(userID);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("posts", posts), "Post retrieved", OK));
     }
 }

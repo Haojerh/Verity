@@ -1,58 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "../components/ui/Pagination";
 import Header from "../components/ui/Header";
 import ReportTable from "../components/report/ReportTable";
 import SearchBar from "../components/ui/SearchBar";
 import FilterBar from "../components/ui/FilterBar";
-
-const mockReports = [
-  {
-    reportID: 1,
-    type: "post",
-    reportedBy: "john_doe",
-    datetime: "2026-05-01 10:15 AM",
-    reason: "Spam content in post",
-    target_id: 10
-  },
-  {
-    reportID: 2,
-    type: "comment",
-    reportedBy: "alice_wong",
-    datetime: "2026-05-02 02:30 PM",
-    reason: "Offensive language",
-    target_id: 8
-    
-  },
-  {
-    reportID: 3,
-    type: "post",
-    reportedBy: "michael_lee",
-    datetime: "2026-05-02 05:45 PM",
-    reason: "Fake news / misinformation",
-    target_id: 6
-  },
-  {
-    reportID: 4,
-    type: "comment",
-    reportedBy: "siti_rahman",
-    datetime: "2026-05-03 09:10",
-    reason: "Harassment",
-    target_id: 20
-  }
-];
+import { getAllReports } from "../services/ReportService";
 
 export default function ManageReport() {
   // state
-  const [reportData] = useState(mockReports);
+  const [reportData, setReportData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
 
-
   const filters = ["All", "Post", "Comment"];
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const res = await getAllReports();
+        setReportData(res.reports); 
+      } catch (err) {
+        console.error("Failed to fetch reports:", err);
+      }
+    };
+
+    fetchReports();
+  }, []);
+
   const filteredReports = reportData.filter((report) => {
     const matchSearch =
-      report.reportedBy.toLowerCase().includes(search.toLowerCase()) ||
+      report.reporterName.toLowerCase().includes(search.toLowerCase()) ||
       report.reason.toLowerCase().includes(search.toLowerCase());
 
     const matchFilter =

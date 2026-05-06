@@ -1,26 +1,31 @@
 package com.Verity.Service;
 
-import com.Verity.DTO.CommentDTO;
-import com.Verity.DTO.CommentRequest;
-import com.Verity.Entity.CommentEntity;
-import com.Verity.Entity.PostEntity;
-import com.Verity.Entity.UserEntity;
-import com.Verity.Repo.CommentRepo;
-import com.Verity.Repo.PostRepo;
-import com.Verity.Repo.UserRepo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
+import com.Verity.DTO.CommentDTO;
+import com.Verity.DTO.CommentRequest;
+import com.Verity.Entity.CommentEntity;
+import com.Verity.Entity.PostEntity;
+import com.Verity.Entity.ReportEntity;
+import com.Verity.Entity.UserEntity;
+import com.Verity.Repo.CommentRepo;
+import com.Verity.Repo.PostRepo;
+import com.Verity.Repo.ReportRepo;
+import com.Verity.Repo.UserRepo;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepo commentRepo;
+    private final ReportRepo reportRepo;
     private final PostRepo postRepo;
     private final UserRepo userRepo;
 
@@ -78,12 +83,62 @@ public class CommentService {
         return rootComments;
     }
 
+    public CommentDTO getCommentByID(String id) {
+        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        CommentDTO dto = new CommentDTO();
+        dto.setId(comment.getCommentID());
+        dto.setText(comment.getText());
+        dto.setSide(comment.getSide());
+        dto.setPostID(comment.getPost() != null ? comment.getPost().getPostID() : null);
+        dto.setParentId(comment.getParentComment() != null ? comment.getParentComment().getCommentID() : null);
+        dto.setSYSCREATEDDATE(comment.getSYSCREATEDDATE());
+
+        if (comment.getAuthor() != null) {
+            dto.setUser(comment.getAuthor().getName());
+            dto.setUserAvatar(comment.getAuthor().getAvatar());
+            dto.setAuthorID(comment.getAuthor().getUserID());
+        }
+
+        return dto;
+    }
+
+    public void takedownComment(String id) {
+        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
+            .orElseThrow(() -> new RuntimeException("Comment not found"));
+        comment.setSYSISDELETED(true);
+        commentRepo.save(comment);
+
+        deleteCommentTree(comment);
+
+        List<ReportEntity> reports = reportRepo.findByTargetComment_CommentIDAndSYSISDELETEDFalse(id);
+
+        for (ReportEntity report : reports) {
+            report.setSYSISDELETED(true);
+        }
+
+        reportRepo.saveAll(reports);
+    }
+
+    private void deleteCommentTree(CommentEntity comment) {
+        comment.setSYSISDELETED(true);
+        commentRepo.save(comment);
+
+        if (comment.getReplies() != null) {
+            for (CommentEntity reply : comment.getReplies()) {
+                deleteCommentTree(reply);
+            }
+        }
+    }
+
     private CommentDTO mapToDTO(CommentEntity entity) {
         CommentDTO dto = new CommentDTO();
         dto.setId(entity.getCommentID());
         dto.setText(entity.getText());
         dto.setSide(entity.getSide());
         dto.setUser(entity.getAuthor() != null ? entity.getAuthor().getName() : null);
+        dto.setUserAvatar(entity.getAuthor() != null ? entity.getAuthor().getAvatar() : null);
         dto.setAuthorID(entity.getAuthor() != null ? entity.getAuthor().getUserID() : null);
         dto.setPostID(entity.getPost() != null ? entity.getPost().getPostID() : null);
         dto.setParentId(entity.getParentComment() != null ? entity.getParentComment().getCommentID() : null);

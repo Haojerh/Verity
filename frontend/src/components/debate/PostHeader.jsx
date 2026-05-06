@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Avatar from "../ui/Avatar";
-import { Bookmark, Flag, LucideShare, MoreVertical } from "lucide-react";
+import { Flag, LucideShare, MoreVertical } from "lucide-react";
 import DebateImages from "../ui/DebateImages";
 import ImageModal from "../ui/ImageModal";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function PostHeader({ 
   post, 
@@ -11,8 +13,12 @@ export default function PostHeader({
   openFullscreenImage,
   closeFullscreenImage
 }) {
+  const navigate = useNavigate();
+  const { user: authUser } = useAuth();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const { 
+    authorID,
     author, 
     content, 
     images, 
@@ -21,6 +27,9 @@ export default function PostHeader({
     title,
     authorImageUrl
   } = post;
+
+  const isModerator = authUser?.userRole?.toUpperCase() === "MODERATOR";
+  const isAdmin = authUser?.userRole?.toUpperCase() === "ADMINISTRATOR";
   
   return (
     <section className="space-y-3 mb-10">
@@ -42,18 +51,17 @@ export default function PostHeader({
           </button>
           {menuOpen && (
             <div className="absolute right-0 top-8 mt-2 w-40 bg-background border rounded-lg shadow-lg dark:shadow-dark-lg">
-              <button className="flex gap-2 p-3 w-full hover:bg-muted/50 items-center">
-                <Bookmark className="w-4 h-4"/> Save
-              </button>
               <button 
                 onClick={() => openModal("share", post)}
                 className="flex gap-2 p-3 w-full hover:bg-muted/50 items-center">
                 <LucideShare className="w-4 h-4"/> Share
               </button>
               <button 
-                onClick={() => openModal("postReport", post)}
-                className="flex gap-2 p-3 w-full text-destructive hover:bg-muted/50 items-center">
-                <Flag className="w-4 h-4"/> Report
+                onClick={() => openModal((isModerator || isAdmin) ? "postTakedown" : "postReport", post)}
+                className="flex gap-2 p-3 w-full text-destructive hover:bg-muted/50 items-center"
+              >
+                <Flag className="w-4 h-4"/> 
+                {(isModerator || isAdmin) ? "Takedown" : "Report"}
               </button>
             </div>
           )}
@@ -65,7 +73,9 @@ export default function PostHeader({
       </h1>
 
       <div className="space-y-2 pt-4">
-        <div className="flex gap-2 items-center text-xs">
+        <div 
+        onClick={() => navigate(`/profile/${authorID}`)}
+        className="flex gap-2 items-center text-xs cursor-pointer w-fit">
           <Avatar name={author} size="sm" imageUrl={authorImageUrl} />
           <span className="text-xs font-bold text-secondary uppercase tracking-tighter">
             @{author}

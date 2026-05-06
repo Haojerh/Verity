@@ -4,38 +4,44 @@ import { Flag } from "lucide-react";
 import Avatar from "../components/ui/Avatar";
 import { useAuth } from "../context/AuthContext";
 import TakedownModal from "../components/debate/TakedownModal";
+import { getCommentByID } from "../services/CommentService.js";
+import { formatDateTime } from "../utils/Format.js";
 
 export default function CommentPage() {
   const { id } = useParams();
   const { user } = useAuth();
 
-  const [comment, setComment] = useState(null);
+  const [comment, setComment] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
+    const fetchComment = async () => {
+      try {
+        setLoading(true);
+        const res = await getCommentByID(id);
+        console.log(res);
+        setComment(res.comment);
+      } catch (err) {
+        console.error("Failed to fetch comment:", err);
+        setComment(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setTimeout(() => {
-      const mock = {
-        id,
-        user: "john_doe",
-        side: "pros",
-        text: "This is a standalone comment page view loaded by ID.",
-        createdAt: "2026-05-06 10:15"
-      };
-
-      setComment(mock);
-      setLoading(false);
-    }, 300);
+    fetchComment();
   }, [id]);
+
+  console.log(comment);
 
   if (loading) return <div className="p-6 text-center">Loading comment...</div>;
 
-  if (!comment) return <div className="p-6 text-center text-destructive">Comment not found</div>;
+  if (!comment) return <div className="p-6 text-center">Comment not found</div>;
 
   const isModerator = user?.userRole?.toUpperCase() === "MODERATOR";
-  if (!isModerator) window.location.href = "/";
+  const isAdmin = user?.userRole?.toUpperCase() === "ADMINISTRATOR";
+  if (!isModerator && !isAdmin) window.location.href = "/";
 
   const isPros = comment.side === "pros";
 
@@ -49,13 +55,21 @@ export default function CommentPage() {
       >
         {/* Header */}
         <div className="flex items-center gap-3 mb-3">
-          <Avatar name={comment.user} size="sm" />
+          <Avatar
+            name={comment.user}
+            size="sm"
+            imageUrl={
+              comment.userAvatar
+                ? `http://localhost:8080/api/uploads/users/${comment.userAvatar}`
+                : null
+            }
+          /> 
           <div className="flex flex-col">
             <div className="flex flex-row gap-2 items-center">
                 <span className="font-medium">@{comment.user}</span>
-                <span className="text-muted-foreground/30 text-xs">•</span>
+                <span className="text-muted-foreground/30 text-xs pt-0.5">•</span>
                 <span
-                className={`text-xxs font-bold uppercase tracking-wider ${
+                className={`text-xxs font-bold uppercase tracking-wider pt-0.5 ${
                     isPros ? "text-primary" : "text-destructive"
                 }`}
                 >
@@ -64,7 +78,7 @@ export default function CommentPage() {
             </div>
 
             <p className="text-xs text-muted-foreground">
-              {comment.createdAt}
+              {formatDateTime(comment.SYSCREATEDDATE)}
             </p>
           </div>
         </div>
@@ -87,8 +101,10 @@ export default function CommentPage() {
 
       {modal &&
         <TakedownModal
-        comment={comment} 
+        entity={comment} 
+        type="comment"
         onClose={() => setModal(false)}
+        onSuccess={() => setComment(null)}
         />
       }
     </div>

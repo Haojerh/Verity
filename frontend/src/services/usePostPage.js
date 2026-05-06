@@ -140,6 +140,7 @@ export const usePostPage = (postID) => {
   return {
     post,
     comments,
+    setComments,
     commentText,
     totalComments,
     totalParticipants: stats.totalParticipants,

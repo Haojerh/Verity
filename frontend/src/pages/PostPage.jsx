@@ -9,17 +9,29 @@ import { usePostPage } from "../services/usePostPage";
 import { countAllComments } from "../services/CommentService";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
+import TakedownModal from "../components/debate/TakedownModal";
+import { useNavigate } from "react-router-dom";
 
 export default function PostPage() {
+  const navigate = useNavigate();
   const { id: postID } = useParams();
   const {
-    post, comments, commentText, totalComments, totalParticipants, setCommentText,
+    post, comments, setComments, commentText, totalComments, totalParticipants, setCommentText,
     userSide, userStanceLabel, activeTab, setActiveTab, modal, stats,
     handleStanceChange, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
 
   if (!post) return <div className="text-center py-10">Loading debate...</div>;
+
+  const removeCommentById = (list, id) => {
+    return list
+      .filter(c => c.id !== id)
+      .map(c => ({
+        ...c,
+        replies: c.replies ? removeCommentById(c.replies, id) : []
+      }));
+  };
 
   console.log("Post Data:", post);
 
@@ -67,7 +79,7 @@ export default function PostPage() {
       {/* Overlay */}
       {modal.type === "postReport" && (
         <ReportModal
-          post={modal.entity}
+          entity={modal.entity}
           type="postReport"
           onClose={closeModal}
         />
@@ -75,9 +87,31 @@ export default function PostPage() {
 
       {modal.type === "commentReport" && (
         <ReportModal
-          post={modal.entity}
+          entity={modal.entity}
           type="commentReport"
           onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "commentTakedown" && (
+        <TakedownModal
+          entity={modal.entity}
+          type="comment"
+          onClose={closeModal}
+          onSuccess={() => {
+            setComments(prev => removeCommentById(prev, modal.entity.id));
+          }}
+        />
+      )}
+
+      {modal.type === "postTakedown" && (
+        <TakedownModal
+          entity={modal.entity}
+          type="post"
+          onClose={closeModal}
+          onSuccess={() => {
+            navigate("/");
+          }}
         />
       )}
 

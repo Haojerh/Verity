@@ -1,19 +1,24 @@
 import Modal from "../ui/Modal";
-import ConfirmDisplay from "../ui/ConfirmDisplay";
 import ModalFooter from "../ui/ModalFooter";
 import { Ban } from "lucide-react";
 import ModalHeader from "../ui/ModalHeader";
-import { deleteAccount } from "../../services/UserService";
-import { logout } from "../../services/request";
 import { useToast } from "../../context/ToastContext";
+import { takedownComment, takedownPost } from "../../services/ReportService.js";
 
-export default function TakedownModal({ data, onClose }) {
+export default function TakedownModal({ entity, onClose, type, onSuccess }) {
   const { showToast } = useToast();
 
   const handleTakedown = async () => {
     try {
-      onClose();
+      if (type === "post") {
+        await takedownPost(entity.postID);
+      } else if (type === "comment") {
+        await takedownComment(entity.id);
+      }
+
       showToast("Takedown successfully");
+      onSuccess?.();
+      onClose();
     } catch (err) {
       console.error(err);
       showToast(err.response?.data?.message || "Takedown failed");
@@ -30,13 +35,14 @@ export default function TakedownModal({ data, onClose }) {
       />
 
       <div className="px-8 py-10 text-center text-2xl">
-        Are you sure to <span className="font-bold">takedown</span> the post/comment?
+        Are you sure to <span className="font-bold">takedown</span> the {type}?
       </div>
 
       <ModalFooter
         buttonText="Takedown"
         buttonColor="red"
         onClose={onClose}
+        onSubmit={handleTakedown}
       />
     </Modal>
   );
