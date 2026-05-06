@@ -7,21 +7,21 @@ import ReportModal from "../components/debate/ReportModal";
 import ShareModal from "../components/debate/ShareModal";
 import { usePostPage } from "../services/usePostPage";
 import { countAllComments } from "../services/CommentService";
-import { getCurrentUserID } from "../services/UserService";
+import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 
 export default function PostPage() {
   const { id: postID } = useParams();
   const {
     post, comments, commentText, totalComments, totalParticipants, setCommentText,
-    userSide, activeTab, setActiveTab, modal, stats,
+    userSide, userStanceLabel, activeTab, setActiveTab, modal, stats,
     handleStanceChange, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
 
-  console.log("PostID data:", post);
-
   if (!post) return <div className="text-center py-10">Loading debate...</div>;
+
+  console.log("Post Data:", post);
 
   return (
     <div className="max-w-4xl mx-auto w-full">
@@ -36,6 +36,7 @@ export default function PostPage() {
       <VotingSection 
         post={post} 
         userSide={userSide} 
+        userStanceLabel={userStanceLabel}
         handleStanceChange={handleStanceChange} 
         stats={stats}
       />

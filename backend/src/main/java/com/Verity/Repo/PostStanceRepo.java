@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface PostStanceRepo extends JpaRepository<PostStanceEntity, String> {
-    long countByPostIDAndChosenStance(PostEntity post, String stance);
+    long countByPostIDAndChosenStanceIgnoreCase(PostEntity post, String stance);
     Optional<PostStanceEntity> findByPostIDAndUser(PostEntity post, UserEntity user);
     @Query(value = """
         SELECT COUNT(DISTINCT uid) FROM (

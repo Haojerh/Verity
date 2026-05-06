@@ -27,7 +27,7 @@ export const getPostStats = (postID) => {
 export const updatePostStance = (postID, userID, stance) => {
     return request(Http.POST, `/api/posts/${postID}/stance`, {
         userID: userID,
-        chosenStance: stance
+        chosenStance: stance.toUpperCase(),
     });
 };
 

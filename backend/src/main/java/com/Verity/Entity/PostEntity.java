@@ -15,8 +15,8 @@ public class PostEntity extends Auditable {
     private String postID;
     private String title;
     private String description;
-    private String proLabel = "Pro";
-    private String conLabel = "Con";
+    private String proLabel;
+    private String conLabel;
     private String imagePath;
 
     @ManyToOne(fetch = FetchType.LAZY)

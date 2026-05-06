@@ -12,6 +12,7 @@ import com.Verity.Repo.PostRepo;
 import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.TopicRepo;
 import com.Verity.Repo.UserRepo;
+import com.Verity.Service.PostStanceLabelService;
 import com.Verity.Utils.FileUtil; // Using the new utility
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class PostService {
     private final TopicRepo topicRepo;
     private final UserRepo userRepo;
     private final PostStanceRepo postStanceRepo;
+    private final PostStanceLabelService postStanceLabelService;
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/posts/";
 
     public PostDTO createPost(PostRequest request, MultipartFile image, String authorEmail) throws IOException {
@@ -73,8 +75,8 @@ public class PostService {
         PostEntity post = postRepo.findById(postID)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        long pros = postStanceRepo.countByPostIDAndChosenStance(post, "pros");
-        long cons = postStanceRepo.countByPostIDAndChosenStance(post, "cons");
+        long pros = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "PROS");
+        long cons = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "CONS");
         long participants = postStanceRepo.countUniqueParticipants(postID);
 
         return new PostStanceDTO(pros, cons, participants);
@@ -91,9 +93,11 @@ public class PostService {
         PostStanceEntity stance = postStanceRepo.findByPostIDAndUser(post, user)
                 .orElse(new PostStanceEntity());
 
+        String normalizedStance = postStanceLabelService.normalizeStance(request.getChosenStance());
+
         stance.setPostID(post);
         stance.setUser(user);
-        stance.setChosenStance(request.getChosenStance());
+        stance.setChosenStance(normalizedStance);
 
         postStanceRepo.save(stance);
     }
@@ -120,8 +124,8 @@ public class PostService {
             dto.setAuthorName(entity.getAuthor().getName());
         }
 
-        long pros = postStanceRepo.countByPostIDAndChosenStance(entity, "pros");
-        long cons = postStanceRepo.countByPostIDAndChosenStance(entity, "cons");
+        long pros = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(entity, "PROS");
+        long cons = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(entity, "CONS");
 
         dto.setStatistics(new PostStanceDTO(pros, cons, pros + cons));
 
