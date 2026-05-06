@@ -8,6 +8,8 @@ import com.Verity.Service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import static java.util.Collections.emptyMap;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.CREATED;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import static com.Verity.Utils.RequestUtils.getResponse;
@@ -82,3 +85,4 @@ public class PostController {
         List<PostDTO> posts = postService.getPostsByUserID(userID);
         return ResponseEntity.ok().body(getResponse(request, Map.of("posts", posts), "Post retrieved", OK));
     }
+}

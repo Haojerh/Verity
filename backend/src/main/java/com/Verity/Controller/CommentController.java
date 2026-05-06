@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static com.Verity.Constant.Constants.OK;
 import static com.Verity.Utils.RequestUtils.getResponse;
-import static org.springframework.http.HttpStatus.CREATED;package com.Verity.Controller;
+import static org.springframework.http.HttpStatus.CREATED;
 import static java.util.Collections.emptyMap;
 
 @RestController
