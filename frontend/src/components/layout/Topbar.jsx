@@ -7,7 +7,7 @@ import logoImageDark from "../../assets/VerityDark.svg";
 import Avatar from "../ui/Avatar";
 import ProfileDropdown from "../ui/ProfileDropdown";
 import { useAuth } from "../../context/AuthContext";
-import { getCurrentUser } from "../../services/userService";
+import { getCurrentUser } from "../../services/UserService";
 // import NotificationPanel from "../notification/NotificationPanel";
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
@@ -21,8 +21,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await getCurrentUser();
-        const user = res.user;
+        const user = await getCurrentUser();
         setUser({
           ...user,
           avatar: user.avatar

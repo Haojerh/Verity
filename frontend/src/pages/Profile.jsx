@@ -1,13 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileTabs from "../components/profile/ProfileTabs";
-import PunishButtons from "../components/profile/PunishButtons";
-import { getCurrentUser } from "../services/userService";
-import WarnModal from "../components/userManagement/WarnModal";
-import BanModal from "../components/userManagement/BanModal";
-import UnbanModal from "../components/userManagement/UnbanModal";
-import MuteModal from "../components/userManagement/MuteModal";
-import UnmuteModal from "../components/userManagement/UnmuteModal";
 import { useAuth } from "../context/AuthContext";
 import { getFollowerCount } from "../services/FollowService.js";
 

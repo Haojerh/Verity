@@ -29,6 +29,11 @@ public class UserServices {
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/users/";
 
     public void createUser(UserRequest userRequest) {
+        boolean emailExists = userRepo.findUserByEmail(userRequest.getEmail()).isPresent();
+        if (emailExists) {
+            throw new ApiException("Email already in use");
+        }
+
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userRequest, userEntity);
         userEntity.setPassword(passwordEncoder.encode(userRequest.getPassword()));

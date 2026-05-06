@@ -44,8 +44,9 @@ export default function Register() {
       await registerUser(data);
       showToast("Account created successfully!");
       window.location.href = "/login";
-    } catch (error) {
-      showToast("Registration error:", error);
+    } catch (err) {
+      console.log(err.response?.data?.message);
+      showToast(err.response?.data?.message || "Failed to register");
     }
   };
 
