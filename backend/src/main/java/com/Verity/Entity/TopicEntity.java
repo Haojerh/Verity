@@ -13,7 +13,7 @@ import net.bytebuddy.utility.RandomString;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "topic")
-public class TopicEntity extends Auditable{
+public class TopicEntity extends Auditable {
     @Id
     @Column(length = 20)
     private String topicID;

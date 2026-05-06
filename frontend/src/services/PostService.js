@@ -11,6 +11,10 @@ export const getPostById = async (postID) => {
   }
 };
 
+export const getUserPosts = async (userID) => {
+  return await request("GET", `/api/posts/user/${userID}`);
+};
+
 export const getAllPosts = async () => {
   try {
     return await request(Http.GET, "/api/posts");

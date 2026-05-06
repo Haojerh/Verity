@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Modal from "../ui/Modal";
 import SelectBox from "../ui/SelectBox";
 import DurationSelector from "../ui/DurationSelector";

@@ -1,7 +1,7 @@
-import { TrendingUp, MessageSquare, Share2 } from "lucide-react";
+import { TrendingUp, Users } from "lucide-react";
 
 export default function ActionBar({ debate }) {
-  const totalVotes = debate.prosVotes + debate.consVotes;
+  const totalVotes = debate.statistics.prosVotes + debate.statistics.consVotes;
 
   return (
     <div className="flex gap-4 text-sm text-muted-foreground mt-3">
@@ -12,19 +12,9 @@ export default function ActionBar({ debate }) {
       </div>
 
       <div className="flex items-center gap-1">
-        <MessageSquare className="w-4 h-4" />
-        <span>{debate.commentCount}</span>
+        <Users className="w-4 h-4" />
+        <span>{debate.statistics.totalParticipants}</span>
       </div>
-
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        className="flex items-center gap-1 hover:text-foreground"
-      >
-        <Share2 className="w-4 h-4" />
-        <span>Share</span>
-      </button>
     </div>
   );
 }

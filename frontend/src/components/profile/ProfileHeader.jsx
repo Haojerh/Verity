@@ -13,7 +13,15 @@ export default function ProfileHeader({
   return (
     <div className="mb-6">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-        <Avatar name={user.name} size="xl" imageUrl={user.avatar} />
+        <Avatar
+          name={user.name}
+          size="xl"
+          imageUrl={
+            user.avatar
+              ? `http://localhost:8080/api/uploads/users/${user.avatar}`
+              : null
+          }
+        />
 
         <div className="flex-1">
             <h2 className="text-xl font-bold text-center sm:text-left">{user.name}</h2>

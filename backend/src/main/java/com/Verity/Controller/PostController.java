@@ -71,4 +71,14 @@ public class PostController {
         return ResponseEntity.status(CREATED)
                 .body(getResponse(request, Map.of("comment", comment), "Comment posted successfully", CREATED));
     }
-}
+    @DeleteMapping("/takedown/{id}")
+    public ResponseEntity<Response> takedownComment(@PathVariable String id, HttpServletRequest request) {
+        postService.takedownPost(id);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "Post taken down", OK));
+    }
+
+    @GetMapping("/user/{userID}")
+    public ResponseEntity<Response> getPostByuserID(@PathVariable String userID, HttpServletRequest request) {
+        List<PostDTO> posts = postService.getPostsByUserID(userID);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("posts", posts), "Post retrieved", OK));
+    }

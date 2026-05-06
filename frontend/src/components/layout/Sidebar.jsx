@@ -76,7 +76,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           }`}
         >
           <Plus className="w-5 h-5" />
-          <span>Start A Discussion</span>
+          <span className="font-bold pb-0.5">Start A Discussion</span>
         </Link>
 
         <hr className="my-2 border-border" />

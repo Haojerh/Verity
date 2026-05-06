@@ -17,3 +17,7 @@ export const countAllComments = (comments) => {
     return acc + 1 + countAllComments(comment.replies);
   }, 0);
 };
+
+export const getCommentByID = (id) => {
+  return request("GET", `/api/comment/${id}`);
+};

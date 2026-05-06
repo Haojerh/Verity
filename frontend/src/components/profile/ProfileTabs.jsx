@@ -1,13 +1,13 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import DebateCard from "../homeDebate/DebateCard";
-import { Bookmark, FileText } from "lucide-react";
+import { ChartBarStacked, FileText, UserPlus } from "lucide-react";
 
 export default function ProfileTabs({
   activeTab,
   setActiveTab,
-  posts = [],
-  saved = [],
-  hasSaved = true
+  posts,
+  saved,
+  hasFollowed
 }) {
   return (
     <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
@@ -25,17 +25,31 @@ export default function ProfileTabs({
           Posts
         </Tabs.Trigger>
 
-        {hasSaved && (
+        {hasFollowed && (
           <Tabs.Trigger 
-            value="saved" 
+            value="topics" 
             className="flex items-center gap-2 px-4 py-3 border-b-2 transition-colors
             data-[state=active]:border-foreground 
             data-[state=inactive]:border-transparent 
             data-[state=inactive]:text-muted-foreground 
             hover:text-foreground"
           >
-            <Bookmark className="w-4 h-4" />
-            Saved
+            <ChartBarStacked className="w-4 h-4" />
+            Followed Topics
+          </Tabs.Trigger>
+        )}
+
+        {hasFollowed && (
+          <Tabs.Trigger 
+            value="users" 
+            className="flex items-center gap-2 px-4 py-3 border-b-2 transition-colors
+            data-[state=active]:border-foreground 
+            data-[state=inactive]:border-transparent 
+            data-[state=inactive]:text-muted-foreground 
+            hover:text-foreground"
+          >
+            <UserPlus className="w-4 h-4" />
+            Followed Topics
           </Tabs.Trigger>
         )}
       </Tabs.List>
@@ -43,7 +57,7 @@ export default function ProfileTabs({
       <Tabs.Content value="posts" className="space-y-4">
         {posts.length > 0 ? (
           posts.map((p) => (
-            <DebateCard key={p.id} debate={p} />
+            <DebateCard key={p.postID} debate={p} />
           ))
         ) : (
           <p className="text-sm text-muted-foreground text-center">
@@ -52,15 +66,29 @@ export default function ProfileTabs({
         )}
       </Tabs.Content>
 
-      {hasSaved && (
-        <Tabs.Content value="saved" className="space-y-4">
+      {hasFollowed && (
+        <Tabs.Content value="topics" className="space-y-4">
           {saved.length > 0 ? (
             saved.map((p) => (
               <DebateCard key={p.id} debate={p} />
             ))
           ) : (
             <p className="text-sm text-muted-foreground text-center">
-              No saved posts.
+              No followed topic post.
+            </p>
+          )}
+        </Tabs.Content>
+      )}
+
+      {hasFollowed && (
+        <Tabs.Content value="users" className="space-y-4">
+          {saved.length > 0 ? (
+            saved.map((p) => (
+              <DebateCard key={p.id} debate={p} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground text-center">
+              No followed user post.
             </p>
           )}
         </Tabs.Content>

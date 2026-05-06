@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUp, CornerUpLeft, Flag, MoreVertical } from "lucide-rea
 import Avatar from "../ui/Avatar";
 import { useState } from "react";
 import TextBox from "../ui/TextBox";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ThreadItem({ 
   comment, 
@@ -11,7 +12,8 @@ export default function ThreadItem({
   conLabel,
   onSubmitReply 
 }) {
-  const { id, side, user, text, replies = [] } = comment;
+  const { user: currentUser } = useAuth();
+  const { id, side, user, userAvatar, text, replies = [] } = comment;
   const isPros = side === 'pros';
   const hasReplies = replies.length > 0;
   
@@ -23,6 +25,9 @@ export default function ThreadItem({
 
   const isDeep = depth > 3;
   const marginClass = depth === 0 ? "mt-6" : isDeep ? "ml-2 mt-2" : "ml-4 md:ml-10 mt-2";
+
+  const isModerator = currentUser?.userRole?.toUpperCase() === "MODERATOR";
+  const isAdmin = currentUser?.userRole?.toUpperCase() === "ADMINISTRATOR";
 
   const handleVote = (type) => {
     if (vote === type) {
@@ -60,12 +65,20 @@ export default function ThreadItem({
         
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3 mb-3">
-            <Avatar name={user} size="sm" />
+            <Avatar
+              name={user}
+              size="sm"
+              imageUrl={
+                userAvatar
+                  ? `http://localhost:8080/api/uploads/users/${userAvatar}`
+                  : null
+              }
+            />            
             {/* Side-by-side Layout for Username and Stance */}
             <div className="flex items-center gap-2">
               <span className="font-medium text-sm text-foreground">@{user}</span>
-              <span className="text-muted-foreground/30 text-xs">•</span>
-              <span className={`text-xxs font-bold uppercase tracking-wider ${
+              <span className="text-muted-foreground/30 text-xs pt-0.5">•</span>
+              <span className={`text-xxs font-bold uppercase tracking-wider pt-0.5 ${
                 isPros ? 'text-primary' : 'text-destructive'
               }`}>
                 {isPros ? proLabel : conLabel}
@@ -84,10 +97,14 @@ export default function ThreadItem({
             {menuOpen && (
               <div className="absolute right-0 top-9 z-20 w-36 bg-popover border border-border rounded-md shadow-dark-lg">
                 <button 
-                  onClick={() => { openModal("commentReport", comment); setMenuOpen(false); }}
-                  className="flex gap-2 p-2.5 w-full text-sm font-medium text-destructive hover:bg-destructive/10 items-center transition-colors"
+                  onClick={() => { 
+                    openModal((isModerator || isAdmin) ? "commentTakedown" : "commentReport", comment); 
+                    setMenuOpen(false); 
+                  }}
+                  className="flex gap-2 p-2.5 w-full text-sm font-medium text-destructive hover:bg-muted/50 items-center transition-colors"
                 >
-                  <Flag className="w-3.5 h-3.5"/> Report
+                  <Flag className="w-3.5 h-3.5"/> 
+                    {(isModerator || isAdmin) ? "Takedown" : "Report"}
                 </button>
               </div>
             )}
