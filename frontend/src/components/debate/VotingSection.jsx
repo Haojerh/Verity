@@ -1,4 +1,4 @@
-export default function VotingSection({ post, userSide, handleStanceChange, stats}) {
+export default function VotingSection({ post, userSide, userStanceLabel, handleStanceChange, stats}) {
   const { proLabel, conLabel } = post; 
   const { prosVotes, consVotes } = stats;
 
@@ -50,6 +50,12 @@ export default function VotingSection({ post, userSide, handleStanceChange, stat
           </div>
         </button>
       </div>
+
+      {userSide && userStanceLabel && (
+        <div className="mb-4 text-sm text-muted-foreground">
+          You joined Team {userStanceLabel}.
+        </div>
+      )}
 
       <div className="flex items-center gap-2 mb-2">
         <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden flex">

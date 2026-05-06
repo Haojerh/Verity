@@ -11,6 +11,7 @@ import com.Verity.Repo.UserRepo;
 import com.Verity.Security.Utils.UserPrincipal;
 import com.Verity.Service.CommentService;
 import com.Verity.Service.PostService;
+import com.Verity.Service.PostStanceLabelService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ import static com.Verity.Utils.RequestUtils.getResponse;
 public class PostController {
     private final PostService postService;
     private final CommentService commentService;
+    private final PostStanceLabelService postStanceLabelService;
     private final PostRepo postRepo;
     private final UserRepo userRepo;
     private final PostStanceRepo postStanceRepo;
@@ -95,7 +97,11 @@ public class PostController {
         PostEntity post = postRepo.findById(postID).orElseThrow(() -> new RuntimeException("Post not found"));
         Optional<PostStanceEntity> stance = postStanceRepo.findByPostIDAndUser(post, user);
         String chosenStance = stance.map(PostStanceEntity::getChosenStance).orElse(null);
-        return ResponseEntity.ok(getResponse(request, Map.of("stance", chosenStance), "User stance retrieved", OK));
+        String stanceLabel = postStanceLabelService.resolveLabel(post, chosenStance);
+        return ResponseEntity.ok(getResponse(request, Map.of(
+                "stance", chosenStance,
+                "stanceLabel", stanceLabel
+        ), "User stance retrieved", OK));
     }
 
     @PostMapping("/{postID}/stance")
