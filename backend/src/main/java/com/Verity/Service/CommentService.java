@@ -7,6 +7,7 @@ import com.Verity.Entity.PostEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Repo.CommentRepo;
 import com.Verity.Repo.PostRepo;
+import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class CommentService {
     private final CommentRepo commentRepo;
     private final PostRepo postRepo;
     private final UserRepo userRepo;
+    private final PostStanceService postStanceService;
 
     public CommentDTO createComment(String postID, CommentRequest request, String authorEmail) {
         PostEntity post = postRepo.findById(postID)
@@ -82,7 +84,7 @@ public class CommentService {
         CommentDTO dto = new CommentDTO();
         dto.setId(entity.getCommentID());
         dto.setText(entity.getText());
-        dto.setSide(entity.getSide());
+        dto.setSide(postStanceService.resolveLabel(entity.getAuthor(), entity.getPost()));
         dto.setUser(entity.getAuthor() != null ? entity.getAuthor().getName() : null);
         dto.setAuthorID(entity.getAuthor() != null ? entity.getAuthor().getUserID() : null);
         dto.setPostID(entity.getPost() != null ? entity.getPost().getPostID() : null);

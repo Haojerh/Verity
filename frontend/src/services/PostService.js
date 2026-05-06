@@ -20,21 +20,6 @@ export const getAllPosts = async () => {
   }
 };
 
-export const getPostStats = (postID) => {
-    return request(Http.GET, `/api/posts/${postID}/stats`);
-};
-
-export const updatePostStance = (postID, userID, stance) => {
-    return request(Http.POST, `/api/posts/${postID}/stance`, {
-        userID: userID,
-        chosenStance: stance.toUpperCase(),
-    });
-};
-
-export const getUserStance = (postID) => {
-    return request(Http.GET, `/api/posts/${postID}/stance`);
-};
-
 export const createPost = async (postData, imageFile) => {
   try {
     const formData = new FormData();
@@ -46,12 +31,10 @@ export const createPost = async (postData, imageFile) => {
     formData.append("proLabel", postData.proLabel || "Pro");
     formData.append("conLabel", postData.conLabel || "Con");
 
-    // Add image if it exists
     if (imageFile) {
       formData.append("image", imageFile);
     }
 
-    // Must use multipart/form-data for file uploads
     return await request(Http.POST, "/api/posts", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
@@ -60,3 +43,39 @@ export const createPost = async (postData, imageFile) => {
     throw error;
   }
 };
+
+export const normalizeImageSource = (source) => {
+  if (!source) return null;
+
+  if (typeof source === "string") {
+    return source.startsWith("http")
+      ? source
+      : `http://localhost:8080/api/uploads/posts/${source.replace(/^\/+/, "")}`;
+  }
+
+  if (typeof source === "object") {
+    const candidate = source.url || source.path || source.imagePath || source.src || source.publicUrl;
+    return normalizeImageSource(candidate);
+  }
+
+  return null;
+};
+
+export const formatDate = (dateString) => {
+  if (!dateString) return "";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric", month: "short", year: "numeric",
+  }).format(new Date(dateString));
+};
+
+export const mapPostData = (postData) => ({
+  ...postData,
+  author: postData.authorName,
+  date: formatDate(postData.SYSCREATEDDATE),
+  topicName: postData.topicName || "General",
+  proLabel: postData.proLabel || "Pros",
+  conLabel: postData.conLabel || "Cons",
+  images: postData.images
+    ? postData.images.map(normalizeImageSource).filter(Boolean)
+    : normalizeImageSource(postData.imagePath) ? [normalizeImageSource(postData.imagePath)] : [],
+});

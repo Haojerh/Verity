@@ -12,7 +12,6 @@ import com.Verity.Repo.PostRepo;
 import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.TopicRepo;
 import com.Verity.Repo.UserRepo;
-import com.Verity.Service.PostStanceLabelService;
 import com.Verity.Utils.FileUtil; // Using the new utility
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ public class PostService {
     private final TopicRepo topicRepo;
     private final UserRepo userRepo;
     private final PostStanceRepo postStanceRepo;
-    private final PostStanceLabelService postStanceLabelService;
+    private final PostStanceService postStanceService;
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/posts/";
 
     public PostDTO createPost(PostRequest request, MultipartFile image, String authorEmail) throws IOException {
@@ -71,36 +70,36 @@ public class PostService {
         return mapToDTO(post);
     }
 
-    public PostStanceDTO getPostStats(String postID) {
-        PostEntity post = postRepo.findById(postID)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+//    public PostStanceDTO getPostStats(String postID) {
+//        PostEntity post = postRepo.findById(postID)
+//                .orElseThrow(() -> new RuntimeException("Post not found"));
+//
+//        long pros = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "PROS");
+//        long cons = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "CONS");
+//        long participants = postStanceRepo.countUniqueParticipants(postID);
+//
+//        return new PostStanceDTO(pros, cons, participants);
+//    }
 
-        long pros = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "PROS");
-        long cons = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "CONS");
-        long participants = postStanceRepo.countUniqueParticipants(postID);
-
-        return new PostStanceDTO(pros, cons, participants);
-    }
-
-    @Transactional
-    public void saveOrUpdateStance(String postID, PostStanceRequest request) {
-        PostEntity post = postRepo.findById(postID)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        UserEntity user = userRepo.findById(request.getUserID())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        PostStanceEntity stance = postStanceRepo.findByPostIDAndUser(post, user)
-                .orElse(new PostStanceEntity());
-
-        String normalizedStance = postStanceLabelService.normalizeStance(request.getChosenStance());
-
-        stance.setPostID(post);
-        stance.setUser(user);
-        stance.setChosenStance(normalizedStance);
-
-        postStanceRepo.save(stance);
-    }
+//    @Transactional
+//    public void saveOrUpdateStance(String postID, PostStanceRequest request) {
+//        PostEntity post = postRepo.findById(postID)
+//                .orElseThrow(() -> new RuntimeException("Post not found"));
+//
+//        UserEntity user = userRepo.findById(request.getUserID())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        PostStanceEntity stance = postStanceRepo.findByPostIDAndUser(post, user)
+//                .orElse(new PostStanceEntity());
+//
+//        String normalizedStance = postStanceService.normalizeStance(request.getChosenStance());
+//
+//        stance.setPostID(post);
+//        stance.setUser(user);
+//        stance.setChosenStance(normalizedStance);
+//
+//        postStanceRepo.save(stance);
+//    }
 
     private PostDTO mapToDTO(PostEntity entity) {
         PostDTO dto = new PostDTO();

@@ -14,11 +14,19 @@ import java.util.Optional;
 public interface PostStanceRepo extends JpaRepository<PostStanceEntity, String> {
     long countByPostIDAndChosenStanceIgnoreCase(PostEntity post, String stance);
     Optional<PostStanceEntity> findByPostIDAndUser(PostEntity post, UserEntity user);
-    @Query(value = """
-        SELECT COUNT(DISTINCT uid) FROM (
-            SELECT userID as uid FROM post_stance WHERE postID = :postId
+    Optional<PostStanceEntity> findByUser_UserIDAndPostID_PostID(String userID, String postID);
+//    @Query(value = """
+//        SELECT COUNT(DISTINCT uid) FROM (
+//            SELECT userID as uid FROM post_stance WHERE postID = :postId
+//            UNION
+//            SELECT authorID as uid FROM comment WHERE postID = :postId
+//        ) as total_participants
+//        """, nativeQuery = true)
+    @Query(value = """ 
+        SELECT COUNT(*) FROM (
+            SELECT userID FROM post_stance WHERE postID = :postId
             UNION
-            SELECT authorID as uid FROM comment WHERE postID = :postId
+            SELECT authorID FROM comment WHERE postID = :postId
         ) as total_participants
         """, nativeQuery = true)
     long countUniqueParticipants(@Param("postId") String postId);
