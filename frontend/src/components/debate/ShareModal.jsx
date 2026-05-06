@@ -9,7 +9,7 @@ import { useState } from "react";
 export default function ShareModal({ post, onClose }) {
   const [copy, setCopied] = useState(false);
 
-  const shareUrl = `${window.location.origin}/post/${post.id}`;
+  const shareUrl = `${window.location.origin}/post/${post.postID}`;
 
   const handleCopy = async () => {
     try {

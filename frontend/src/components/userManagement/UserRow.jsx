@@ -20,7 +20,7 @@ export default function UserRow({ user, onAction }) {
 
       <td className="hidden lg:table-cell p-4 text-center">
         <span className={`px-2 py-1 text-xs rounded-full ${
-          user.banned ? "bg-red-200 text-red-700" : "bg-muted"
+          user.banned ? "bg-destructive/15 text-destructive" : "bg-muted"
         }`}>
           {user.banned ? "Yes" : "No"}
         </span>
@@ -28,7 +28,7 @@ export default function UserRow({ user, onAction }) {
 
       <td className="hidden lg:table-cell p-4 text-center">
         <span className={`px-2 py-1 text-xs rounded-full ${
-          user.muted ? "bg-yellow-200 text-yellow-700" : "bg-muted"
+          user.muted ? "bg-yellow-700/15 text-yellow-700" : "bg-muted"
         }`}>
           {user.muted ? "Yes" : "No"}
         </span>

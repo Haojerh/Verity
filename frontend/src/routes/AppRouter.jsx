@@ -14,6 +14,8 @@ import CreatePost from "../pages/CreatePost";
 import Profile from "../pages/Profile";
 import Settings from "../pages/Settings";
 import UserProfile from "../pages/UserProfile";
+import ManageReport from "../pages/ManageReport";
+import CommentPage from "../pages/CommentPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,10 +39,12 @@ export const router = createBrowserRouter(
           </Route>
 
           <Route path="topic-management" element={<TopicManagement />} />
+          <Route path="report-management" element={<ManageReport />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:id" element={<UserProfile />} />
           <Route path="settings" element={<Settings />} />
           <Route path="post/:id" element={<PostPage />} />
+          <Route path="/comment/:id" element={<CommentPage />} />
         </Route>
       </Route>
 
