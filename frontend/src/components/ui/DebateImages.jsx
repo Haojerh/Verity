@@ -2,7 +2,9 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function DebateImages({ images, onImageClick, type = "home" }) {
+  console.log(images);
   const safeImages = Array.isArray(images) ? images : [];
+  console.log(safeImages[0]);
 
   const [index, setIndex] = useState(0);
 
@@ -12,8 +14,11 @@ export default function DebateImages({ images, onImageClick, type = "home" }) {
     return (
       <img
         src={safeImages[0]}
-        className="w-full h-48 object-cover rounded-lg mb-4"
-        onClick={() => onImageClick?.(0)}
+        className="w-full h-60 object-cover rounded-lg mb-4"
+        onClick={(e) => {
+          e.stopPropagation();
+          onImageClick?.(index);
+        }}
       />
     );
   }

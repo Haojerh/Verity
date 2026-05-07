@@ -58,7 +58,8 @@ export default function MuteModal({ user, onClose, setUserData, isProfile=false 
       showToast("User Muted");
       onClose();
     } catch (err) {
-      showToast("Error creating punishment:", err);
+      onClose();
+      showToast(err.response?.data?.message || "Failed to mute");
     }
   };
 

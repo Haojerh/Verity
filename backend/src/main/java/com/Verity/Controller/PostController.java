@@ -197,6 +197,28 @@ public class PostController {
         );
     }
 
+    @GetMapping("/recommended/{userID}")
+    public ResponseEntity<Response> getRecommendedPosts(
+        @PathVariable String userID,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "6") int size,
+        HttpServletRequest request) {
+        var posts = postService.getRecommendedPosts(userID, page, size);
+
+        return ResponseEntity.ok(
+            getResponse(
+                request,
+                Map.of(
+                    "posts", posts.getContent(),
+                    "totalPages", posts.getTotalPages(),
+                    "currentPage", posts.getNumber()
+                ),
+                "Posts Retrieved",
+                OK
+            )
+        );
+    }
+
     @GetMapping("/popular")
     public ResponseEntity<Response> getPopularPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, HttpServletRequest request) {
         var posts = postService.getPopularPosts(page, size);

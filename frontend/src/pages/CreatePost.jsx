@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import PostForm from "../components/createPost/PostForm";
 import { request } from "../services/request";
 import { Http } from "../constant/http.method";
+import { useToast } from "../context/ToastContext";
 
 export default function CreatePost() {
   const [topics, setTopics] = useState([]);
   const navigate = useNavigate();
+
+   const { showToast } = useToast();
 
     useEffect(() => {
     const fetchTopics = async () => {
@@ -41,8 +44,9 @@ export default function CreatePost() {
       const res = await request(Http.POST, "/api/posts", formData);
       console.log(res);
       navigate(`/post/${res.post.postID}`);
+      showToast("Post Created");
     } catch (err) {
-      console.error("Upload failed", err);
+      showToast(err.response?.data?.message || "Failed to create post");
     }
   };
 

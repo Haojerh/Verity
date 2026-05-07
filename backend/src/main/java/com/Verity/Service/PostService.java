@@ -1,11 +1,15 @@
 package com.Verity.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,10 +25,12 @@ import com.Verity.Entity.ReportEntity;
 import com.Verity.Entity.TopicEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Repo.CommentRepo;
-import com.Verity.Repo.PostRepo; // Using the new utility
+import com.Verity.Repo.FollowRepo;
+import com.Verity.Repo.PostRepo;
 import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.ReportRepo;
 import com.Verity.Repo.TopicRepo;
+import com.Verity.Repo.UserFavTopicRepo;
 import com.Verity.Repo.UserRepo;
 import com.Verity.Utils.FileUtil;
 
@@ -41,9 +47,19 @@ public class PostService {
     private final CommentRepo commentRepo;
     private final PostStanceRepo postStanceRepo;
     private final PostStanceService postStanceService;
+    private final PunishmentLogService punishmentLogService;
+    private final FollowRepo followRepo;
+    private final UserFavTopicRepo userFavTopicRepo;
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/posts/";
 
     public PostDTO createPost(PostRequest request, MultipartFile image, String authorEmail) throws IOException {
+        UserEntity author = userRepo.findUserByEmail(authorEmail)
+        .orElseThrow(() -> new RuntimeException("Author not found"));
+
+        if (punishmentLogService.isUserPunished(author.getUserID(), "MUTE")) {
+            throw new RuntimeException("User is Currently Muted");
+        }
+
         PostEntity post = new PostEntity();
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
@@ -60,8 +76,6 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Topic not found"));
         post.setTopic(topic);
 
-        UserEntity author = userRepo.findUserByEmail(authorEmail)
-                .orElseThrow(() -> new RuntimeException("Author not found"));
         post.setAuthor(author);
 
         PostEntity savedPost = postRepo.save(post);
@@ -300,5 +314,84 @@ public class PostService {
             dto.setStatistics(postStanceService.getPostStats(post.getPostID()));
             return dto;
         });
+    }
+
+    public Page<PostDTO> getRecommendedPosts(String userID, int page, int size) {
+        int maxSize = 50;
+
+        // Get followed users
+        List<String> followedUserIds = followRepo
+            .findByUserFollower_UserID(userID)
+            .stream()
+            .map(f -> f.getUserFollowing().getUserID())
+            .toList();
+
+        // Get followed topics
+        List<String> followedTopicIds = userFavTopicRepo
+            .findByUser_UserID(userID)
+            .stream()
+            .map(f -> f.getTopic().getTopicID())
+            .toList();
+
+        Set<PostEntity> resultSet = new LinkedHashSet<>();
+
+        // Followed users posts (max 15)
+        if (!followedUserIds.isEmpty()) {
+            Pageable userPage = PageRequest.of(0, 15);
+
+            resultSet.addAll(
+                postRepo.findByAuthor_UserIDInAndSYSISDELETEDFalse(followedUserIds, userPage)
+                        .getContent()
+            );
+        }
+
+        // Followed topics posts (max 15)
+        if (!followedTopicIds.isEmpty()) {
+            Pageable topicPage = PageRequest.of(0, 15);
+
+            resultSet.addAll(
+                postRepo.findByTopic_TopicIDInAndSYSISDELETEDFalse(followedTopicIds, topicPage)
+                        .getContent()
+            );
+        }
+
+        // Collect existing IDs
+        List<String> existingPostIds = resultSet.stream()
+            .map(PostEntity::getPostID)
+            .toList();
+
+        // Fill random posts safely
+        int remainingSlots = maxSize - resultSet.size();
+
+        if (remainingSlots > 0) {
+
+            Pageable randomPage = PageRequest.of(0, remainingSlots);
+
+            resultSet.addAll(
+                postRepo.findRandomPostsExcluding(existingPostIds, randomPage)
+                        .getContent()
+            );
+        }
+
+        // Final list
+        List<PostEntity> finalList = new ArrayList<>(resultSet);
+
+        int start = page * size;
+        int end = Math.min(start + size, finalList.size());
+
+        if (start >= finalList.size()) {
+            return Page.empty();
+        }
+
+        List<PostDTO> pageContent = finalList.subList(start, end)
+            .stream()
+            .map(this::mapToDTO)
+            .toList();
+
+        return new PageImpl<>(
+            pageContent,
+            PageRequest.of(page, size),
+            finalList.size()
+        );
     }
 }

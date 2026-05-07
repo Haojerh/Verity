@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Avatar from "../ui/Avatar";
-import { formatDate } from "../../utils/Format";
+import { formatPostDateTime } from "../../utils/Format";
 import { useNavigate } from "react-router-dom";
 
 export default function DebateHeader({ debate }) {
@@ -22,7 +22,7 @@ export default function DebateHeader({ debate }) {
         <div>
           <p className="font-medium text-sm">{debate.authorName}</p>
           <p className="text-xs text-muted-foreground">
-            {formatDate(debate.SYSCREATEDDATE)}
+            {formatPostDateTime(debate.SYSCREATEDDATE)}
           </p>
         </div>
       </div>

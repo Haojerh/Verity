@@ -66,6 +66,31 @@ public class PunishmentLogService {
         UserEntity moderator = userRepo.findUserByEmail(moderatorEmail)
             .orElseThrow(() -> new RuntimeException("Moderator not found"));
 
+        String currentRole = moderator.getUserRole();
+        String targetRole = punishedUser.getUserRole();
+
+        System.out.println(currentRole + ", " + targetRole);
+
+        if (currentRole.equalsIgnoreCase("MODERATOR")) {
+            if (
+                targetRole.equalsIgnoreCase("MODERATOR") ||
+                targetRole.equalsIgnoreCase("ADMINISTRATOR")
+            ) {
+                throw new RuntimeException(
+                    "Moderators cannot punish moderators or admins"
+                );
+            }
+        }
+
+        if (currentRole.equalsIgnoreCase("ADMINISTRATOR")) {
+
+            if (targetRole.equalsIgnoreCase("ADMINISTRATOR")) {
+                throw new RuntimeException(
+                    "Admins cannot punish other admins"
+                );
+            }
+        }
+
         PunishmentLogEntity log = new PunishmentLogEntity();
         log.setType(request.getType());
         log.setReason(request.getReason());

@@ -15,7 +15,12 @@ export default function useInfinitePostsById(fetchFn, id, PAGE_SIZE = 6) {
 
     try {
       const res = await fetchFn(id, pageNum, PAGE_SIZE)
-      const newPosts = res.posts || [];
+      const newPosts = (res.posts || []).map((post) => ({
+        ...post,
+        imagePath: post.imagePath
+            ? [`http://localhost:8080/api/uploads/posts/${post.imagePath}`]
+            : [],
+      }));
 
       setPosts((prev) =>
         pageNum === 0 ? newPosts : [...prev, ...newPosts]

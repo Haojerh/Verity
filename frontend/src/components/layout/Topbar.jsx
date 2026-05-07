@@ -1,4 +1,4 @@
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import { getCurrentUser } from "../../services/UserService";
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,6 +71,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
   // };
 
   return (
+    <>
     <header className="sticky top-0 z-50 bg-card border-b border-border">
       <div className="flex items-center justify-between px-6 py-3">
         {/* Left section */}
@@ -95,7 +97,10 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+                if (e.key === "Enter") {
+                  setMobileSearchOpen(false);
+                  navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+                }
               }}
               className="w-full pl-10 pr-4 py-2 bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
               style={{
@@ -110,8 +115,11 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
 
         {/* Right section */}
         <div className="flex items-center gap-3">
-          <button className="relative block sm:hidden">
-            <Search />
+          <button 
+            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+            className="relative block sm:hidden"
+          >
+            {mobileSearchOpen ? <X size={20} /> : <Search size={20} />}
           </button>
 
           {/* Notification Bell */}
@@ -162,5 +170,36 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
         </div>
       </div>
     </header>
+
+    {mobileSearchOpen && (
+      <div className="sm:hidden px-4 py-3 border-b border-border bg-card">
+        <div className="relative flex items-center">
+          
+          <Search className="absolute left-3 w-5 h-5 text-muted-foreground" />
+
+          <input
+            autoFocus
+            type="text"
+            placeholder="Search debates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setMobileSearchOpen(false);
+                navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+              }
+            }}
+            className="w-full pl-10 pr-10 py-2 bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+            style={{
+                border: '2px solid transparent',
+                backgroundImage: 'linear-gradient(var(--background), var(--background)), linear-gradient(to right, #22c55e, #ef4444)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box'
+              }}
+          />
+        </div>
+      </div>
+    )}
+    </>
   );
 }

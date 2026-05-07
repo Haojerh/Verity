@@ -1,5 +1,6 @@
 package com.Verity.Repo;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,6 @@ public interface FollowRepo extends JpaRepository<FollowEntity, String> {
     Optional<FollowEntity> findByUserFollowerAndUserFollowing(UserEntity follower, UserEntity following);
 
     boolean existsByUserFollowerAndUserFollowing(UserEntity follower, UserEntity following);
+
+    List<FollowEntity> findByUserFollower_UserID(String userId);
 }

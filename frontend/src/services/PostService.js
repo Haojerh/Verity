@@ -48,6 +48,13 @@ export const getAllPosts = async () => {
   }
 };
 
+export const getRecommendedPosts = async (userID, page = 0, size = 6) => {
+  return await request(
+    "GET",
+    `/api/posts/recommended/${userID}?page=${page}&size=${size}`
+  );
+};
+
 export const getRecentPosts = async (page = 0, size = 6) => {
     return await request(
     "GET",
@@ -61,6 +68,7 @@ export const getPopularPosts = async (page = 0, size = 6) => {
     `/api/posts/popular?page=${page}&size=${size}`
   );
 };
+
 
 export const createPost = async (postData, imageFile) => {
   try {

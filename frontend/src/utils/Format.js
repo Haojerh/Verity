@@ -7,16 +7,38 @@ export const formatDateTime = (isoString) => {
          `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 };
 
-export const formatDate = (dateString) => {
+export const formatPostDateTime = (dateString) => {
   const date = new Date(dateString);
   const now = new Date();
-  const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
 
-  if (diff === 0) return "Today";
-  if (diff === 1) return "Yesterday";
-  if (diff < 7) return `${diff}d ago`;
-  return date.toLocaleDateString();
-}
+  const diffMs = now - date;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  const time = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const dateOnly = date.toLocaleDateString();
+
+  if (diffDays === 0) {
+    return `Today ${time}`;
+  }
+
+  if (diffDays === 1) {
+    return `Yesterday ${time}`;
+  }
+
+  if (diffDays < 7) {
+    return `${diffDays}d ago`;
+  }
+
+  if (diffDays <= 30) {
+    return `${dateOnly} ${time}`;
+  }
+
+  return dateOnly;
+};
 
 export const formatDuration = (minutes) => {
   if (minutes === -1) return "Permanent";
