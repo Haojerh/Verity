@@ -14,7 +14,7 @@ export default function DebateCard({ debate }) {
   return (
     <div
       onClick={() => navigate(`/post/${debate.postID}`)}
-      className="relative bg-card border rounded-lg p-4 cursor-pointer hover:shadow dark:hover:shadow-dark"
+      className="relative bg-card border rounded-lg p-4 cursor-pointer hover:shadow-md dark:hover:shadow-dark-md"
     >
       <DebateHeader debate={debate} />
 

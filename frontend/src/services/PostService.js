@@ -11,8 +11,32 @@ export const getPostById = async (postID) => {
   }
 };
 
-export const getUserPosts = async (userID) => {
-  return await request("GET", `/api/posts/user/${userID}`);
+export const getUserPosts = async (userID, page = 0, size = 6) => {
+  return await request(
+    "GET",
+    `/api/posts/user/${userID}?page=${page}&size=${size}`
+  );
+};
+
+export const getFollowedUsersPosts = async (userID, page = 0, size = 6) => {
+  return await request(
+    "GET",
+    `/api/posts/followedUsers/${userID}?page=${page}&size=${size}`
+  );
+};
+
+export const getFollowedTopicsPosts = async (userID, page = 0, size = 6) => {
+  return await request(
+    "GET",
+    `/api/posts/followedTopics/${userID}?page=${page}&size=${size}`
+  );
+};
+
+export const getTopicPosts = async (topicID, page = 0, size = 6) => {
+  return await request(
+    "GET",
+    `/api/posts/topic/${topicID}?page=${page}&size=${size}`
+  );
 };
 
 export const getAllPosts = async () => {
@@ -22,6 +46,20 @@ export const getAllPosts = async () => {
     console.error("Error fetching all posts:", error);
     throw error;
   }
+};
+
+export const getRecentPosts = async (page = 0, size = 6) => {
+    return await request(
+    "GET",
+    `/api/posts/recent?page=${page}&size=${size}`
+  );
+};
+
+export const getPopularPosts = async (page = 0, size = 6) => {
+    return await request(
+    "GET",
+    `/api/posts/popular?page=${page}&size=${size}`
+  );
 };
 
 export const createPost = async (postData, imageFile) => {

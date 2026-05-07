@@ -35,7 +35,7 @@ export default function TakedownModal({ entity, onClose, type, onSuccess }) {
       />
 
       <div className="px-8 py-10 text-center text-2xl">
-        Are you sure to <span className="font-bold">takedown</span> the {type}?
+        Are you sure to <span className="font-bold text-destructive">takedown</span> the {type}?
       </div>
 
       <ModalFooter

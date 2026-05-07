@@ -20,7 +20,7 @@ export default function PostHeader({
   const { 
     authorID,
     author, 
-    content, 
+    description, 
     images, 
     date, 
     topicName, 
@@ -83,7 +83,7 @@ export default function PostHeader({
         </div>
 
         <p className="text-xl font-serif text-muted-foreground leading-relaxed italic">
-          {content}
+          {description}
         </p>
 
         {images && (

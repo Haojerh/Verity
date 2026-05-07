@@ -97,7 +97,7 @@ public class TopicService {
     }
 
     public TopicDTO retrieveTopicById(String topicID) {
-        TopicEntity topic = topicRepo.findById(topicID)
+        TopicEntity topic = topicRepo.findByTopicIDAndSYSISDELETEDFalse(topicID)
                 .orElseThrow(() -> new RuntimeException("Error - Topic not found."));
 
         TopicDTO dto = new TopicDTO();

@@ -1,53 +1,58 @@
-import { useState, useEffect } from "react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileTabs from "../components/profile/ProfileTabs";
+import PostSkeleton from "../components/ui/PostSkeleton";
 import { useAuth } from "../context/AuthContext";
-import { getFollowerCount } from "../services/FollowService.js";
-import { getUserPosts } from "../services/PostService.js";
+import { useState } from "react";
+import { getUserPosts, getFollowedUsersPosts, getFollowedTopicsPosts } from "../services/PostService";
+import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
+import useFollowers from "../hooks/useFollowers";
 
 export default function Profile() {
-  const [activeTab, setActiveTab] = useState("posts");
-  const [followers, setFollowers] = useState(0);
-  const [posts, setPosts] = useState([]);
   const { user } = useAuth();
+  const followers = useFollowers(user?.userID);
+  const [activeTab, setActiveTab] = useState("posts");
 
-  useEffect(() => {
-    if (!user?.userID) return;
+  const profilePosts = useInfinitePostsById(getUserPosts, user?.userID);
+  const followingUsersPosts = useInfinitePostsById(getFollowedUsersPosts, user?.userID);
+  const followingTopicsPosts = useInfinitePostsById(getFollowedTopicsPosts, user?.userID);
 
-    const fetchData = async () => {
-      try {
-        const [followerRes, postRes] = await Promise.all([
-          getFollowerCount(user.userID),
-          getUserPosts(user.userID)
-        ]);
-
-        setFollowers(followerRes);
-        setPosts(postRes.posts);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchData();
-  }, [user?.userID]);
-
-  const mockSaved = [];
 
   if (!user) {
-    return <div className="text-center mt-10">Loading profile...</div>;
+    return (
+      <div className="text-center mt-10">
+        Loading profile...
+      </div>
+    );
   }
+
+  var activeFeed;
+
+  if (activeTab === "posts") {
+    activeFeed = profilePosts;
+  } else if (activeTab === "users") {
+    activeFeed = followingUsersPosts;
+  } else {
+    activeFeed = followingTopicsPosts;
+  }
+
+  const { posts, loading } = activeFeed;
 
   return (
     <div className="max-w-4xl mx-auto">
-      <ProfileHeader user={user} isOwnProfile={true} followers={followers} />
+      <ProfileHeader
+        user={user}
+        isOwnProfile={true}
+        followers={followers}
+      />
 
       <ProfileTabs
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         posts={posts}
-        saved={mockSaved}
         hasFollowed={true}
       />
+
+      {loading && <PostSkeleton count={2} />}
     </div>
   );
 }

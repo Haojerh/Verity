@@ -16,6 +16,8 @@ import Settings from "../pages/Settings";
 import UserProfile from "../pages/UserProfile";
 import ManageReport from "../pages/ManageReport";
 import CommentPage from "../pages/CommentPage";
+import RecentPage from "../pages/RecentPage";
+import PopularPage from "../pages/PopularPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +30,8 @@ export const router = createBrowserRouter(
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="recent" element={<RecentPage />} />
+          <Route path="popular" element={<PopularPage />} />
           <Route path="user-management" element={<UserManagement />} />
           <Route path="moderator-management" element={<ModeratorManagement />} />
 

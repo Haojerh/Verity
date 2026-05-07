@@ -10,8 +10,12 @@ import UnbanModal from "../components/userManagement/UnbanModal";
 import MuteModal from "../components/userManagement/MuteModal";
 import UnmuteModal from "../components/userManagement/UnmuteModal";
 import { useAuth } from "../context/AuthContext";
-import { toggleFollow, getFollowStatus, getFollowerCount } from "../services/FollowService.js";
-import { getUserPosts } from "../services/PostService.js";
+import { toggleFollow, getFollowStatus } from "../services/FollowService.js";
+import PostSkeleton from "../components/ui/PostSkeleton";
+import useFollowers from "../hooks/useFollowers";
+import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
+import { getUserPosts } from "../services/PostService";
+import { isModerator, isAdmin } from "../utils/Format.js";
 
 export default function UserProfile() {
   const { id } = useParams();
@@ -19,14 +23,14 @@ export default function UserProfile() {
   const navigate = useNavigate();
 
   const [profileUser, setProfileUser] = useState(null);
-  const [posts, setPosts] = useState([]);
   const [isFollowed, setIsFollowed] = useState(false);
-  const [followers, setFollowers] = useState(0);
-  const [activeTab, setActiveTab] = useState("posts");
   const [modal, setModal] = useState({
     type: null,
     user: null,
   });
+
+  const followers = useFollowers(id);
+  const { posts, loading } = useInfinitePostsById(getUserPosts, id, 6);
 
   useEffect(() => {
     if (currentUser?.userID === id) {
@@ -48,19 +52,6 @@ export default function UserProfile() {
   }, [id]);
 
   useEffect(() => {
-    const fetchFollowers = async () => {
-        try {
-        const res = await getFollowerCount(id);
-        setFollowers(res);
-        } catch (err) {
-        console.error(err);
-        }
-    };
-
-    if (id) fetchFollowers();
-  }, [id]);
-
-  useEffect(() => {
     const fetchFollowStatus = async () => {
         try {
         const res = await getFollowStatus(id);
@@ -71,19 +62,6 @@ export default function UserProfile() {
     };
 
     if (id) fetchFollowStatus();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await getUserPosts(id);
-        setPosts(res.posts);
-      } catch (err) {
-        console.error("Failed to fetch posts", err);
-      }
-    };
-
-    if (id) fetchPosts();
   }, [id]);
 
   const handleFollowToggle = async () => {
@@ -111,8 +89,6 @@ export default function UserProfile() {
     return <div className="text-center mt-10">Loading profile...</div>;
   }
 
-  const isModerator = currentUser?.userRole?.toUpperCase() === "MODERATOR";
-  const isAdmin = currentUser?.userRole?.toUpperCase() === "ADMINISTRATOR";
   const isOwnProfile = currentUser?.userID === profileUser?.userID;
 
   return (
@@ -130,8 +106,8 @@ export default function UserProfile() {
       )}
 
       <ProfileTabs
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        activeTab="posts"
+        setActiveTab={() => {}}
         posts={posts}
         saved={mockSaved}
         hasFollowed={isOwnProfile}
@@ -180,6 +156,8 @@ export default function UserProfile() {
           isProfile={true}
         />
       )}
+
+      {loading && <PostSkeleton count={2} />}
     </div>
   );
 }
