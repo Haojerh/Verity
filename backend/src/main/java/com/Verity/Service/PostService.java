@@ -146,25 +146,6 @@ public class PostService {
         });
     }
 
-//    @Transactional
-//    public void saveOrUpdateStance(String postID, PostStanceRequest request) {
-//        PostEntity post = postRepo.findByPostIDAndSYSISDELETEDFalse(postID)
-//                .orElseThrow(() -> new RuntimeException("Post not found"));
-//
-//        UserEntity user = userRepo.findById(request.getUserID())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        PostStanceEntity stance = postStanceRepo.findByPostIDAndUser(post, user)
-//                .orElse(new PostStanceEntity());
-//
-//        String normalizedStance = postStanceLabelService.normalizeStance(request.getChosenStance());
-//
-//        stance.setPostID(post);
-//        stance.setUser(user);
-//        stance.setChosenStance(normalizedStance);
-//
-//        postStanceRepo.save(stance);
-//    }
 
     private PostDTO mapToDTO(PostEntity entity) {
         PostDTO dto = new PostDTO();
@@ -204,7 +185,7 @@ public class PostService {
         postRepo.save(post);
 
         // delete comments under post
-        List<CommentEntity> comments = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postId);
+        List<CommentEntity> comments = commentRepo.findByPost_PostID(postId);
 
         for (CommentEntity c : comments) {
             c.setSYSISDELETED(true);

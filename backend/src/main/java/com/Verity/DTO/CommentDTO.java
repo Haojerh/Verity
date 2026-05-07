@@ -22,4 +22,5 @@ public class CommentDTO {
     private String parentId;
     private List<CommentDTO> replies = new ArrayList<>();
     private LocalDateTime SYSCREATEDDATE;
+    private long totalComments;
 }

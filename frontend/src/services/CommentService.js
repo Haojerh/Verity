@@ -1,23 +1,25 @@
 import { request } from "./request";
 
-const BASE = "/api/posts";
+const BASE = "/api/comment";
 
 export const getPostComments = (postID) => {
-  return request("GET", `${BASE}/${postID}/comments`);
+  return request("GET", `${BASE}/post/${postID}`);
 };
 
+/**
+ * Sends a CommentRequest to the backend.
+ * @param {string} postID 
+ * @param {object} payload 
+ */
 export const createPostComment = (postID, payload) => {
-  return request("POST", `${BASE}/${postID}/comments`, payload);
+  return request("POST", `${BASE}/post/${postID}`, payload);
 };
 
-export const countAllComments = (comments) => {
-  if (!comments) return 0;
-  
-  return comments.reduce((acc, comment) => {
-    return acc + 1 + countAllComments(comment.replies);
-  }, 0);
+export const getTotalCommentCount = (comments) => {
+  if (!comments || comments.length === 0) return 0;
+  return comments[0].totalComments;
 };
 
 export const getCommentByID = (id) => {
-  return request("GET", `/api/comment/${id}`);
+  return request("GET", `${BASE}/${id}`);
 };

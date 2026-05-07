@@ -10,8 +10,8 @@ public class CommentRequest {
     @NotBlank(message = "Comment text is required")
     private String text;
 
-    @NotBlank(message = "Comment side is required")
-    private String side;
+/*    @NotBlank(message = "Comment side is required")
+    private String side;*/
 
     @JsonAlias({"parentId", "parentCommentId"})
     private String parentCommentID;

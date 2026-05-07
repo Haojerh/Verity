@@ -2,14 +2,11 @@ package com.Verity.Controller;
 
 import com.Verity.DTO.PostStanceDTO;
 import com.Verity.DTO.PostStanceRequest;
-import com.Verity.Entity.PostEntity;
-import com.Verity.Entity.UserEntity;
 import com.Verity.Service.PostStanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/stances")
@@ -36,10 +33,8 @@ public class PostStanceController {
             @PathVariable String postID,
             @PathVariable String userID) {
 
-        // We use the service method to get the final resolved label (e.g., "PROS")
         String stanceLabel = postStanceService.resolveLabel(userID, postID);
 
-        // Return 200 OK with the string, or an empty string if not found
         return ResponseEntity.ok(stanceLabel != null ? stanceLabel : "");
     }
 }

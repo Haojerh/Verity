@@ -5,8 +5,7 @@ import PostHeader from "../components/debate/PostHeader";
 import CommentSection from "../components/debate/CommentSection";
 import ReportModal from "../components/debate/ReportModal";
 import ShareModal from "../components/debate/ShareModal";
-import { usePostPage } from "../services/usePostPage";
-import { countAllComments } from "../services/CommentService";
+import { usePostPage } from "../hooks/usePostPage";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import TakedownModal from "../components/debate/TakedownModal";
@@ -17,7 +16,7 @@ export default function PostPage() {
   const { id: postID } = useParams();
   const {
     post, comments, setComments, commentText, totalComments, totalParticipants, setCommentText,
-    userSide, userStanceLabel, activeTab, setActiveTab, modal, stats,
+    userSide, userStanceLabel, activeTab, fetchData, setActiveTab, modal, stats,
     handleStanceChange, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
@@ -99,7 +98,9 @@ export default function PostPage() {
           type="comment"
           onClose={closeModal}
           onSuccess={() => {
-            setComments(prev => removeCommentById(prev, modal.entity.id));
+            // setComments(prev => removeCommentById(prev, modal.entity.id));
+            fetchData();
+            closeModal();
           }}
         />
       )}

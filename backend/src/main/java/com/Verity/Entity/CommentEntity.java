@@ -23,8 +23,8 @@ public class CommentEntity extends Auditable {
     @Column(columnDefinition = "TEXT")
     private String text;
 
-    @Column(length = 20)
-    private String side;
+//    @Column(length = 20)
+//    private String side;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postID")
