@@ -18,12 +18,15 @@ export default function DebateCard({ debate }) {
     >
       <DebateHeader debate={debate} />
 
-      <h3 className="text-lg font-medium mb-1">{debate.title}</h3>
-      <p className="text-muted-foreground text-sm mb-6">
+      <h3 className="text-lg font-medium">{debate.title}</h3>
+      <p className="text-muted-foreground text-sm mb-4">
         {debate.description}
       </p>
 
-      <DebateImages images={debate.imagePath} onImageClick={(i) => setFullscreenImage(i)}/>
+      <DebateImages 
+      images={debate.imagePath} 
+      onImageClick={(i) => setFullscreenImage(i)}
+      />
 
       <VoteBar debate={debate} />
 

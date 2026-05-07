@@ -59,7 +59,8 @@ export default function BanModal({ user, onClose, setUserData, isProfile=false }
       showToast("User Banned");
       onClose();
     } catch (err) {
-      showToast("Error creating punishment:", err);
+      onClose();
+      showToast(err.response?.data?.message || "Failed to ban");
     }
   };
 

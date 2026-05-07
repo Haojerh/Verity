@@ -18,6 +18,7 @@ import ManageReport from "../pages/ManageReport";
 import CommentPage from "../pages/CommentPage";
 import RecentPage from "../pages/RecentPage";
 import PopularPage from "../pages/PopularPage";
+import SearchPage from "../pages/SearchPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +33,7 @@ export const router = createBrowserRouter(
           <Route index element={<Home />} />
           <Route path="recent" element={<RecentPage />} />
           <Route path="popular" element={<PopularPage />} />
+          <Route path="search" element={<SearchPage />} />
           <Route path="user-management" element={<UserManagement />} />
           <Route path="moderator-management" element={<ModeratorManagement />} />
 

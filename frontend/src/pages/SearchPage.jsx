@@ -1,19 +1,20 @@
 import Header from "../components/ui/Header";
-import { getRecommendedPosts } from "../services/PostService";
+import useInfinitePosts from "../hooks/useInfinitePosts.jsx";
+import { getPopularPosts } from "../services/PostService";
 import PostSkeleton from "../components/ui/PostSkeleton";
 import DebateCard from "../components/homeDebate/DebateCard";
-import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
-import { useAuth } from "../context/AuthContext";
 
-export default function Home() {
-  const { user } = useAuth();
-  const { posts, loading } = useInfinitePostsById(getRecommendedPosts, user?.userID, 6);
+export default function SearchPage() {
+  const { posts, loading } = useInfinitePosts(getPopularPosts, 6);
+  const query = new URLSearchParams(location.search).get("q") || "";
+
+  if (!query) window.location.href="/";
 
   return (
     <div className="max-w-4xl mx-auto">
       <Header 
-      title="Recommended Debates"
-      desc="Discover debates based on personalization"
+      title={`Search Results for "${query}"`}
+      desc="Find Posts By Searching"
       />
 
       <div className="space-y-4">
@@ -23,7 +24,7 @@ export default function Home() {
       </div>
 
       {posts.length === 0 && !loading && (
-        <div className="text-sm text-muted-foreground">No Post Yet.</div>
+        <div className="text-sm text-muted-foreground">No Posts Found.</div>
       )}
 
       {loading && <PostSkeleton count={2} />}

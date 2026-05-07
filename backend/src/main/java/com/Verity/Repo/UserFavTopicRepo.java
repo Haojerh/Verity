@@ -18,4 +18,6 @@ public interface UserFavTopicRepo extends JpaRepository<UserFavTopicEntity, Stri
     boolean existsByUserAndTopic(UserEntity user, TopicEntity topic);
 
     Optional<UserFavTopicEntity> findByUserAndTopic(UserEntity user, TopicEntity topic);
+
+    List<UserFavTopicEntity> findByUser_UserID(String userId);
 }

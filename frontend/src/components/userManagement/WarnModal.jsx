@@ -42,7 +42,8 @@ export default function WarnModal({ user, onClose, roleType="default" }) {
       showToast("User Warned");
       onClose();
     } catch (err) {
-      showToast("Error creating punishment:", err);
+      onClose();
+      showToast(err.response?.data?.message || "Failed to warn");
     }
   };
 

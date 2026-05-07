@@ -25,6 +25,28 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
     Page<PostEntity> findByTopic_TopicIDAndSYSISDELETEDFalse(String topicID, Pageable pageable);
 
     Page<PostEntity> findBySYSISDELETEDFalse(Pageable pageable);
+
+    @Query("""
+        SELECT p FROM PostEntity p
+        WHERE p.author.userID IN :userIds
+        AND p.SYSISDELETED = false
+        ORDER BY p.SYSCREATEDDATE DESC
+    """)
+    Page<PostEntity> findByAuthor_UserIDInAndSYSISDELETEDFalse(
+        @Param("userIds") List<String> userIds,
+        Pageable pageable
+    );
+
+    @Query("""
+        SELECT p FROM PostEntity p
+        WHERE p.topic.topicID IN :topicIds
+        AND p.SYSISDELETED = false
+        ORDER BY p.SYSCREATEDDATE DESC
+    """)
+    Page<PostEntity> findByTopic_TopicIDInAndSYSISDELETEDFalse(
+        @Param("topicIds") List<String> topicIds,
+        Pageable pageable
+    );
     
     @Query("""
         SELECT p
@@ -61,4 +83,15 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
         ORDER BY COUNT(ps) DESC
     """)
     Page<PostEntity> findPopularPosts(Pageable pageable);
+
+    @Query("""
+        SELECT p FROM PostEntity p
+        WHERE p.SYSISDELETED = false
+        AND (:excludedIds IS NULL OR p.postID NOT IN :excludedIds)
+        ORDER BY FUNCTION('RAND')
+    """)
+    Page<PostEntity> findRandomPostsExcluding(
+        @Param("excludedIds") List<String> excludedIds,
+        Pageable pageable
+    );
 }
