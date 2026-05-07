@@ -26,7 +26,7 @@ export default function ShareModal({ post, onClose }) {
     <Modal onClose={onClose}>
       <ModalHeader text="Share Post" color="primary" icon={Share2} onClose={onClose}/>
 
-      <div className="px-8 pb-8 space-y-6">
+      <div className="px-8 py-8 space-y-6">
         <div className="flex items-center justify-between gap-4 pl-4 pr-2 py-2 rounded-xl bg-muted/70 border">
             <div className="flex flex-row gap-6 items-center">
                 <Link className="w-5 h-5 text-muted-foreground"/>

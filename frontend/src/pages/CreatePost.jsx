@@ -38,8 +38,9 @@ export default function CreatePost() {
     }
 
     try {
-      await request(Http.POST, "/api/posts", formData);
-      navigate("/");
+      const res = await request(Http.POST, "/api/posts", formData);
+      console.log(res);
+      navigate(`/post/${res.post.postID}`);
     } catch (err) {
       console.error("Upload failed", err);
     }

@@ -5,28 +5,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.Verity.DTO.PostDTO;
 import com.Verity.DTO.PostRequest;
 import com.Verity.DTO.PostStanceDTO;
-import com.Verity.DTO.PostStanceRequest;
 import com.Verity.Entity.CommentEntity;
 import com.Verity.Entity.PostEntity;
-import com.Verity.Entity.PostStanceEntity;
 import com.Verity.Entity.ReportEntity;
-import com.Verity.Entity.TopicEntity; // Using the new utility
+import com.Verity.Entity.TopicEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Repo.CommentRepo;
-import com.Verity.Repo.PostRepo;
+import com.Verity.Repo.PostRepo; // Using the new utility
 import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.ReportRepo;
 import com.Verity.Repo.TopicRepo;
 import com.Verity.Repo.UserRepo;
 import com.Verity.Utils.FileUtil;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -55,7 +56,7 @@ public class PostService {
             post.setImagePath(fileName);
         }
 
-        TopicEntity topic = topicRepo.findById(request.getTopicID())
+        TopicEntity topic = topicRepo.findByTopicIDAndSYSISDELETEDFalse(request.getTopicID())
                 .orElseThrow(() -> new RuntimeException("Topic not found"));
         post.setTopic(topic);
 
@@ -80,21 +81,13 @@ public class PostService {
         return mapToDTO(post);
     }
 
-    public PostStanceDTO getPostStats(String postID) {
-        PostEntity post = postRepo.findByPostIDAndSYSISDELETEDFalse(postID)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+    public Page<PostDTO> getPostsByUserID(String userID, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "SYSCREATEDDATE"));
 
-        long pros = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "PROS");
-        long cons = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(post, "CONS");
-        long participants = postStanceRepo.countUniqueParticipants(postID);
+        Page<PostEntity> posts = postRepo
+            .findByAuthor_UserIDAndSYSISDELETEDFalse(userID, pageable);
 
-        return new PostStanceDTO(pros, cons, participants);
-    }
-
-    public List<PostDTO> getPostsByUserID(String userID) {
-        List<PostEntity> posts = postRepo.findByAuthor_UserIDAndSYSISDELETEDFalse(userID);
-
-        return posts.stream().map(post -> {
+        return posts.map(post -> {
             PostDTO dto = new PostDTO();
             BeanUtils.copyProperties(post, dto);
 
@@ -103,11 +96,54 @@ public class PostService {
             dto.setAuthorAvatar(post.getAuthor().getAvatar());
             dto.setTopicName(post.getTopic() != null ? post.getTopic().getName() : null);
 
-            PostStanceDTO stats = getPostStats(post.getPostID());
+            PostStanceDTO stats = postStanceService.getPostStats(post.getPostID());
             dto.setStatistics(stats);
 
             return dto;
-        }).toList();
+        });
+    }
+
+    public Page<PostDTO> getFollowedUsersPosts(String userID, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "SYSCREATEDDATE"));
+
+        Page<PostEntity> posts = postRepo.findPostsByFollowedUsers(userID, pageable);
+
+        return posts.map(post -> {
+            PostDTO dto = new PostDTO();
+            BeanUtils.copyProperties(post, dto);
+
+            dto.setAuthorID(post.getAuthor().getUserID());
+            dto.setAuthorName(post.getAuthor().getName());
+            dto.setAuthorAvatar(post.getAuthor().getAvatar());
+            dto.setTopicName(post.getTopic() != null ? post.getTopic().getName() : null);
+
+            PostStanceDTO stats = postStanceService.getPostStats(post.getPostID());
+            dto.setStatistics(stats);
+
+            return dto;
+        });
+    }
+
+    public Page<PostDTO> getFollowedTopicsPosts(String userID, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "SYSCREATEDDATE"));
+
+        Page<PostEntity> posts =postRepo.findPostsByFollowedTopics(userID, pageable);
+
+        return posts.map(post -> {
+            PostDTO dto = new PostDTO();
+
+            BeanUtils.copyProperties(post, dto);
+
+            dto.setAuthorID(post.getAuthor().getUserID());
+            dto.setAuthorName(post.getAuthor().getName());
+            dto.setAuthorAvatar(post.getAuthor().getAvatar());
+            dto.setTopicName(post.getTopic() != null ? post.getTopic().getName() : null);
+
+            PostStanceDTO stats = postStanceService.getPostStats(post.getPostID());
+            dto.setStatistics(stats);
+
+            return dto;
+        });
     }
 
 //    @Transactional
@@ -186,5 +222,83 @@ public class PostService {
 
         reportRepo.saveAll(postReports);
         reportRepo.saveAll(commentReports);
+    }
+
+    public Page<PostDTO> getTopicPosts(String topicID, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "SYSCREATEDDATE"));
+
+        Page<PostEntity> posts =postRepo.findByTopic_TopicIDAndSYSISDELETEDFalse(topicID, pageable);
+
+        return posts.map(post -> {
+            PostDTO dto = new PostDTO();
+
+            BeanUtils.copyProperties(post, dto);
+
+            dto.setAuthorID(post.getAuthor().getUserID());
+            dto.setAuthorName(post.getAuthor().getName());
+            dto.setAuthorAvatar(post.getAuthor().getAvatar());
+            dto.setTopicName(post.getTopic() != null ? post.getTopic().getName() : null);
+
+            PostStanceDTO stats = postStanceService.getPostStats(post.getPostID());
+            dto.setStatistics(stats);
+
+            return dto;
+        });
+    }
+
+    public Page<PostDTO> getRecentPosts(int page, int size) {
+        int maxPosts = 50;
+        int start = page * size;
+
+        if (start >= maxPosts) {
+            return Page.empty();
+        }
+
+        int remaining = maxPosts - start;
+        int pageSize = Math.min(size, remaining);
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "SYSCREATEDDATE"));
+
+        Page<PostEntity> posts = postRepo.findBySYSISDELETEDFalse(pageable);
+
+        return posts.map(post -> {
+            PostDTO dto = new PostDTO();
+            BeanUtils.copyProperties(post, dto);
+
+            dto.setAuthorID(post.getAuthor().getUserID());
+            dto.setAuthorName(post.getAuthor().getName());
+            dto.setAuthorAvatar(post.getAuthor().getAvatar());
+            dto.setTopicName(post.getTopic() != null ? post.getTopic().getName() : null);
+
+            dto.setStatistics(postStanceService.getPostStats(post.getPostID()));
+            return dto;
+        });
+    }
+
+    public Page<PostDTO> getPopularPosts(int page, int size) {
+        int maxPosts = 50;
+        int start = page * size;
+
+        if (start >= maxPosts) {
+            return Page.empty();
+        }
+
+        int remaining = maxPosts - start;
+        int pageSize = Math.min(size, remaining);
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<PostEntity> posts = postRepo.findPopularPosts(pageable);
+
+        return posts.map(post -> {
+            PostDTO dto = new PostDTO();
+            BeanUtils.copyProperties(post, dto);
+
+            dto.setAuthorID(post.getAuthor().getUserID());
+            dto.setAuthorName(post.getAuthor().getName());
+            dto.setAuthorAvatar(post.getAuthor().getAvatar());
+            dto.setTopicName(post.getTopic() != null ? post.getTopic().getName() : null);
+
+            dto.setStatistics(postStanceService.getPostStats(post.getPostID()));
+            return dto;
+        });
     }
 }

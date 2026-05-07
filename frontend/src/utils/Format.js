@@ -38,3 +38,6 @@ export const formatDuration = (minutes) => {
 
   return result.length ? result.join(" ") : "0 Minute";
 };
+
+export const isModerator = (currentUser) => { return currentUser?.userRole?.toUpperCase() === "MODERATOR" };
+export const isAdmin = (currentUser) => { return currentUser?.userRole?.toUpperCase() === "ADMINISTRATOR" };

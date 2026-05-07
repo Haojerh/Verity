@@ -6,7 +6,6 @@ export default function ProfileTabs({
   activeTab,
   setActiveTab,
   posts,
-  saved,
   hasFollowed
 }) {
   return (
@@ -49,7 +48,7 @@ export default function ProfileTabs({
             hover:text-foreground"
           >
             <UserPlus className="w-4 h-4" />
-            Followed Topics
+            Followed Users
           </Tabs.Trigger>
         )}
       </Tabs.List>
@@ -68,13 +67,13 @@ export default function ProfileTabs({
 
       {hasFollowed && (
         <Tabs.Content value="topics" className="space-y-4">
-          {saved.length > 0 ? (
-            saved.map((p) => (
-              <DebateCard key={p.id} debate={p} />
+          {posts.length > 0 ? (
+            posts.map((p) => (
+              <DebateCard key={p.postID} debate={p} />
             ))
           ) : (
             <p className="text-sm text-muted-foreground text-center">
-              No followed topic post.
+              No followed topic post yet.
             </p>
           )}
         </Tabs.Content>
@@ -82,13 +81,13 @@ export default function ProfileTabs({
 
       {hasFollowed && (
         <Tabs.Content value="users" className="space-y-4">
-          {saved.length > 0 ? (
-            saved.map((p) => (
-              <DebateCard key={p.id} debate={p} />
+          {posts.length > 0 ? (
+            posts.map((p) => (
+              <DebateCard key={p.postID} debate={p} />
             ))
           ) : (
             <p className="text-sm text-muted-foreground text-center">
-              No followed user post.
+              No followed user post yet.
             </p>
           )}
         </Tabs.Content>
