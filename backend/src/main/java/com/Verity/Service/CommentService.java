@@ -138,7 +138,7 @@ public class CommentService {
         }
     }
 
-    private CommentDTO mapToDTO(CommentEntity entity, long totalCount) {
+    public CommentDTO mapToDTO(CommentEntity entity, long totalCount) {
         CommentDTO dto = new CommentDTO();
         UserEntity currentUser;
         currentUser = userServices.getCurrentUser();
