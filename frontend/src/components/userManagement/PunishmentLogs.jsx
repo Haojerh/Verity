@@ -4,8 +4,8 @@ import ModalFooter from "../ui/ModalFooter";
 import ModalHeader from "../ui/ModalHeader";
 import { useEffect, useState } from "react";
 import { getLogs } from "../../services/PunishmentLogsService";
-import { formatDuration } from "../../utils/Format";
-import { formatDateTime } from "../../utils/Format";
+import { formatDuration } from "../../utils/Utils";
+import { formatDateTime } from "../../utils/Utils";
 
 export default function PunishmentLogs({ roleType="user", onClose, user }) {
   const [logs, setLogs] = useState([]);

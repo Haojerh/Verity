@@ -10,7 +10,7 @@ export default function CommentInput({ userSide, value, onChange, onSubmit, subm
   }
 
   return (
-    <div className="bg-card border border-border p-4 rounded-2xl shadow-dark-sm">
+    <div className="bg-card border border-border p-4 rounded-2xl shadow-dark-sm mb-6">
       <textarea 
         className="w-full bg-input-background text-foreground p-4 rounded-xl border border-transparent focus:border-primary outline-none resize-none transition-all text-sm"
         placeholder={`Write your argument as a ${userSide === 'pros' ? 'supporter' : 'critic'}...`}

@@ -5,6 +5,7 @@ import DebateImages from "../ui/DebateImages";
 import ImageModal from "../ui/ImageModal";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { isModerator, isAdmin } from "../../utils/Utils";
 
 export default function PostHeader({ 
   post, 
@@ -27,9 +28,6 @@ export default function PostHeader({
     title,
     authorImageUrl
   } = post;
-
-  const isModerator = authUser?.userRole?.toUpperCase() === "MODERATOR";
-  const isAdmin = authUser?.userRole?.toUpperCase() === "ADMINISTRATOR";
   
   return (
     <section className="space-y-3 mb-10">
@@ -57,11 +55,11 @@ export default function PostHeader({
                 <LucideShare className="w-4 h-4"/> Share
               </button>
               <button 
-                onClick={() => openModal((isModerator || isAdmin) ? "postTakedown" : "postReport", post)}
+                onClick={() => openModal((isModerator(authUser) || isAdmin(authUser)) ? "postTakedown" : "postReport", post)}
                 className="flex gap-2 p-3 w-full text-destructive hover:bg-muted/50 items-center"
               >
                 <Flag className="w-4 h-4"/> 
-                {(isModerator || isAdmin) ? "Takedown" : "Report"}
+                {(isModerator(authUser) || isAdmin(AuthUser)) ? "Takedown" : "Report"}
               </button>
             </div>
           )}

@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Flag } from "lucide-react";
 import Avatar from "../components/ui/Avatar";
 import { useAuth } from "../context/AuthContext";
 import TakedownModal from "../components/debate/TakedownModal";
 import { getCommentByID } from "../services/CommentService.js";
-import { formatDateTime } from "../utils/Format.js";
+import { formatDateTime } from "../utils/Utils.js";
+import { isModerator, isAdmin } from "../utils/Utils.js";
 
 export default function CommentPage() {
   const { id } = useParams();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const [comment, setComment] = useState([]);
+  const [comment, setComment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (!isModerator(user) && !isAdmin(user)) navigate("/");
+  }, [user, navigate]);
 
   useEffect(() => {
     const fetchComment = async () => {
@@ -33,15 +41,9 @@ export default function CommentPage() {
     fetchComment();
   }, [id]);
 
-  console.log(comment);
-
   if (loading) return <div className="p-6 text-center">Loading comment...</div>;
 
   if (!comment) return <div className="p-6 text-center">Comment not found</div>;
-
-  const isModerator = user?.userRole?.toUpperCase() === "MODERATOR";
-  const isAdmin = user?.userRole?.toUpperCase() === "ADMINISTRATOR";
-  if (!isModerator && !isAdmin) window.location.href = "/";
 
   const isPros = comment.side === "pros";
 
@@ -67,13 +69,12 @@ export default function CommentPage() {
           <div className="flex flex-col">
             <div className="flex flex-row gap-2 items-center">
                 <span className="font-medium">@{comment.user}</span>
-                <span className="text-muted-foreground/30 text-xs pt-0.5">•</span>
-                <span
-                className={`text-xxs font-bold uppercase tracking-wider pt-0.5 ${
-                    isPros ? "text-primary" : "text-destructive"
-                }`}
-                >
-                {isPros ? "PROS" : "CONS"}
+                <span className={`text-xxs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${
+                  isPros 
+                    ? 'bg-primary/10 text-primary' 
+                    : 'bg-destructive/10 text-destructive'
+                }`}>
+                  {isPros ? "PRO" : "CON"}
                 </span>
             </div>
 
@@ -92,7 +93,7 @@ export default function CommentPage() {
         <div className="flex justify-end">
           <button 
           onClick={() => setModal(true)}
-          className="flex items-center gap-2 text-sm text-destructive hover:opacity-80">
+          className="flex items-center gap-2 text-sm text-destructive hover:text-destructive-hover">
             <Flag className="w-4 h-4" />
             Takedown
           </button>

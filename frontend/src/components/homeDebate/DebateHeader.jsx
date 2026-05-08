@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Avatar from "../ui/Avatar";
-import { formatPostDateTime } from "../../utils/Format";
+import { formatPostDateTime } from "../../utils/Utils";
 import { useNavigate } from "react-router-dom";
 
 export default function DebateHeader({ debate }) {
