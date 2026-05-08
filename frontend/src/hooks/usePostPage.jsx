@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { getPostComments, createPostComment, countAllComments } from "../services/CommentService";
+import { getPostComments, createPostComment } from "../services/CommentService";
 import { getPostById, mapPostData } from "../services/PostService";
 import { getPostStats, getUserStance, selectStance } from "../services/PostStanceService";
 import { useAuth } from "../context/AuthContext";
@@ -23,19 +23,19 @@ export const usePostPage = (postID) => {
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(null);
 
   /**
-   * Orchestrates the initial data load and user synchronization
+   * Manage the initial data load and user synchronization
    */
   const fetchData = useCallback(async () => {
     if (!postID) return;
 
     try {
-      const [postData, commentData, statsData] = await Promise.all([
+      const [postData, commentResponse, statsData] = await Promise.all([
         getPostById(postID),
         getPostComments(postID),
         getPostStats(postID)
       ]);
 
-      // Handle user-specific participation status
+
       if (user) {
         const stanceLabel = await getUserStance(postID, user.userID);
         if (stanceLabel?.trim()) {
@@ -47,8 +47,12 @@ export const usePostPage = (postID) => {
       }
 
       setPost(mapPostData(postData));
-      setComments(commentData.comments ?? commentData ?? []);
+
+      const actualComments = commentResponse?.comments || [];
+      setComments(actualComments);
+
       setStats(statsData);
+      console.log("Comment Response:", actualComments); 
     } catch (err) {
       console.error("Fetch failed:", err);
     }
@@ -56,16 +60,10 @@ export const usePostPage = (postID) => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  /**
-   * Action Handlers
-   */
   const handleStanceChange = async (newStance) => {
     if (!user || userSide !== null) return;
-
     try {
       await selectStance(postID, user.userID, newStance.toUpperCase());
-      
-      // Update local state without a full page re-fetch
       const updatedStats = await getPostStats(postID);
       setStats(updatedStats);
       setUserSide(newStance);
@@ -78,22 +76,27 @@ export const usePostPage = (postID) => {
 
   const handleCommentSubmit = async (text, parentID = null) => {
     if (!text.trim() || !userSide) return;
+    
+    const currentTab = activeTab; 
+
     try {
       await createPostComment(postID, { text, side: activeTab, parentCommentID: parentID });
       setCommentText("");
-      fetchData(); 
+      await fetchData(); 
+      setActiveTab(currentTab); 
     } catch (err) {
       console.error("Comment submission failed:", err);
     }
   };
 
-  // Memoized derived data
-  const totalComments = useMemo(() => countAllComments(comments), [comments]);
+  const totalComments = useMemo(() => {
+      return comments.length > 0 ? (comments[0].totalComments || 0) : 0;
+  }, [comments]);
 
   return {
-    post, comments, commentText, stats, totalComments,
+    post, comments, setComments, commentText, stats, totalComments,
     userSide, userStanceLabel, activeTab, modal, fullscreenImageIndex,
-    setCommentText, setActiveTab,
+    setCommentText, setActiveTab, fetchData,
     handleStanceChange,
     totalParticipants: stats.totalParticipants,
     handleSubmitComment: () => handleCommentSubmit(commentText),

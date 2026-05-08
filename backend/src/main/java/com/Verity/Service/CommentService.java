@@ -16,7 +16,6 @@ import com.Verity.Entity.ReportEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Repo.CommentRepo;
 import com.Verity.Repo.PostRepo;
-import com.Verity.Repo.PostStanceRepo;
 import com.Verity.Repo.ReportRepo;
 import com.Verity.Repo.UserRepo;
 
@@ -40,12 +39,11 @@ public class CommentService {
 
         CommentEntity comment = new CommentEntity();
         comment.setText(request.getText());
-        comment.setSide(request.getSide());
         comment.setPost(post);
         comment.setAuthor(author);
 
         if (request.getParentCommentID() != null && !request.getParentCommentID().isBlank()) {
-            CommentEntity parentComment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(request.getParentCommentID())
+            CommentEntity parentComment = commentRepo.findByCommentID(request.getParentCommentID())
                     .orElseThrow(() -> new RuntimeException("Parent comment not found"));
 
             if (!parentComment.getPost().getPostID().equals(postID)) {
@@ -55,44 +53,52 @@ public class CommentService {
         }
 
         CommentEntity savedComment = commentRepo.save(comment);
-        return mapToDTO(savedComment);
+
+        long updatedCount = commentRepo.countByPost_PostID(postID);
+
+        return mapToDTO(savedComment, updatedCount);
     }
 
     public List<CommentDTO> getCommentsByPostID(String postID) {
-        postRepo.findById(postID).orElseThrow(() -> new RuntimeException("Post not found"));
-
-        List<CommentEntity> commentEntities = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID);
-        commentEntities.sort(Comparator.comparing(CommentEntity::getSYSCREATEDDATE));
+        List<CommentEntity> entities = commentRepo.findByPost_PostID(postID);
+        long totalCount = entities.size();
 
         Map<String, CommentDTO> dtoMap = new HashMap<>();
-        for (CommentEntity commentEntity : commentEntities) {
-            dtoMap.put(commentEntity.getCommentID(), mapToDTO(commentEntity));
+        for (CommentEntity entity : entities) {
+            dtoMap.put(entity.getCommentID(), mapToDTO(entity, totalCount));
         }
 
         List<CommentDTO> rootComments = new ArrayList<>();
-        for (CommentEntity commentEntity : commentEntities) {
-            CommentDTO commentDto = dtoMap.get(commentEntity.getCommentID());
-            if (commentEntity.getParentComment() != null) {
-                CommentDTO parentDto = dtoMap.get(commentEntity.getParentComment().getCommentID());
+        for (CommentEntity entity : entities) {
+            CommentDTO currentDto = dtoMap.get(entity.getCommentID());
+
+            if (entity.getParentComment() != null) {
+                CommentDTO parentDto = dtoMap.get(entity.getParentComment().getCommentID());
                 if (parentDto != null) {
-                    parentDto.getReplies().add(commentDto);
-                    continue;
+                    parentDto.getReplies().add(currentDto);
                 }
+            } else {
+                rootComments.add(currentDto);
             }
-            rootComments.add(commentDto);
         }
+
+        rootComments.sort(Comparator.comparing(CommentDTO::getSYSCREATEDDATE));
 
         return rootComments;
     }
 
     public CommentDTO getCommentByID(String id) {
-        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
+        CommentEntity comment = commentRepo.findByCommentID(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         CommentDTO dto = new CommentDTO();
         dto.setId(comment.getCommentID());
         dto.setText(comment.getText());
-        dto.setSide(comment.getSide());
+
+        if (comment.getAuthor() != null && comment.getPost() != null) {
+            String stanceLabel = postStanceService.resolveLabel(comment.getAuthor(), comment.getPost());
+            dto.setSide(stanceLabel);
+        }
         dto.setPostID(comment.getPost() != null ? comment.getPost().getPostID() : null);
         dto.setParentId(comment.getParentComment() != null ? comment.getParentComment().getCommentID() : null);
         dto.setSYSCREATEDDATE(comment.getSYSCREATEDDATE());
@@ -107,8 +113,8 @@ public class CommentService {
     }
 
     public void takedownComment(String id) {
-        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
-            .orElseThrow(() -> new RuntimeException("Comment not found"));
+        CommentEntity comment = commentRepo.findByCommentID(id)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
         comment.setSYSISDELETED(true);
         commentRepo.save(comment);
 
@@ -134,17 +140,27 @@ public class CommentService {
         }
     }
 
-    private CommentDTO mapToDTO(CommentEntity entity) {
+    private CommentDTO mapToDTO(CommentEntity entity, long totalCount) {
         CommentDTO dto = new CommentDTO();
+
         dto.setId(entity.getCommentID());
-        dto.setText(entity.getText());
-        dto.setSide(postStanceService.resolveLabel(entity.getAuthor(), entity.getPost()));
-        dto.setUser(entity.getAuthor() != null ? entity.getAuthor().getName() : null);
-        dto.setUserAvatar(entity.getAuthor() != null ? entity.getAuthor().getAvatar() : null);
         dto.setAuthorID(entity.getAuthor() != null ? entity.getAuthor().getUserID() : null);
         dto.setPostID(entity.getPost() != null ? entity.getPost().getPostID() : null);
         dto.setParentId(entity.getParentComment() != null ? entity.getParentComment().getCommentID() : null);
+
+        dto.setText(entity.getText());
+        if (entity.getAuthor() != null && entity.getPost() != null) {
+            String stanceLabel = postStanceService.resolveLabel(entity.getAuthor(), entity.getPost());
+            dto.setSide(stanceLabel);
+        }
+        dto.setUser(entity.getAuthor() != null ? entity.getAuthor().getName() : null);
+        dto.setUserAvatar(entity.getAuthor() != null ? entity.getAuthor().getAvatar() : null);
         dto.setSYSCREATEDDATE(entity.getSYSCREATEDDATE());
+
+        dto.setTotalComments(totalCount);
+
+        dto.setReplies(new ArrayList<>());
+
         return dto;
     }
 }

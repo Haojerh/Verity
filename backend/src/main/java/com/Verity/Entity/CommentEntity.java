@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import net.bytebuddy.utility.RandomString;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "comment")
+@SQLRestriction("SYSISDELETED = false")
 public class CommentEntity extends Auditable {
     @Id
     @Column(length = 20)
@@ -21,8 +23,8 @@ public class CommentEntity extends Auditable {
     @Column(columnDefinition = "TEXT")
     private String text;
 
-    @Column(length = 20)
-    private String side;
+//    @Column(length = 20)
+//    private String side;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postID")
