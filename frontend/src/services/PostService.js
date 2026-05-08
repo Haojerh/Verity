@@ -69,6 +69,12 @@ export const getPopularPosts = async (page = 0, size = 6) => {
   );
 };
 
+export const getSearchPosts = async (q, page = 0, size = 6) => {
+    return await request(
+    "GET",
+    `/api/posts/search?q=${q}&page=${page}&size=${size}`
+  );
+};
 
 export const createPost = async (postData, imageFile) => {
   try {

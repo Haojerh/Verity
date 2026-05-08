@@ -2,8 +2,10 @@ package com.Verity.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -316,82 +318,142 @@ public class PostService {
         });
     }
 
+    public Page<PostDTO> getSearchPosts(String q, int page, int size) {
+        int maxPosts = 50;
+        int start = page * size;
+
+        if (start >= maxPosts) {
+            return Page.empty();
+        }
+
+        int remaining = maxPosts - start;
+        int pageSize = Math.min(size, remaining);
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "SYSCREATEDDATE"));
+
+        Page<PostEntity> posts = postRepo.searchPosts(q, pageable);
+
+        return posts.map(post -> {
+            PostDTO dto = new PostDTO();
+            BeanUtils.copyProperties(post, dto);
+
+            dto.setAuthorID(post.getAuthor().getUserID());
+            dto.setAuthorName(post.getAuthor().getName());
+            dto.setAuthorAvatar(post.getAuthor().getAvatar());
+            dto.setTopicName(post.getTopic() != null ? post.getTopic().getName() : null);
+
+            dto.setStatistics(postStanceService.getPostStats(post.getPostID()));
+            return dto;
+        });
+    }
+
     public Page<PostDTO> getRecommendedPosts(String userID, int page, int size) {
         int maxSize = 50;
+        int start = page * size;
 
-        // Get followed users
+        if (start >= maxSize) {
+            return Page.empty();
+        }
+
+        int endLimit = Math.min(start + size, maxSize);
+
+        // Followed users
         List<String> followedUserIds = followRepo
             .findByUserFollower_UserID(userID)
             .stream()
             .map(f -> f.getUserFollowing().getUserID())
             .toList();
 
-        // Get followed topics
+        List<PostEntity> userPosts = followedUserIds.isEmpty()
+            ? List.of()
+            : postRepo.findByAuthor_UserIDInAndSYSISDELETEDFalse(
+                followedUserIds,
+                Pageable.unpaged()
+            ).getContent();
+
+        // Followed topics
         List<String> followedTopicIds = userFavTopicRepo
             .findByUser_UserID(userID)
             .stream()
             .map(f -> f.getTopic().getTopicID())
             .toList();
 
-        Set<PostEntity> resultSet = new LinkedHashSet<>();
+        List<PostEntity> topicPosts = followedTopicIds.isEmpty()
+            ? List.of()
+            : postRepo.findByTopic_TopicIDInAndSYSISDELETEDFalse(
+                followedTopicIds,
+                Pageable.unpaged()
+            ).getContent();
 
-        // Followed users posts (max 15)
-        if (!followedUserIds.isEmpty()) {
-            Pageable userPage = PageRequest.of(0, 15);
+        // Debug
+        Set<String> usedIds = new HashSet<>();
 
-            resultSet.addAll(
-                postRepo.findByAuthor_UserIDInAndSYSISDELETEDFalse(followedUserIds, userPage)
-                        .getContent()
-            );
+        class DebugPost {
+            PostEntity post;
+            String source;
+
+            DebugPost(PostEntity post, String source) {
+                this.post = post;
+                this.source = source;
+            }
         }
 
-        // Followed topics posts (max 15)
-        if (!followedTopicIds.isEmpty()) {
-            Pageable topicPage = PageRequest.of(0, 15);
+        List<DebugPost> ordered = new ArrayList<>();
 
-            resultSet.addAll(
-                postRepo.findByTopic_TopicIDInAndSYSISDELETEDFalse(followedTopicIds, topicPage)
-                        .getContent()
-            );
+        for (PostEntity p : userPosts) {
+            if (usedIds.add(p.getPostID())) {
+                ordered.add(new DebugPost(p, "USER"));
+            }
         }
 
-        // Collect existing IDs
-        List<String> existingPostIds = resultSet.stream()
-            .map(PostEntity::getPostID)
-            .toList();
+        for (PostEntity p : topicPosts) {
+            if (usedIds.add(p.getPostID())) {
+                ordered.add(new DebugPost(p, "TOPIC"));
+            }
+        }
 
-        // Fill random posts safely
-        int remainingSlots = maxSize - resultSet.size();
+        // Get Random Posts
+        int remainingSlots = maxSize - ordered.size();
 
         if (remainingSlots > 0) {
 
-            Pageable randomPage = PageRequest.of(0, remainingSlots);
+            List<PostEntity> randomPool =
+                postRepo.findRandomPool(new ArrayList<>(usedIds));
 
-            resultSet.addAll(
-                postRepo.findRandomPostsExcluding(existingPostIds, randomPage)
-                        .getContent()
+            Collections.shuffle(randomPool, new Random(userID.hashCode()));
+
+            for (PostEntity p : randomPool) {
+
+                if (ordered.size() >= maxSize) break;
+
+                if (usedIds.add(p.getPostID())) {
+                    ordered.add(new DebugPost(p, "RANDOM"));
+                }
+            }
+        }
+
+        // Debug purpose
+        System.out.println("\n========== RECOMMENDED FEED DEBUG ==========");
+        for (DebugPost dp : ordered) {
+            System.out.println(
+                dp.source + " -> " + dp.post.getPostID()
             );
         }
+        System.out.println("===========================================\n");
 
-        // Final list
-        List<PostEntity> finalList = new ArrayList<>(resultSet);
+        // pagination slice
+        List<DebugPost> pageSlice = ordered.subList(
+            Math.min(start, ordered.size()),
+            Math.min(endLimit, ordered.size())
+        );
 
-        int start = page * size;
-        int end = Math.min(start + size, finalList.size());
-
-        if (start >= finalList.size()) {
-            return Page.empty();
-        }
-
-        List<PostDTO> pageContent = finalList.subList(start, end)
-            .stream()
-            .map(this::mapToDTO)
+        List<PostDTO> content = pageSlice.stream()
+            .map(dp -> mapToDTO(dp.post))
             .toList();
 
         return new PageImpl<>(
-            pageContent,
+            content,
             PageRequest.of(page, size),
-            finalList.size()
+            Math.min(maxSize, ordered.size())
         );
     }
 }

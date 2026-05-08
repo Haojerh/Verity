@@ -1,14 +1,16 @@
 import Header from "../components/ui/Header";
-import useInfinitePosts from "../hooks/useInfinitePosts.jsx";
-import { getPopularPosts } from "../services/PostService";
+import { useNavigate } from "react-router-dom";
+import { getSearchPosts } from "../services/PostService";
 import PostSkeleton from "../components/ui/PostSkeleton";
 import DebateCard from "../components/homeDebate/DebateCard";
+import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 
 export default function SearchPage() {
-  const { posts, loading } = useInfinitePosts(getPopularPosts, 6);
+  const navigate = useNavigate();
   const query = new URLSearchParams(location.search).get("q") || "";
+  const { posts, loading } = useInfinitePostsById(getSearchPosts, query, 6);
 
-  if (!query) window.location.href="/";
+  if (!query) navigate("/");
 
   return (
     <div className="max-w-4xl mx-auto">

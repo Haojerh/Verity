@@ -2,9 +2,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function DebateImages({ images, onImageClick, type = "home" }) {
-  console.log(images);
   const safeImages = Array.isArray(images) ? images : [];
-  console.log(safeImages[0]);
 
   const [index, setIndex] = useState(0);
 

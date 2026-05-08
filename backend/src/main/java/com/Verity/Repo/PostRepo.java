@@ -88,10 +88,16 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
         SELECT p FROM PostEntity p
         WHERE p.SYSISDELETED = false
         AND (:excludedIds IS NULL OR p.postID NOT IN :excludedIds)
-        ORDER BY FUNCTION('RAND')
     """)
-    Page<PostEntity> findRandomPostsExcluding(
-        @Param("excludedIds") List<String> excludedIds,
-        Pageable pageable
-    );
-}
+    List<PostEntity> findRandomPool(@Param("excludedIds") List<String> excludedIds);
+
+    @Query("""
+    SELECT p FROM PostEntity p
+    WHERE p.SYSISDELETED = false
+    AND (
+        LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%'))
+        OR LOWER(p.description) LIKE LOWER(CONCAT('%', :q, '%'))
+    )
+    """)
+    Page<PostEntity> searchPosts(@Param("q") String q, Pageable pageable);
+ }

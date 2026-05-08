@@ -236,4 +236,22 @@ public class PostController {
             )
         );
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Response> getSearchPosts(@RequestParam String q, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, HttpServletRequest request) {
+        var posts = postService.getSearchPosts(q, page, size);
+
+        return ResponseEntity.ok(
+            getResponse(
+                request,
+                Map.of(
+                    "posts", posts.getContent(),
+                    "totalPages", posts.getTotalPages(),
+                    "currentPage", posts.getNumber()
+                ),
+                "Posts Retrieved",
+                OK
+            )
+        );
+    }
 }
