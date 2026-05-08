@@ -1,16 +1,6 @@
 import { request } from "../services/request";
 import { Http } from "../constant/http.method";
 
-// export const getPostById = async (postID) => {
-//   try {
-//     const response = await request(Http.GET, `/api/posts/${postID}`);
-//     return response.post ?? response;
-//   } catch (error) {
-//     console.error(`Error fetching post ${postID}:`, error);
-//     throw error;
-//   }
-// };
-
 export const getPostById = async (postID) => {
   try {
     const response = await request(Http.GET, `/api/posts/${postID}`);
@@ -147,3 +137,16 @@ export const mapPostData = (postData) => ({
     ? postData.images.map(normalizeImageSource).filter(Boolean)
     : normalizeImageSource(postData.imagePath) ? [normalizeImageSource(postData.imagePath)] : [],
 });
+
+export const voteOnComment = async (commentID, voterID, voteValue) => {
+  try {
+    const response = await request(Http.POST, `/api/comments/${commentID}/vote`, {
+      voterID,
+      voteValue
+    });
+    return response; 
+  } catch (error) {
+    console.error("Voting failed:", error);
+    throw error;
+  }
+};

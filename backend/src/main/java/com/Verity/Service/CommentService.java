@@ -6,18 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.Verity.Entity.*;
+import com.Verity.Repo.*;
 import org.springframework.stereotype.Service;
 
 import com.Verity.DTO.CommentDTO;
 import com.Verity.DTO.CommentRequest;
-import com.Verity.Entity.CommentEntity;
-import com.Verity.Entity.PostEntity;
-import com.Verity.Entity.ReportEntity;
-import com.Verity.Entity.UserEntity;
-import com.Verity.Repo.CommentRepo;
-import com.Verity.Repo.PostRepo;
-import com.Verity.Repo.ReportRepo;
-import com.Verity.Repo.UserRepo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +23,10 @@ public class CommentService {
     private final PostRepo postRepo;
     private final UserRepo userRepo;
     private final PostStanceService postStanceService;
+    private final VoteRepo voteRepo;
+    private final VoteService voteService;
+    private final UserServices userServices;
+
 
     public CommentDTO createComment(String postID, CommentRequest request, String authorEmail) {
         PostEntity post = postRepo.findById(postID)
@@ -140,8 +138,10 @@ public class CommentService {
         }
     }
 
-    private CommentDTO mapToDTO(CommentEntity entity, long totalCount) {
+    public CommentDTO mapToDTO(CommentEntity entity, long totalCount) {
         CommentDTO dto = new CommentDTO();
+        UserEntity currentUser;
+        currentUser = userServices.getCurrentUser();
 
         dto.setId(entity.getCommentID());
         dto.setAuthorID(entity.getAuthor() != null ? entity.getAuthor().getUserID() : null);
@@ -158,6 +158,15 @@ public class CommentService {
         dto.setSYSCREATEDDATE(entity.getSYSCREATEDDATE());
 
         dto.setTotalComments(totalCount);
+
+        dto.setVotes(voteRepo.sumVoteValueByCommentID(entity.getCommentID()));
+
+        int userVoteStatus = voteRepo.findByComment_CommentIDAndVoter_UserID(
+                entity.getCommentID(),
+                currentUser.getUserID()
+        ).map(VoteEntity::getVoteValue).orElse(0);
+
+        dto.setUserVote(userVoteStatus);
 
         dto.setReplies(new ArrayList<>());
 

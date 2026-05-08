@@ -17,18 +17,16 @@ public class VoteEntity extends Auditable {
     @Column(name = "voteID", length = 20)
     private String voteID;
 
-    // Many votes belong to one thread
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commentID", referencedColumnName = "commentID", nullable = false)
     private CommentEntity comment;
 
-    // Many votes can be cast by one user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voterID", referencedColumnName = "userID", nullable = false)
     private UserEntity voter;
 
     @Column(nullable = false)
-    private int voteValue; // 1 for upvote, -1 for downvote
+    private int voteValue;
 
     @PrePersist
     public void beforePersist() { setVoteID("VOT-" + RandomString.make(10));}
