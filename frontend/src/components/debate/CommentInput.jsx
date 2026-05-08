@@ -1,7 +1,7 @@
 export default function CommentInput({ userSide, value, onChange, onSubmit, submitting }) {
   if (!userSide) {
     return (
-      <div className="p-8 bg-muted/30 rounded-2xl text-center border-2 border-dashed border-border">
+      <div className="p-8 bg-muted/30 rounded-2xl text-center border-2 border-dashed border-border mb-6">
         <p className="text-sm text-muted-foreground font-medium"> 
           Pick a side above to join the discussion 
         </p>
