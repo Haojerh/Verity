@@ -4,6 +4,7 @@ import { useState } from "react";
 import TextBox from "../ui/TextBox";
 import { useAuth } from "../../context/AuthContext";
 import { formatDistanceToNow } from "date-fns";
+import VoteControl from "./VoteControl";
 
 export default function ThreadItem({ 
   comment, 
@@ -123,15 +124,11 @@ export default function ThreadItem({
         </p>
         
         <div className="flex items-center gap-5">
-          <div className="flex items-center gap-1 bg-muted/50 rounded-md p-0.5">
-            <button onClick={() => setVote("upvote")} className={`p-1.5 rounded-md ${vote === "upvote" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
-            <span className="text-xs font-medium px-1">{voteCount}</span>
-            <button onClick={() => setVote("downvote")} className={`p-1.5 rounded-md ${vote === "downvote" ? "bg-destructive text-destructive-foreground" : "text-muted-foreground"}`}>
-              <ArrowDown className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <VoteControl 
+            commentID={id} 
+            initialVotes={comment.votes} 
+            userVoteStatus={comment.userVote}
+          />
           
           <div className="flex items-center gap-4">
             <button 

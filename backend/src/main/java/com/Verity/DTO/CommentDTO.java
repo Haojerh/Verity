@@ -20,6 +20,8 @@ public class CommentDTO {
     private String authorID;
     private String postID;
     private String parentId;
+    private int votes;
+    private int userVote;
     private List<CommentDTO> replies = new ArrayList<>();
     private LocalDateTime SYSCREATEDDATE;
     private long totalComments;

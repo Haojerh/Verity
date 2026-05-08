@@ -147,3 +147,16 @@ export const mapPostData = (postData) => ({
     ? postData.images.map(normalizeImageSource).filter(Boolean)
     : normalizeImageSource(postData.imagePath) ? [normalizeImageSource(postData.imagePath)] : [],
 });
+
+export const voteOnComment = async (commentID, voterID, voteValue) => {
+  try {
+    const response = await request(Http.POST, `/api/comments/${commentID}/vote`, {
+      voterID,
+      voteValue
+    });
+    return response; 
+  } catch (error) {
+    console.error("Voting failed:", error);
+    throw error;
+  }
+};
