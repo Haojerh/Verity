@@ -2,8 +2,10 @@ package com.Verity.Service;
 
 import com.Verity.DTO.CommentDTO;
 import com.Verity.Entity.CommentEntity;
+import com.Verity.Entity.PostEntity;
 import com.Verity.Entity.VoteEntity;
 import com.Verity.Repo.CommentRepo;
+import com.Verity.Repo.PostRepo;
 import com.Verity.Repo.VoteRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class ConsensusService {
     private final VoteRepo voteRepo;
     private final PostStanceService postStanceService;
     private final CommentRepo commentRepo;
+    private final PostRepo postRepo;
     private final CommentService commentService;
 
     public int calculateConsensusScore(CommentEntity comment) {
@@ -63,11 +66,13 @@ public class ConsensusService {
                 .orElse(null);
     }
 
-    public Map<String, CommentDTO> getConsensusHighlights(String postID, String proLabel, String conLabel) {
-        Map<String, CommentDTO> highlights = new HashMap<>();
+    public Map<String, CommentDTO> getConsensusHighlights(String postID) {
+        PostEntity post = postRepo.findById(postID)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        highlights.put("pros", getLeadingCommentForSide(postID, proLabel));
-        highlights.put("cons", getLeadingCommentForSide(postID, conLabel));
+        Map<String, CommentDTO> highlights = new HashMap<>();
+        highlights.put("pros", getLeadingCommentForSide(postID, post.getProLabel()));
+        highlights.put("cons", getLeadingCommentForSide(postID, post.getConLabel()));
 
         return highlights;
     }

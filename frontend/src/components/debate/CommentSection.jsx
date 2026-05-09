@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import CommentInput from "./CommentInput";
 import ThreadItem from "./ThreadItem";
+import ConsensusCard from "./ConsensusCard"; 
+import { getConsensusHighlights } from "../../services/ConsensusService";
 
 export default function CommentSection({ 
   post, 
@@ -13,7 +16,20 @@ export default function CommentSection({
   onSubmitReply,
   openModal,
 }) {
-  const { proLabel, conLabel } = post;
+  const { postID, proLabel, conLabel } = post;
+  const [highlights, setHighlights] = useState({ pros: null, cons: null });
+
+  useEffect(() => {
+    const fetchHighlights = async () => {
+      try {
+        const data = await getConsensusHighlights(postID);
+        setHighlights(data);
+      } catch (err) {
+        console.error("Failed to load highlights", err);
+      }
+    };
+    fetchHighlights();
+  }, [postID]);
 
   const normalizedPro = proLabel?.toUpperCase();
   const normalizedCon = conLabel?.toUpperCase();
@@ -88,6 +104,30 @@ export default function CommentSection({
               You can only contribute to your own team's side.
             </p>
           </div>
+        )}
+
+        {/* CONSENSUS HIGHLIGHTS AREA */}
+        {activeTab === "pros" && highlights.pros && (
+          <ConsensusCard 
+            comment={highlights.pros} 
+            type="pros" 
+            label={proLabel}
+            openModal={openModal}
+            onSubmitReply={onSubmitReply}
+            proLabel={proLabel}
+            conLabel={conLabel}
+          />
+        )}
+        {activeTab === "cons" && highlights.cons && (
+          <ConsensusCard 
+            comment={highlights.cons} 
+            type="cons" 
+            label={conLabel}
+            openModal={openModal}
+            onSubmitReply={onSubmitReply}
+            proLabel={proLabel}
+            conLabel={conLabel}
+          />
         )}
 
         {/* Thread List */}

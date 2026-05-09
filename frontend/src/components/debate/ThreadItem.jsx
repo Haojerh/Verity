@@ -13,7 +13,8 @@ export default function ThreadItem({
   openModal, 
   proLabel, 
   conLabel,
-  onSubmitReply 
+  onSubmitReply,
+  minimal = false 
 }) {
   const { user: currentUser } = useAuth();
   
@@ -93,12 +94,13 @@ export default function ThreadItem({
             </div>
           </div>
 
-          <div className="relative">
-            <button 
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-1.5 hover:bg-muted rounded-md transition-colors text-muted-foreground"
-            >
-              <MoreVertical className="w-4 h-4" />
+          {!minimal && (
+            <div className="relative">
+              <button 
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-1.5 hover:bg-muted rounded-md transition-colors text-muted-foreground"
+              >
+                <MoreVertical className="w-4 h-4" />
             </button>
             {menuOpen && (
               <div className="absolute right-0 top-9 z-20 w-36 bg-popover border border-border rounded-md shadow-dark-lg animate-in fade-in zoom-in duration-100">
@@ -115,38 +117,41 @@ export default function ThreadItem({
               </div>
             )}
           </div>
+          )}
         </div>
         
         <p className="text-foreground text-sm leading-relaxed mb-4 whitespace-pre-wrap">
           {text}
         </p>
-        
-        <div className="flex items-center gap-5">
-          <VoteControl 
-            commentID={id} 
-            initialVotes={comment.votes} 
-            userVoteStatus={comment.userVote}
-          />
-          
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setReply(prev => ({ ...prev, state: !prev.state }))}
-              className={`flex items-center gap-2 text-xxs font-medium uppercase tracking-widest ${reply.state ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              <CornerUpLeft className="w-3.5 h-3.5" />
-              {reply.state ? "Cancel" : "Reply"}
-            </button>
 
-            {hasReplies && (
-              <button
-                onClick={() => setCollapsed((prev) => !prev)}
-                className="text-xxs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground"
+        {!minimal && (
+          <div className="flex items-center gap-5">
+            <VoteControl 
+              commentID={id} 
+              initialVotes={comment.votes} 
+              userVoteStatus={comment.userVote}
+            />
+            
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setReply(prev => ({ ...prev, state: !prev.state }))}
+                className={`flex items-center gap-2 text-xxs font-medium uppercase tracking-widest ${reply.state ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
               >
-                {collapsed ? `Show ${replies.length} replies` : `Hide ${replies.length} replies`}
+                <CornerUpLeft className="w-3.5 h-3.5" />
+                {reply.state ? "Cancel" : "Reply"}
               </button>
-            )}
+
+              {hasReplies && (
+                <button
+                  onClick={() => setCollapsed((prev) => !prev)}
+                  className="text-xxs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground"
+                >
+                  {collapsed ? `Show ${replies.length} replies` : `Hide ${replies.length} replies`}
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {reply.state && (
           <div className="mt-4 flex flex-col gap-2 p-3 bg-input-background rounded-md border border-border">
