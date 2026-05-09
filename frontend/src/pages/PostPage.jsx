@@ -10,12 +10,13 @@ import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import TakedownModal from "../components/debate/TakedownModal";
 import { useNavigate } from "react-router-dom";
+import DebateSummary from "../components/debate/DebateSummary";
 
 export default function PostPage() {
   const navigate = useNavigate();
   const { id: postID } = useParams();
   const {
-    post, comments, setComments, commentText, totalComments, totalParticipants, setCommentText,
+    post, comments, mvp, setComments, commentText, totalComments, totalParticipants, setCommentText,
     userSide, userStanceLabel, activeTab, fetchData, setActiveTab, modal, stats,
     handleStanceChange, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
@@ -31,17 +32,6 @@ export default function PostPage() {
         replies: c.replies ? removeCommentById(c.replies, id) : []
       }));
   };
-
-  const [mvp, setMvp] = useState("Loading...");
-
-  useEffect(() => {
-    const loadData = async () => {
-      const data = await getConsensusData(postID, post.proLabel, post.conLabel);
-      setMvp(data.mvp); 
-      setHighlights(data.highlights);
-    };
-    loadData();
-  }, [postID]);
 
   return (
     <div className="max-w-4xl mx-auto w-full">
@@ -66,9 +56,11 @@ export default function PostPage() {
         <p className="text-muted-foreground">{post.description}</p>
       </section> */}
 
+      <DebateSummary postID={post.postID} />
+
       <StatsRow
         counts={{ totalParticipants, totalComments }}
-        mvp={post?.mvp || "you_self12"}
+        mvp={mvp}
       />
 
       <CommentSection

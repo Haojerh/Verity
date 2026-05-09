@@ -150,3 +150,11 @@ export const voteOnComment = async (commentID, voterID, voteValue) => {
     throw error;
   }
 };
+
+export const getConsensusData = async (postID) => {
+  const response = await fetch(`/api/consensus/post/${postID}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch consensus data");
+  }
+  return await response.json();
+};

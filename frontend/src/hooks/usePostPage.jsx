@@ -4,6 +4,7 @@ import { getPostById, mapPostData } from "../services/PostService";
 import { getPostStats, getUserStance, selectStance } from "../services/PostStanceService";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { getConsensusData } from "../services/PostService";
 
 export const usePostPage = (postID) => {
   const { user } = useAuth();
@@ -11,6 +12,7 @@ export const usePostPage = (postID) => {
   
   // Data State
   const [post, setPost] = useState(null);
+  const [mvp, setMvp] = useState("Loading...")
   const [comments, setComments] = useState([]);
   const [stats, setStats] = useState({ totalParticipants: 0, prosVotes: 0, consVotes: 0 });
   
@@ -54,13 +56,35 @@ export const usePostPage = (postID) => {
       setComments(actualComments);
 
       setStats(statsData);
-      console.log("Comment Response:", actualComments); 
     } catch (err) {
       console.error("Fetch failed:", err);
     }
   }, [postID, user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+        const fetchInitialData = async () => {
+            const postData = await getPostById(postID); 
+            setPost(postData);
+
+            if (postData) {
+                try {
+                    const consensusData = await getConsensusData(
+                        postID, 
+                        postData.proLabel, 
+                        postData.conLabel
+                    );
+                    setMvp(consensusData.mvp || "No MVP");
+                } catch (err) {
+                    console.error("Error fetching MVP:", err);
+                    setMvp("None");
+                }
+            }
+        };
+
+        fetchInitialData();
+    }, [postID]);
 
   const handleStanceChange = async (newStance) => {
     if (!user || userSide !== null) return;
@@ -98,7 +122,7 @@ export const usePostPage = (postID) => {
   }, [comments]);
 
   return {
-    post, comments, setComments, commentText, stats, totalComments,
+    post, mvp, comments, setComments, commentText, stats, totalComments,
     userSide, userStanceLabel, activeTab, modal, fullscreenImageIndex,
     setCommentText, setActiveTab, fetchData,
     handleStanceChange,
