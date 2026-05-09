@@ -23,8 +23,8 @@ export default function VoteControl({ commentID, initialVotes, userVoteStatus })
     setVote(nextVote);
     
     try {
-      const newTotal = await voteOnComment(commentID, user.userID, numericValue);
-      setVoteCount(newTotal);
+      const res = await voteOnComment(commentID, user.userID, numericValue);
+      setVoteCount(res);
     } catch (err) {
       setVote(previousVote);
       setVoteCount(previousCount);
