@@ -9,11 +9,13 @@ import ProfileDropdown from "../ui/ProfileDropdown";
 import { useAuth } from "../../context/AuthContext";
 import { getCurrentUser } from "../../services/UserService";
 import NotificationPanel from "../notification/NotificationPanel";
+import { getUserNotifications } from "../../services/NotiService";
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -36,6 +38,21 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
 
     fetchUser();
   }, [setUser]);
+
+  useEffect(() => {
+    if (!user?.userID) return;
+    fetchNotifications();
+  }, [user?.userID]);
+
+  const fetchNotifications = async () => {
+    const res = await getUserNotifications(user.userID);
+    setNotifications(res.notifications || []);
+  };
+
+  useEffect(() => {
+    const count = notifications.filter(n => !n.read).length;
+    setUnreadCount(count);
+  }, [notifications]);
 
   return (
     <>
@@ -97,7 +114,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
             >
               <Bell size={20} />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white text-xxs rounded-full flex items-center justify-center">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
@@ -105,9 +122,12 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
             
             {/* Notification Panel - Pass the callback */}
             {notificationOpen && (
-              <NotificationPanel 
+              <NotificationPanel
+                notifications={notifications}
+                setNotifications={setNotifications}
                 onClose={() => setNotificationOpen(false)}
-                onUnreadCountChange={() => {}}
+                unreadCount={unreadCount}
+                onUnreadCountChange={setUnreadCount}
               />
             )}
           </div>

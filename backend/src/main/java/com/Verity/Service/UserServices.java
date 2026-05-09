@@ -15,6 +15,7 @@ import com.Verity.DTO.UserRequest;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Exceptions.ApiException;
 import com.Verity.Repo.UserRepo;
+import com.Verity.Repo.VoteRepo;
 import com.Verity.Utils.FileUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class UserServices {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final PunishmentLogService punishmentLogService;
+    private final VoteRepo voteRepo;
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/users/";
 
     public void createUser(UserRequest userRequest) {
@@ -212,5 +214,9 @@ public class UserServices {
 
         return userRepo.findUserByEmail(email)
                 .orElseThrow(() -> new ApiException("User not found"));
+    }
+
+    public int getUserReputation(String userID) {
+        return voteRepo.sumReputationByUserID(userID);
     }
 }

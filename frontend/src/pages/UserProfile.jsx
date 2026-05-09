@@ -15,6 +15,7 @@ import PostSkeleton from "../components/ui/PostSkeleton";
 import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 import { getUserPosts } from "../services/PostService";
 import { isModerator, isAdmin } from "../utils/Utils.js";
+import useReputation from "../hooks/useReputation.jsx";
 
 export default function UserProfile() {
   const { id } = useParams();
@@ -31,6 +32,7 @@ export default function UserProfile() {
   });
 
   const { posts, loading } = useInfinitePostsById(getUserPosts, id, 6);
+  const { reputation } = useReputation(id);
 
   // Redirect if own profile
   useEffect(() => {
@@ -115,6 +117,7 @@ export default function UserProfile() {
         isFollowed={isFollowed}
         onFollowToggle={handleFollowToggle}
         followers={followers}
+        reputation={reputation}
       />
 
       {(isModerator(currentUser) || isAdmin(currentUser)) && !isOwnProfile && (

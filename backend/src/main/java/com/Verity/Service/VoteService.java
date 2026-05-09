@@ -1,24 +1,25 @@
 package com.Verity.Service;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.Verity.DTO.VoteRequest;
 import com.Verity.Entity.CommentEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Entity.VoteEntity;
 import com.Verity.Repo.CommentRepo;
-import com.Verity.Repo.UserRepo;
 import com.Verity.Repo.VoteRepo;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class VoteService {
     private final VoteRepo voteRepo;
     private final CommentRepo commentRepo;
-    private final UserRepo userRepo;
+    private final UserServices userServices;
 
     @Transactional
     public int handleVote(String commentID, VoteRequest request) {
@@ -58,8 +59,8 @@ public class VoteService {
     private void createNewVote(String commentID, VoteRequest request) {
         CommentEntity comment = commentRepo.findById(commentID)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
-        UserEntity user = userRepo.findById(request.getVoterID())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                
+        UserEntity user = userServices.getCurrentUser();
 
         VoteEntity newVote = new VoteEntity();
         newVote.setComment(comment);
