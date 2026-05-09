@@ -13,14 +13,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ConsensusController {
     private final ConsensusService consensusService;
+    
 
     @GetMapping("/post/{postID}")
     public ResponseEntity<Map<String, CommentDTO>> getConsensusHighlights(
-            @PathVariable String postID,
-            @RequestParam String proLabel,
-            @RequestParam String conLabel) {
+            @PathVariable String postID) {
 
-        Map<String, CommentDTO> highlights = consensusService.getConsensusHighlights(postID, proLabel, conLabel);
+        // Let the service handle finding the labels based on the postID
+        Map<String, CommentDTO> highlights = consensusService.getConsensusHighlights(postID);
         return ResponseEntity.ok(highlights);
     }
 }
