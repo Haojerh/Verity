@@ -1,14 +1,16 @@
 package com.Verity.Repo;
 
-import com.Verity.Entity.PostEntity;
-import com.Verity.Entity.PostStanceEntity;
-import com.Verity.Entity.UserEntity;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.Verity.Entity.PostEntity;
+import com.Verity.Entity.PostStanceEntity;
+import com.Verity.Entity.UserEntity;
 
 @Repository
 public interface PostStanceRepo extends JpaRepository<PostStanceEntity, String> {
@@ -30,4 +32,20 @@ public interface PostStanceRepo extends JpaRepository<PostStanceEntity, String> 
         ) as total_participants
         """, nativeQuery = true)
     long countUniqueParticipants(@Param("postId") String postId);
+
+    @Query(value = """
+        SELECT COALESCE(AVG(participants), 0)
+        FROM (
+            SELECT p.postID,
+                (
+                    SELECT COUNT(DISTINCT ps.userID)
+                    FROM post_stance ps
+                    WHERE ps.postID = p.postID
+                ) AS participants
+            FROM post p
+        ) x
+    """, nativeQuery = true)
+    Double avgParticipantsPerPost();
+
+    List<PostStanceEntity> findByPostID_PostIDAndSYSISDELETEDFalse(String postId);
 }

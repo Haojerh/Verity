@@ -57,7 +57,7 @@ export default function NotificationPanel({ notifications, setNotifications, onC
     switch(type) {
       case "REPORT": return "🚨";
       case "POST": return "💬";
-      case "SYSTEM": return "📢";
+      case "PUNISHMENT": return "⚖️";
       default: return "📌";
     }
   };

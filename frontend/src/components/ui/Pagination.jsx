@@ -6,6 +6,7 @@ export default function Pagination({
   onPageChange,
   totalItems,
   itemsPerPage,
+  type="users"
 }) {
   const start = (currentPage - 1) * itemsPerPage + 1;
   const end = Math.min(currentPage * itemsPerPage, totalItems);
@@ -19,7 +20,7 @@ export default function Pagination({
   return (
     <div className="mt-4 flex items-center justify-between">
       <p className="text-xs font-medium">
-        Showing {start}-{end} of {totalItems} users
+        Showing {start}-{end} of {totalItems} {type}
       </p>
 
       <div className="flex items-center gap-1">

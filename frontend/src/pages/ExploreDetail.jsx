@@ -15,6 +15,10 @@ export default function ExploreDetail() {
     const { posts, loading } = useInfinitePostsById(getTopicPosts, id);
 
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "instant" });
+    }, []);
+
+    useEffect(() => {
         const fetchData = async () => {
             try {
             const [topicRes, favRes] = await Promise.all([

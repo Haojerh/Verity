@@ -1,5 +1,6 @@
 package com.Verity.Repo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,8 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
     Page<PostEntity> findByAuthor_UserIDAndSYSISDELETEDFalse(String userID, Pageable pageable);
 
     Page<PostEntity> findByTopic_TopicIDAndSYSISDELETEDFalse(String topicID, Pageable pageable);
+
+    long countByTopic_TopicIDAndSYSISDELETEDFalse(String topicID);
 
     Page<PostEntity> findBySYSISDELETEDFalse(Pageable pageable);
 
@@ -92,12 +95,30 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
     List<PostEntity> findRandomPool(@Param("excludedIds") List<String> excludedIds);
 
     @Query("""
-    SELECT p FROM PostEntity p
-    WHERE p.SYSISDELETED = false
-    AND (
-        LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%'))
-        OR LOWER(p.description) LIKE LOWER(CONCAT('%', :q, '%'))
+        SELECT p FROM PostEntity p
+        WHERE p.SYSISDELETED = false
+        AND (
+            LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%'))
+            OR LOWER(p.description) LIKE LOWER(CONCAT('%', :q, '%'))
     )
     """)
     Page<PostEntity> searchPosts(@Param("q") String q, Pageable pageable);
+
+    @Query("""
+        SELECT FUNCTION('DATE', p.SYSCREATEDDATE), COUNT(p)
+        FROM PostEntity p
+        WHERE p.SYSCREATEDDATE >= :startDate
+        GROUP BY FUNCTION('DATE', p.SYSCREATEDDATE)
+        ORDER BY FUNCTION('DATE', p.SYSCREATEDDATE)
+        """)
+    List<Object[]> countPostsLast5Days(@Param("startDate") LocalDateTime startDate);
+
+    @Query("""
+        SELECT FUNCTION('HOUR', p.SYSCREATEDDATE), COUNT(p)
+        FROM PostEntity p
+        WHERE p.SYSISDELETED = false
+        GROUP BY FUNCTION('HOUR', p.SYSCREATEDDATE)
+        ORDER BY FUNCTION('HOUR', p.SYSCREATEDDATE)
+    """)
+    List<Object[]> countPostsByHour();
  }

@@ -17,6 +17,10 @@ export default function TopicManagement() {
   });
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
+  useEffect(() => {
     const fetchTopics = async () => {
       try {
         const res = await getTopics();
@@ -70,6 +74,10 @@ export default function TopicManagement() {
             onAction={openModal}
           />
         ))}
+
+        {filteredTopics.length === 0 && (
+            <div className="text-sm text-center text-muted-foreground">No Topic Yet.</div>
+        )}
       </div>
 
       {/* Overlay */}

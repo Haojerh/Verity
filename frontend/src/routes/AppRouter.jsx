@@ -21,6 +21,7 @@ import PopularPage from "../pages/PopularPage";
 import SearchPage from "../pages/SearchPage";
 import Rules from "../pages/Rules";
 import Policies from "../pages/Policies";
+import Analytics from "../pages/Analytics";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,6 +37,7 @@ export const router = createBrowserRouter(
           <Route path="recent" element={<RecentPage />} />
           <Route path="popular" element={<PopularPage />} />
           <Route path="search" element={<SearchPage />} />
+          <Route path="analytics" element={<Analytics />} />
           <Route path="rules" element={<Rules />} />
           <Route path="policies" element={<Policies />} />
           <Route path="user-management" element={<UserManagement />} />

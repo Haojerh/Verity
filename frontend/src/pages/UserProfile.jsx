@@ -34,6 +34,10 @@ export default function UserProfile() {
   const { posts, loading } = useInfinitePostsById(getUserPosts, id, 6);
   const { reputation } = useReputation(id);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
   // Redirect if own profile
   useEffect(() => {
     if (currentUser?.userID === id) {

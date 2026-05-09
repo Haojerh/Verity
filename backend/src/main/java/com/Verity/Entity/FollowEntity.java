@@ -20,11 +20,11 @@ public class FollowEntity extends Auditable {
     private String followID;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FollowerID")
+    @JoinColumn(name = "followerID")
     private UserEntity userFollower;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FollowingID")
+    @JoinColumn(name = "followingID")
     private UserEntity userFollowing;
 
     @PrePersist

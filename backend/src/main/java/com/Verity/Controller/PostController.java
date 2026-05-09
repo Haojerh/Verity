@@ -15,14 +15,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.Verity.DTO.CommentDTO;
-import com.Verity.DTO.CommentRequest;
 import com.Verity.DTO.PostDTO;
 import com.Verity.DTO.PostRequest;
 import com.Verity.Domain.Response;
@@ -65,6 +62,12 @@ public class PostController {
     public ResponseEntity<Response> getPostById(@PathVariable String postID, HttpServletRequest request) {
         PostDTO post = postService.getPostById(postID);
         return ResponseEntity.ok().body(getResponse(request, Map.of("post", post), "Post retrieved", OK));
+    }
+
+    @DeleteMapping("/takedown/{id}")
+    public ResponseEntity<Response> takedownComment(@PathVariable String id, HttpServletRequest request) {
+        postService.takedownPost(id);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "Post taken down", OK));
     }
 
     @GetMapping("/user/{userID}")

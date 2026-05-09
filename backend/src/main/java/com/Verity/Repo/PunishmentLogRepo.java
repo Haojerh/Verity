@@ -26,4 +26,6 @@ public interface PunishmentLogRepo extends JpaRepository<PunishmentLogEntity,Str
     """)
     List<PunishmentLogEntity> findByUserID(String userID);
 
+    long countByTypeIgnoreCase(String type);
+
 }

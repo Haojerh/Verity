@@ -23,7 +23,7 @@ export default function CommentInput({ userSide, value, onChange, onSubmit, subm
           type="button"
           disabled={!value?.trim() || submitting}
           onClick={onSubmit}
-          className="bg-primary text-primary-foreground px-6 py-2 rounded-lg not-only:hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Post Comment
         </button>

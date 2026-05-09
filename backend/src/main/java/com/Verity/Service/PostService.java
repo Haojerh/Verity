@@ -23,9 +23,11 @@ import com.Verity.DTO.PostRequest;
 import com.Verity.DTO.PostStanceDTO;
 import com.Verity.Entity.CommentEntity;
 import com.Verity.Entity.PostEntity;
+import com.Verity.Entity.PostStanceEntity;
 import com.Verity.Entity.ReportEntity;
 import com.Verity.Entity.TopicEntity;
 import com.Verity.Entity.UserEntity;
+import com.Verity.Entity.VoteEntity;
 import com.Verity.Repo.CommentRepo;
 import com.Verity.Repo.FollowRepo;
 import com.Verity.Repo.PostRepo;
@@ -34,6 +36,7 @@ import com.Verity.Repo.ReportRepo;
 import com.Verity.Repo.TopicRepo;
 import com.Verity.Repo.UserFavTopicRepo;
 import com.Verity.Repo.UserRepo;
+import com.Verity.Repo.VoteRepo;
 import com.Verity.Utils.FileUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -52,6 +55,8 @@ public class PostService {
     private final PunishmentLogService punishmentLogService;
     private final FollowRepo followRepo;
     private final UserFavTopicRepo userFavTopicRepo;
+    private final UserNotiService userNotiService;
+    private final VoteRepo voteRepo;
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/posts/";
 
     public PostDTO createPost(PostRequest request, MultipartFile image, String authorEmail) throws IOException {
@@ -201,24 +206,45 @@ public class PostService {
         postRepo.save(post);
 
         // delete comments under post
-        List<CommentEntity> comments = commentRepo.findByPost_PostID(postId);
-
-        for (CommentEntity c : comments) {
-            c.setSYSISDELETED(true);
-        }
+        List<CommentEntity> comments = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postId);
+        comments.forEach(c -> c.setSYSISDELETED(true));
         commentRepo.saveAll(comments);
+
+        // delete comments votes under post
+        List<VoteEntity> votes = voteRepo.findByComment_Post_PostIDAndSYSISDELETEDFalse(postId);
+        votes.forEach(v -> v.setSYSISDELETED(true));
+        voteRepo.saveAll(votes);
+
+        // delete post stance under post
+        List<PostStanceEntity> stances = postStanceRepo.findByPostID_PostIDAndSYSISDELETEDFalse(postId);
+        stances.forEach(s -> s.setSYSISDELETED(true));
+        postStanceRepo.saveAll(stances);
 
         // delete post reports
         List<ReportEntity> postReports = reportRepo.findByTargetPost_PostIDAndSYSISDELETEDFalse(postId);
+        postReports.forEach(r -> r.setSYSISDELETED(true));
+        reportRepo.saveAll(postReports);
 
         // delete comment reports under that post
         List<ReportEntity> commentReports = reportRepo.findByTargetComment_Post_PostIDAndSYSISDELETEDFalse(postId);
-
-        postReports.forEach(r -> r.setSYSISDELETED(true));
         commentReports.forEach(r -> r.setSYSISDELETED(true));
-
-        reportRepo.saveAll(postReports);
         reportRepo.saveAll(commentReports);
+
+        for (ReportEntity r : postReports) {
+            userNotiService.createNotification(
+                r.getReporter(),
+                "Your report on post '" + r.getTargetPost().getTitle() + "' has been resolved",
+                "REPORT"
+            );
+        }
+
+        for (ReportEntity r : commentReports) {
+            userNotiService.createNotification(
+                r.getReporter(),
+                "Your report on comment in post with title'" + r.getTargetComment().getPost().getTitle() + "' has been resolved as the post has been removed",
+                "REPORT"
+            );
+        }
     }
 
     public Page<PostDTO> getTopicPosts(String topicID, int page, int size) {

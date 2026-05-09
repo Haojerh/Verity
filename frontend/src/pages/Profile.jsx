@@ -2,7 +2,7 @@ import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileTabs from "../components/profile/ProfileTabs";
 import PostSkeleton from "../components/ui/PostSkeleton";
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getUserPosts, getFollowedUsersPosts, getFollowedTopicsPosts } from "../services/PostService";
 import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 import useFollowers from "../hooks/useFollowers";
@@ -18,6 +18,10 @@ export default function Profile() {
   const followingTopicsPosts = useInfinitePostsById(getFollowedTopicsPosts, user?.userID);
 
   const { reputation } = useReputation(user?.userID);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
   if (!user) {
     return (
