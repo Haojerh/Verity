@@ -19,7 +19,7 @@ public class UserNotiService {
 
     public List<UserNotiDTO> getUserNotifications(String userID) {
 
-        List<UserNotiEntity> notis = userNotiRepo.findByUserIdOrderByCreatedDateDesc(
+        List<UserNotiEntity> notis = userNotiRepo.findByRecipient_UserIDOrderBySYSCREATEDDATEDesc(
             userID,
             PageRequest.of(0, 20)
         );
@@ -31,6 +31,7 @@ public class UserNotiService {
             dto.setType(noti.getType());
             dto.setMessage(noti.getMessage());
             dto.setRead(noti.isRead());
+            dto.setSYSCREATEDDATE(noti.getSYSCREATEDDATE());
 
             if ("POST".equals(noti.getType())) {
                 dto.setSourceID(noti.getSourceID());

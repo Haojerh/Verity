@@ -6,6 +6,7 @@ import { useState } from "react";
 import { getUserPosts, getFollowedUsersPosts, getFollowedTopicsPosts } from "../services/PostService";
 import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 import useFollowers from "../hooks/useFollowers";
+import useReputation from "../hooks/useReputation.jsx";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export default function Profile() {
   const followingUsersPosts = useInfinitePostsById(getFollowedUsersPosts, user?.userID);
   const followingTopicsPosts = useInfinitePostsById(getFollowedTopicsPosts, user?.userID);
 
+  const { reputation } = useReputation(user?.userID);
 
   if (!user) {
     return (
@@ -43,6 +45,7 @@ export default function Profile() {
         user={user}
         isOwnProfile={true}
         followers={followers}
+        reputation={reputation}
       />
 
       <ProfileTabs

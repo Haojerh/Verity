@@ -5,13 +5,23 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
-import com.Verity.Entity.*;
-import com.Verity.Repo.*;
 import org.springframework.stereotype.Service;
 
 import com.Verity.DTO.CommentDTO;
 import com.Verity.DTO.CommentRequest;
+import com.Verity.Entity.CommentEntity;
+import com.Verity.Entity.PostEntity;
+import com.Verity.Entity.ReportEntity;
+import com.Verity.Entity.UserEntity;
+import com.Verity.Entity.VoteEntity;
+import com.Verity.Exceptions.ApiException;
+import com.Verity.Repo.CommentRepo;
+import com.Verity.Repo.PostRepo;
+import com.Verity.Repo.ReportRepo;
+import com.Verity.Repo.UserRepo;
+import com.Verity.Repo.VoteRepo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,8 +37,20 @@ public class CommentService {
     private final VoteService voteService;
     private final UserServices userServices;
 
+    private static final Pattern BAD_WORDS = Pattern.compile(
+    "(?i)\\b(fuck|shit|damn|ass|faggot|cunt|fk|fuc|sht|asshole|bitch)\\b"
+    );
 
     public CommentDTO createComment(String postID, CommentRequest request, String authorEmail) {
+
+        String normalized = request.getText()
+            .toLowerCase()
+            .replaceAll("[^a-z0-9\\s]", "");
+        
+        if (BAD_WORDS.matcher(normalized).find()) {
+            throw new ApiException("Your comment contains inappropriate language!");
+        }
+
         PostEntity post = postRepo.findById(postID)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 

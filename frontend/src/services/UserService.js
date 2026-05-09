@@ -50,3 +50,7 @@ export const updateAvatar = async (file) => {
 export const deleteAccount = async () => {
   return await request("DELETE", "/api/user");
 };
+
+export const getUserReputation = async (userID) => {
+  return await request("GET", `/api/reputation/${userID}`)
+}

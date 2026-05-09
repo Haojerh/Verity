@@ -164,4 +164,10 @@ public class UserController {
         userServices.changePassword(email, req.getCurrentPassword(), req.getNewPassword());
         return ResponseEntity.ok(getResponse(request, emptyMap(), "Password updated successfully", OK));
     }
+
+    @GetMapping("/api/reputation/{id}")
+    public ResponseEntity<Response> getRepById(@PathVariable String id, HttpServletRequest request) {
+        var reputation = userServices.getUserReputation(id);
+        return ResponseEntity.ok(getResponse(request, Map.of("reputation", reputation), "Reputation Retrieved", OK));
+    }
 }

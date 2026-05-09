@@ -1,5 +1,7 @@
 package com.Verity.DTO;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,5 +15,6 @@ public class UserNotiDTO {
     private String type;
     private boolean isRead;
     private String sourceID;
+    private LocalDateTime SYSCREATEDDATE;
 
 }

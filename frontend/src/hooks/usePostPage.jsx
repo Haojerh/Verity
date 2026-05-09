@@ -3,9 +3,11 @@ import { getPostComments, createPostComment } from "../services/CommentService";
 import { getPostById, mapPostData } from "../services/PostService";
 import { getPostStats, getUserStance, selectStance } from "../services/PostStanceService";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export const usePostPage = (postID) => {
   const { user } = useAuth();
+  const { showToast } = useToast();
   
   // Data State
   const [post, setPost] = useState(null);
@@ -84,8 +86,10 @@ export const usePostPage = (postID) => {
       setCommentText("");
       await fetchData(); 
       setActiveTab(currentTab); 
+      showToast("Comment Posted");
     } catch (err) {
       console.error("Comment submission failed:", err);
+      showToast(err.response?.data?.message || "Failed to comment");
     }
   };
 
