@@ -8,7 +8,7 @@ import Avatar from "../ui/Avatar";
 import ProfileDropdown from "../ui/ProfileDropdown";
 import { useAuth } from "../../context/AuthContext";
 import { getCurrentUser } from "../../services/UserService";
-// import NotificationPanel from "../notification/NotificationPanel";
+import NotificationPanel from "../notification/NotificationPanel";
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -36,39 +36,6 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
 
     fetchUser();
   }, [setUser]);
-  
-  // // Fetch unread notification count
-  // const fetchUnreadCount = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:8080/api/notifications/unread/count");
-  //     const data = await response.json();
-  //     setUnreadCount(data.count);
-  //   } catch (error) {
-  //     console.error("Error fetching notifications:", error);
-  //   }
-  // };
-  
-  // // This function will be called from NotificationPanel when count changes
-  // const handleUnreadCountChange = (newCount) => {
-  //   setUnreadCount(newCount);
-  // };
-  
-  // useEffect(() => {
-  //   fetchUnreadCount();
-  //   const interval = setInterval(fetchUnreadCount, 30000);
-  //   return () => clearInterval(interval);
-  // }, []);
-  
-  // const handleSearch = () => {
-  //   if (!searchQuery.trim()) return;
-    
-  //   // Make sure to encode properly
-  //   const encodedQuery = encodeURIComponent(searchQuery);
-  //   console.log("Searching:", searchQuery);
-  //   console.log("Encoded:", encodedQuery);
-    
-  //   navigate(`/?q=${encodedQuery}`);
-  // };
 
   return (
     <>
@@ -140,20 +107,10 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
             {notificationOpen && (
               <NotificationPanel 
                 onClose={() => setNotificationOpen(false)}
-                onUnreadCountChange={handleUnreadCountChange}
+                onUnreadCountChange={() => {}}
               />
             )}
           </div>
-
-          {/* Profile */}
-          {/* <div className="relative">
-            <button onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-              <Avatar name={currentUser} />
-            </button>
-            {profileMenuOpen && (
-              <ProfileDropdown onClose={() => setProfileMenuOpen(false)} />
-            )}
-          </div> */}
 
           {/* Profile */}
           <div className="relative">
@@ -163,7 +120,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
             {profileMenuOpen && (
               <ProfileDropdown 
                 onClose={() => setProfileMenuOpen(false)} 
-                onToggle={onOpenDisplayMode} // Pass the function here
+                onToggle={onOpenDisplayMode}
               />
             )}
           </div>

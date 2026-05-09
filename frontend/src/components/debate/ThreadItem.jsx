@@ -4,6 +4,7 @@ import { useState } from "react";
 import TextBox from "../ui/TextBox";
 import { useAuth } from "../../context/AuthContext";
 import { formatDistanceToNow } from "date-fns";
+import { isModerator, isAdmin } from "../../utils/Utils.js";
 import VoteControl from "./VoteControl";
 
 export default function ThreadItem({ 
@@ -41,9 +42,6 @@ export default function ThreadItem({
 
   const isDeep = depth > 3;
   const marginClass = depth === 0 ? "mt-6" : isDeep ? "ml-2 mt-2" : "ml-4 md:ml-10 mt-2";
-
-  const isModerator = currentUser?.userRole?.toUpperCase() === "MODERATOR";
-  const isAdmin = currentUser?.userRole?.toUpperCase() === "ADMINISTRATOR";
 
   const handlePostReply = () => {
     if (!reply.message.trim()) return;
@@ -108,13 +106,13 @@ export default function ThreadItem({
               <div className="absolute right-0 top-9 z-20 w-36 bg-popover border border-border rounded-md shadow-dark-lg animate-in fade-in zoom-in duration-100">
                 <button 
                   onClick={() => { 
-                    openModal((isModerator || isAdmin) ? "commentTakedown" : "commentReport", comment); 
+                    openModal((isModerator(currentUser) || isAdmin(currentUser)) ? "commentTakedown" : "commentReport", comment); 
                     setMenuOpen(false); 
                   }}
                   className="flex gap-2 p-2.5 w-full text-sm font-medium text-destructive hover:bg-muted/50 items-center transition-colors"
                 >
                   <Flag className="w-3.5 h-3.5"/> 
-                  {(isModerator || isAdmin) ? "Takedown" : "Report"}
+                  {(isModerator(currentUser) || isAdmin(currentUser)) ? "Takedown" : "Report"}
                 </button>
               </div>
             )}
@@ -158,7 +156,7 @@ export default function ThreadItem({
         {reply.state && (
           <div className="mt-4 flex flex-col gap-2 p-3 bg-input-background rounded-md border border-border">
             <TextBox 
-              placeholder={`Replying as @${currentUser?.username}...`}
+              placeholder={`Replying as @${currentUser?.name}...`}
               value={reply.message}
               onChange={(e) => setReply(prev => ({ ...prev, message: e.target.value }))}
               autoFocus

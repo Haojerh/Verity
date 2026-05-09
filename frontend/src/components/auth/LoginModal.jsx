@@ -5,7 +5,7 @@ import ModalHeader from "../ui/ModalHeader";
 import { TriangleAlert } from "lucide-react";
 import { useEffect } from "react";
 import { demoteModerator } from "../../services/PunishmentLogsService";
-import { formatDuration } from "../../utils/Format";
+import { formatDuration } from "../../utils/Utils";
 
 export default function LoginModal({ user, remaining, onClose }) {
   const remainingTime = formatDuration(remaining);

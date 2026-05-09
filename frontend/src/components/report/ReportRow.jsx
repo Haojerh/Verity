@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { formatDateTime } from "../../utils/Format";
+import { formatDateTime } from "../../utils/Utils";
 
 export default function ModeratorRow({ report }) {
   return (

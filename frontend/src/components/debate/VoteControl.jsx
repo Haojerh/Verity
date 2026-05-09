@@ -42,7 +42,7 @@ export default function VoteControl({ commentID, initialVotes, userVoteStatus })
         <ArrowUp className="w-3.5 h-3.5" />
       </button>
 
-      <span className="text-xs font-bold px-1 min-w-[1.5rem] text-center">{voteCount}</span>
+      <span className="text-xs font-bold px-1 min-w-6 text-center">{voteCount}</span>
 
       <button
         onClick={() => handleVote("downvote")}

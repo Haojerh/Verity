@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileTabs from "../components/profile/ProfileTabs";
@@ -10,12 +10,11 @@ import UnbanModal from "../components/userManagement/UnbanModal";
 import MuteModal from "../components/userManagement/MuteModal";
 import UnmuteModal from "../components/userManagement/UnmuteModal";
 import { useAuth } from "../context/AuthContext";
-import { toggleFollow, getFollowStatus } from "../services/FollowService.js";
+import { toggleFollow, getFollowStatus, getFollowerCount } from "../services/FollowService.js";
 import PostSkeleton from "../components/ui/PostSkeleton";
-import useFollowers from "../hooks/useFollowers";
 import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 import { getUserPosts } from "../services/PostService";
-import { isModerator, isAdmin } from "../utils/Format.js";
+import { isModerator, isAdmin } from "../utils/Utils.js";
 
 export default function UserProfile() {
   const { id } = useParams();
@@ -24,14 +23,16 @@ export default function UserProfile() {
 
   const [profileUser, setProfileUser] = useState(null);
   const [isFollowed, setIsFollowed] = useState(false);
+  const [followers, setFollowers] = useState(0);
+
   const [modal, setModal] = useState({
     type: null,
     user: null,
   });
 
-  const followers = useFollowers(id);
   const { posts, loading } = useInfinitePostsById(getUserPosts, id, 6);
 
+  // Redirect if own profile
   useEffect(() => {
     if (currentUser?.userID === id) {
       navigate("/profile");
@@ -49,6 +50,19 @@ export default function UserProfile() {
     };
 
     fetchUser();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchFollowers = async () => {
+        try {
+        const res = await getFollowerCount(id);
+        setFollowers(res);
+        } catch (err) {
+        console.error(err);
+        }
+    };
+
+    if (id) fetchFollowers();
   }, [id]);
 
   useEffect(() => {
@@ -75,6 +89,7 @@ export default function UserProfile() {
     }
   };
 
+  //Modals
   const openModal = useCallback((type, user) => {
     setModal({ type, user });
   }, []);
@@ -93,7 +108,8 @@ export default function UserProfile() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <ProfileHeader 
+
+      <ProfileHeader
         user={profileUser}
         isOwnProfile={isOwnProfile}
         isFollowed={isFollowed}
@@ -101,7 +117,7 @@ export default function UserProfile() {
         followers={followers}
       />
 
-      {(isModerator || isAdmin) && !isOwnProfile && (
+      {(isModerator(currentUser) || isAdmin(currentUser)) && !isOwnProfile && (
         <PunishButtons user={profileUser} openModal={openModal} />
       )}
 
@@ -115,14 +131,11 @@ export default function UserProfile() {
 
       {/* MODALS */}
       {modal.type === "warn" && (
-        <WarnModal 
-          user={modal.user} 
-          onClose={closeModal} 
-        />
+        <WarnModal user={modal.user} onClose={closeModal} />
       )}
 
       {modal.type === "ban" && (
-        <BanModal 
+        <BanModal
           user={modal.user}
           onClose={closeModal}
           setUserData={setProfileUser}
@@ -149,7 +162,7 @@ export default function UserProfile() {
       )}
 
       {modal.type === "unmute" && (
-        <UnmuteModal 
+        <UnmuteModal
           user={modal.user}
           onClose={closeModal}
           setUserData={setProfileUser}

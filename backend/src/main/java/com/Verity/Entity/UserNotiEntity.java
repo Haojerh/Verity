@@ -19,13 +19,14 @@ public class UserNotiEntity extends Auditable {
     @Column(length = 20, nullable = false)
     private String notiID;
     private String message;
+    private String type;
     private String sourceID;
-    private boolean isRead = false;
+    private boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipientID")
     private UserEntity recipient;
 
     @PrePersist
-    public void beforePersist() { setNotiID("USRNOT-" + RandomString.make(10));}
+    public void beforePersist() { setNotiID("NOT-" + RandomString.make(10));}
 }

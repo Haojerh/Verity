@@ -1,16 +1,20 @@
 import Header from "../components/ui/Header";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { getSearchPosts } from "../services/PostService";
 import PostSkeleton from "../components/ui/PostSkeleton";
 import DebateCard from "../components/homeDebate/DebateCard";
 import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 
 export default function SearchPage() {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("q") || "";
   const navigate = useNavigate();
-  const query = new URLSearchParams(location.search).get("q") || "";
   const { posts, loading } = useInfinitePostsById(getSearchPosts, query, 6);
 
-  if (!query) navigate("/");
+  useEffect(() => {
+    if (!query) navigate("/");
+  }, [query]);
 
   return (
     <div className="max-w-4xl mx-auto">

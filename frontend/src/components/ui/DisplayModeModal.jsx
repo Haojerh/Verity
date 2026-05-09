@@ -13,7 +13,7 @@ export default function DisplayModeModal({ onClose, isDark, onDark }) {
         onClose={onClose}
       />
 
-      <div className="px-8 pb-8 space-y-3 flex flex-col">
+      <div className="px-8 pb-4 space-y-3 flex flex-col">
         <button
           onClick={() => onDark(false)}
           className={`flex items-center gap-2 border-2 rounded-md p-3 transition-all
