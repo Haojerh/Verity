@@ -4,10 +4,15 @@ import PostSkeleton from "../components/ui/PostSkeleton";
 import DebateCard from "../components/homeDebate/DebateCard";
 import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
 
 export default function Home() {
   const { user } = useAuth();
   const { posts, loading } = useInfinitePostsById(getRecommendedPosts, user?.userID, 6);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto">

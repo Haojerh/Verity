@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.Verity.DTO.UserNotiDTO;
+import com.Verity.Entity.UserEntity;
 import com.Verity.Entity.UserNotiEntity;
 import com.Verity.Repo.UserNotiRepo;
 
@@ -16,6 +17,26 @@ import lombok.RequiredArgsConstructor;
 public class UserNotiService {
 
     private final UserNotiRepo userNotiRepo;
+
+    public void createNotification(UserEntity user, String message, String type) {
+        UserNotiEntity notification = new UserNotiEntity();
+        notification.setRecipient(user);
+        notification.setMessage(message);
+        notification.setType(type);
+        notification.setRead(false);
+        userNotiRepo.save(notification);
+    }
+
+    public void createNotification(UserEntity user, String message, String type, String sourceID) {
+        UserNotiEntity notification = new UserNotiEntity();
+        notification.setRecipient(user);
+        notification.setMessage(message);
+        notification.setType(type);
+        notification.setSourceID(sourceID);
+        notification.setRead(false);
+
+        userNotiRepo.save(notification);
+    }
 
     public List<UserNotiDTO> getUserNotifications(String userID) {
 

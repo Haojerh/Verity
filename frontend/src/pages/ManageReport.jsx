@@ -88,6 +88,7 @@ export default function ManageReport() {
         onPageChange={setCurrentPage}
         totalItems={filteredReports.length}
         itemsPerPage={itemsPerPage}
+        type="reports"
       />
     </div>
   );

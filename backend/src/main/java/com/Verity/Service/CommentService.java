@@ -36,6 +36,7 @@ public class CommentService {
     private final VoteRepo voteRepo;
     private final VoteService voteService;
     private final UserServices userServices;
+    private final UserNotiService userNotiService;
 
     private static final Pattern BAD_WORDS = Pattern.compile(
     "(?i)\\b(fuck|shit|damn|ass|faggot|cunt|fk|fuc|sht|asshole|bitch)\\b"
@@ -63,7 +64,7 @@ public class CommentService {
         comment.setAuthor(author);
 
         if (request.getParentCommentID() != null && !request.getParentCommentID().isBlank()) {
-            CommentEntity parentComment = commentRepo.findByCommentID(request.getParentCommentID())
+            CommentEntity parentComment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(request.getParentCommentID())
                     .orElseThrow(() -> new RuntimeException("Parent comment not found"));
 
             if (!parentComment.getPost().getPostID().equals(postID)) {
@@ -76,11 +77,20 @@ public class CommentService {
 
         long updatedCount = commentRepo.countByPost_PostID(postID);
 
+        if (!post.getAuthor().getUserID().equals(author.getUserID())) {
+            userNotiService.createNotification(
+                post.getAuthor(),
+                author.getName() + " has commented on your post with title " + "'" + post.getTitle() + "'", 
+                "POST", 
+                post.getPostID()
+            );
+        }
+
         return mapToDTO(savedComment, updatedCount);
     }
 
     public List<CommentDTO> getCommentsByPostID(String postID) {
-        List<CommentEntity> entities = commentRepo.findByPost_PostID(postID);
+        List<CommentEntity> entities = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID);
         long totalCount = entities.size();
 
         Map<String, CommentDTO> dtoMap = new HashMap<>();
@@ -108,7 +118,7 @@ public class CommentService {
     }
 
     public CommentDTO getCommentByID(String id) {
-        CommentEntity comment = commentRepo.findByCommentID(id)
+        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         CommentDTO dto = new CommentDTO();
@@ -133,25 +143,34 @@ public class CommentService {
     }
 
     public void takedownComment(String id) {
-        CommentEntity comment = commentRepo.findByCommentID(id)
+        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
-        comment.setSYSISDELETED(true);
-        commentRepo.save(comment);
 
+        // Deletion Logic and Replies too
         deleteCommentTree(comment);
 
+        // Delete Reports Related to Comments
         List<ReportEntity> reports = reportRepo.findByTargetComment_CommentIDAndSYSISDELETEDFalse(id);
-
-        for (ReportEntity report : reports) {
-            report.setSYSISDELETED(true);
-        }
-
+        reports.forEach(r -> r.setSYSISDELETED(true));
         reportRepo.saveAll(reports);
+
+        for (ReportEntity r : reports) {
+            userNotiService.createNotification(
+                r.getReporter(),
+                "Your report on comment in post with title'" + r.getTargetComment().getPost().getTitle() + "' has been resolved",
+                "REPORT"
+            );
+        }
     }
 
     private void deleteCommentTree(CommentEntity comment) {
         comment.setSYSISDELETED(true);
         commentRepo.save(comment);
+
+        // Delete Related Votes
+        List<VoteEntity> votes = voteRepo.findByComment_CommentIDAndSYSISDELETEDFalse(comment.getCommentID());
+        votes.forEach(v -> v.setSYSISDELETED(true));
+        voteRepo.saveAll(votes);
 
         if (comment.getReplies() != null) {
             for (CommentEntity reply : comment.getReplies()) {

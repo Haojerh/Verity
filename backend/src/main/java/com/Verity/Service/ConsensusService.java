@@ -56,7 +56,7 @@ public class ConsensusService {
     }
 
     public CommentDTO getLeadingCommentForSide(String postID, String sideLabel) {
-        List<CommentEntity> allComments = commentRepo.findByPost_PostID(postID);
+        List<CommentEntity> allComments = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID);
 
         return allComments.stream()
                 .filter(c -> {

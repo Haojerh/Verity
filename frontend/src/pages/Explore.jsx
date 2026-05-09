@@ -8,6 +8,10 @@ export default function Explore() {
   const [topics, setTopics] = useState([]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const [topicRes, favRes] = await Promise.all([
@@ -75,6 +79,10 @@ export default function Explore() {
         {topics.map((topic) => (
           <TopicCard key={topic.topicID} topic={topic} onFollowToggle={handleFollowToggle} />
         ))}
+
+        {topics.length === 0 && (
+            <div className="text-sm text-center text-muted-foreground">No Topic Yet.</div>
+        )}
       </div>
     </div>
   );

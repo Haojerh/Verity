@@ -21,11 +21,15 @@ public interface VoteRepo extends JpaRepository<VoteEntity, String> {
     List<VoteEntity> findByComment_CommentID(String commentID);
 
     @Query("""
-    SELECT COALESCE(SUM(v.voteValue), 0)
-    FROM VoteEntity v
-    JOIN v.comment c
-    JOIN c.author a
-    WHERE a.userID = :userID
+        SELECT COALESCE(SUM(v.voteValue), 0)
+        FROM VoteEntity v
+        JOIN v.comment c
+        JOIN c.author a
+        WHERE a.userID = :userID
     """)
     Integer sumReputationByUserID(@Param("userID") String userID);
+
+    List<VoteEntity> findByComment_Post_PostIDAndSYSISDELETEDFalse(String postId);
+
+    List<VoteEntity> findByComment_CommentIDAndSYSISDELETEDFalse(String commentId);
 }

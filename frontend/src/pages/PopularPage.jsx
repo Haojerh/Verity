@@ -3,9 +3,14 @@ import useInfinitePosts from "../hooks/useInfinitePosts.jsx";
 import { getPopularPosts } from "../services/PostService";
 import PostSkeleton from "../components/ui/PostSkeleton";
 import DebateCard from "../components/homeDebate/DebateCard";
+import { useEffect } from "react";
 
 export default function PopularPage() {
   const { posts, loading } = useInfinitePosts(getPopularPosts, 6);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto">

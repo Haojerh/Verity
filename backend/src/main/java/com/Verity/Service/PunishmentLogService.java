@@ -23,6 +23,7 @@ public class PunishmentLogService {
 
     private final PunishmentLogRepo punishmentLogRepo;
     private final UserRepo userRepo;
+    private final UserNotiService userNotiService;
 
     public boolean isUserPunished(String userId, String type) {
         List<PunishmentLogEntity> logs = punishmentLogRepo.findByUserAndType(userId, type);
@@ -65,31 +66,11 @@ public class PunishmentLogService {
 
         UserEntity moderator = userRepo.findUserByEmail(moderatorEmail)
             .orElseThrow(() -> new RuntimeException("Moderator not found"));
-
-        String currentRole = moderator.getUserRole();
-        String targetRole = punishedUser.getUserRole();
-
-        System.out.println(currentRole + ", " + targetRole);
-
-        if (currentRole.equalsIgnoreCase("MODERATOR")) {
-            if (
-                targetRole.equalsIgnoreCase("MODERATOR") ||
-                targetRole.equalsIgnoreCase("ADMINISTRATOR")
-            ) {
-                throw new RuntimeException(
-                    "Moderators cannot punish moderators or admins"
-                );
-            }
-        }
-
-        if (currentRole.equalsIgnoreCase("ADMINISTRATOR")) {
-
-            if (targetRole.equalsIgnoreCase("ADMINISTRATOR")) {
-                throw new RuntimeException(
-                    "Admins cannot punish other admins"
-                );
-            }
-        }
+        
+        validatePunishmentPermission(
+            moderator.getUserRole(),
+            punishedUser.getUserRole()
+        );
 
         PunishmentLogEntity log = new PunishmentLogEntity();
         log.setType(request.getType());
@@ -99,6 +80,42 @@ public class PunishmentLogService {
         log.setModerator(moderator);
 
         punishmentLogRepo.save(log);
+
+        userNotiService.createNotification(
+            punishedUser,
+            buildPunishmentMessage(request),
+            "PUNISHMENT"
+        );
+    }
+
+    private void validatePunishmentPermission(String currentRole, String targetRole) {
+        if (currentRole.equalsIgnoreCase("MODERATOR")) {
+            if (targetRole.equalsIgnoreCase("MODERATOR") ||
+                targetRole.equalsIgnoreCase("ADMINISTRATOR")) {
+
+                throw new RuntimeException(
+                    "Moderators cannot punish moderators or admins"
+                );
+            }
+        }
+
+        if (currentRole.equalsIgnoreCase("ADMINISTRATOR")) {
+            if (targetRole.equalsIgnoreCase("ADMINISTRATOR")) {
+                throw new RuntimeException(
+                    "Admins cannot punish other admins"
+                );
+            }
+        }
+    }
+
+    private String buildPunishmentMessage(PunishmentLogRequest request) {
+        if (request.getType().equalsIgnoreCase("WARN")) {
+            return "You have been WARNED due to " + request.getReason();
+        }
+
+        return "You have been " + request.getType() +
+            " for " + request.getDuration() +
+            " minutes due to " + request.getReason();
     }
 
     public void unmuteUser(String userId) {
@@ -116,6 +133,15 @@ public class PunishmentLogService {
         }
 
         punishmentLogRepo.saveAll(logs);
+
+        UserEntity user = userRepo.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userNotiService.createNotification(
+            user,
+            "Your account has been unmuted",
+            "PUNISHMENT"
+        );
     }
 
     public void unbanUser(String userId) {
@@ -133,6 +159,15 @@ public class PunishmentLogService {
         }
 
         punishmentLogRepo.saveAll(logs);
+
+        UserEntity user = userRepo.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userNotiService.createNotification(
+            user,
+            "Your account has been unbanned",
+            "PUNISHMENT"
+        );
     }
 
     public List<PunishmentLogDTO> getAllPunishments() {
@@ -161,5 +196,11 @@ public class PunishmentLogService {
             userEntity.setUserRole("BASIC");
             userRepo.save(userEntity);
         }
+
+        userNotiService.createNotification(
+            userEntity,
+            "You have been DEMOTED by Administrator",
+            "PUNISHMENT"
+        );
     }
 }
