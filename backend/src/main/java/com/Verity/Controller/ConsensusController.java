@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -13,14 +14,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ConsensusController {
     private final ConsensusService consensusService;
-    
 
     @GetMapping("/post/{postID}")
-    public ResponseEntity<Map<String, CommentDTO>> getConsensusHighlights(
+    public ResponseEntity<Map<String, Object>> getConsensusData(
             @PathVariable String postID) {
 
-        // Let the service handle finding the labels based on the postID
+        Map<String, Object> response = new HashMap<>();
+
         Map<String, CommentDTO> highlights = consensusService.getConsensusHighlights(postID);
-        return ResponseEntity.ok(highlights);
+        response.put("highlights", highlights);
+
+        String mvp = consensusService.getDebateMVP(postID);
+        response.put("mvp", mvp);
+
+        return ResponseEntity.ok(response);
     }
 }

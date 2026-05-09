@@ -26,3 +26,7 @@ spring:
     org:
       springframework:
         security: DEBUG
+
+gemini:
+  api:
+    key: "AIzaSyBh_cHiGrOFgTrhMy5lnXDeThJPH3Q1BnQ"

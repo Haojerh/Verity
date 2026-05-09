@@ -10,6 +10,5 @@ import com.Verity.Entity.UserNotiEntity;
 
 @Repository
 public interface UserNotiRepo extends JpaRepository<UserNotiEntity, String> {
-
     List<UserNotiEntity> findByUserIdOrderByCreatedDateDesc(String userID, Pageable pageable);
 }

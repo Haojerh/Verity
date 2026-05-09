@@ -59,7 +59,7 @@ export default function PostHeader({
                 className="flex gap-2 p-3 w-full text-destructive hover:bg-muted/50 items-center"
               >
                 <Flag className="w-4 h-4"/> 
-                {(isModerator(authUser) || isAdmin(AuthUser)) ? "Takedown" : "Report"}
+                {(isModerator(authUser) || isAdmin(authUser)) ? "Takedown" : "Report"}
               </button>
             </div>
           )}

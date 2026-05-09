@@ -3,6 +3,7 @@ package com.Verity.Service;
 import com.Verity.DTO.CommentDTO;
 import com.Verity.Entity.CommentEntity;
 import com.Verity.Entity.PostEntity;
+import com.Verity.Entity.UserEntity;
 import com.Verity.Entity.VoteEntity;
 import com.Verity.Repo.CommentRepo;
 import com.Verity.Repo.PostRepo;
@@ -14,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +77,23 @@ public class ConsensusService {
         highlights.put("cons", getLeadingCommentForSide(postID, post.getConLabel()));
 
         return highlights;
+    }
+
+    public String getDebateMVP(String postID) {
+        List<CommentEntity> allComments = commentRepo.findByPost_PostID(postID);
+
+        if (allComments.isEmpty()) return "None";
+
+        Map<UserEntity, Integer> userScores = allComments.stream()
+                .filter(c -> c.getAuthor() != null)
+                .collect(Collectors.groupingBy(
+                        CommentEntity::getAuthor,
+                        Collectors.summingInt(this::calculateConsensusScore)
+                ));
+
+        return userScores.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(entry -> entry.getKey().getName())
+                .orElse("None");
     }
 }

@@ -32,7 +32,16 @@ export default function PostPage() {
       }));
   };
 
-  console.log("Post Data:", post);
+  const [mvp, setMvp] = useState("Loading...");
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await getConsensusData(postID, post.proLabel, post.conLabel);
+      setMvp(data.mvp); 
+      setHighlights(data.highlights);
+    };
+    loadData();
+  }, [postID]);
 
   return (
     <div className="max-w-4xl mx-auto w-full">

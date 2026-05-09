@@ -8,7 +8,9 @@ export default function StatsRow({ counts, mvp = "you_self12" }) {
           <Trophy className="w-8 h-8 text-yellow-500" />
           <div>
             <div className="text-sm text-muted-foreground">MVP</div>
-            <div className="text-lg font-bold break-all">@{mvp}</div>
+            <div className="text-sm font-bold truncate">
+              {mvp ? `@${mvp.toLowerCase().replace(/\s+/g, '_')}` : "No MVP yet"}
+            </div>
           </div>
         </div>
       </div>
