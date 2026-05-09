@@ -85,6 +85,27 @@ export default function CommentSection({
       </div>
 
       <div className="p-6">
+        {/* Comment Input Logic */}
+        {!userSide && <CommentInput userSide={null} />}
+        
+        {userSide && activeTab === userSide && (
+          <CommentInput
+            userSide={userSide}
+            value={commentText}
+            onChange={setCommentText}
+            onSubmit={onSubmitComment}
+          />
+        )}
+
+        {userSide && activeTab !== userSide && (
+          <div className="p-4 bg-muted/20 rounded-xl text-center border border-border mb-6">
+            <p className="text-sm text-muted-foreground font-medium">
+              You joined Team {userSide === "pros" ? proLabel : conLabel}. 
+              You can only contribute to your own team's side.
+            </p>
+          </div>
+        )}
+
         {/* CONSENSUS HIGHLIGHTS AREA */}
         {activeTab === "pros" && highlights.pros && (
           <ConsensusCard 
@@ -107,26 +128,6 @@ export default function CommentSection({
             proLabel={proLabel}
             conLabel={conLabel}
           />
-        )}
-        {/* Comment Input Logic */}
-        {!userSide && <CommentInput userSide={null} />}
-        
-        {userSide && activeTab === userSide && (
-          <CommentInput
-            userSide={userSide}
-            value={commentText}
-            onChange={setCommentText}
-            onSubmit={onSubmitComment}
-          />
-        )}
-
-        {userSide && activeTab !== userSide && (
-          <div className="p-4 bg-muted/20 rounded-xl text-center border border-border mb-6">
-            <p className="text-sm text-muted-foreground font-medium">
-              You joined Team {userSide === "pros" ? proLabel : conLabel}. 
-              You can only contribute to your own team's side.
-            </p>
-          </div>
         )}
 
         {/* Thread List */}
