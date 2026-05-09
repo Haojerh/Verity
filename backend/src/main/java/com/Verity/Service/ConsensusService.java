@@ -1,5 +1,12 @@
 package com.Verity.Service;
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import com.Verity.DTO.CommentDTO;
 import com.Verity.Entity.CommentEntity;
 import com.Verity.Entity.PostEntity;
@@ -7,13 +14,8 @@ import com.Verity.Entity.VoteEntity;
 import com.Verity.Repo.CommentRepo;
 import com.Verity.Repo.PostRepo;
 import com.Verity.Repo.VoteRepo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +63,7 @@ public class ConsensusService {
                     String actualSide = getCommentSide(c);
                     return actualSide != null && actualSide.equalsIgnoreCase(sideLabel);
                 })
-                .max(Comparator.comparingInt(this::calculateConsensusScore))
+                .max(Comparator.comparingInt((CommentEntity c) -> this.calculateConsensusScore(c)))
                 .map(winner -> commentService.mapToDTO(winner, 0))
                 .orElse(null);
     }
