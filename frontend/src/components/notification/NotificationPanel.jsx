@@ -63,7 +63,7 @@ export default function NotificationPanel({ notifications, setNotifications, onC
   };
 
   return (
-    <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg z-50 border">
+    <div className="absolute right-0 mt-2 w-96 bg-background rounded-lg shadow-lg dark:shadow-dark-lg z-50 border">
 
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b">
