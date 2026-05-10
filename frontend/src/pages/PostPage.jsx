@@ -51,11 +51,6 @@ export default function PostPage() {
         stats={stats}
       />
 
-      {/* <section className="bg-card border border-border rounded-lg p-6 mb-6">
-        <h3 className="mb-3">Debate Summary</h3>
-        <p className="text-muted-foreground">{post.description}</p>
-      </section> */}
-
       {/* <DebateSummary postID={post.postID} /> */}
 
       <StatsRow

@@ -2,6 +2,7 @@ package com.Verity.Service;
 
 import java.util.List;
 
+import com.Verity.Constant.UserRole;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,8 +38,15 @@ public class UserServices {
         }
 
         UserEntity userEntity = new UserEntity();
+
         BeanUtils.copyProperties(userRequest, userEntity);
+
         userEntity.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+
+        userEntity.setUserRole(UserRole.USER);
+
+        userEntity.setSYSISDELETED(false);
+
         userRepo.save(userEntity);
     }
 

@@ -40,13 +40,6 @@ public class UserEntity extends Auditable {
 
     @Column(name = "avatar", nullable = true, unique = false, length = 256)
     private String avatar;
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userID", referencedColumnName = "userID", nullable = true)
-//    private List<UserNotiEntity> userNotiEntityList;
-//
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userID", referencedColumnName = "userID", nullable = true)
-//    private List<UserFavTopicEntity> userFavTopicEntityList;
 
     @PrePersist
     public void beforePersist() { setUserID("USR-" + RandomString.make(10));}

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -147,6 +148,7 @@ public class UserController {
     }
 
     @GetMapping("/api/moderators")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Response> getAllModerators(HttpServletRequest request) {
         var moderators = userServices.getAllModerators();
         return ResponseEntity.ok(getResponse(request, Map.of("moderators", moderators), "Moderators Retrieved", OK));
