@@ -1,58 +1,95 @@
 # Verity
-A Debate Social Media Platform for Capstone Project
+**A Debate Social Media Platform for Capstone Project**
 
-Verity is a full-stack web application that allows users to post, discuss, and engage in debates, with future support for AI-based features such as toxic content detection and content summarization.
+Verity is a full-stack web application that allows users to post, discuss, and engage in debates. It comes fully equipped with moderation & administration features to manage posts, topics and users. Users are also free to vote for their stance and upvote/downvote comments. Verity has a built in function known as the **Consensus Service** to determine which comments are commonly accepted by both sides in a debate. AI Summarisation features are also applied to Posts to summarise debate contents.
 
-## Required Installations:
-### MySQL
-https://dev.mysql.com/downloads/installer/
-- Choose MySQL Installer (Web version)
-- Use Default Setup
-- Set username and password during installation (recommended: root / root)
+---
 
-### Node.js
-https://nodejs.org/
-After installation, verify:
-```
-node -v
-npm -v
-```
+## 🛠 Prerequisites
+Ensure you have the following installed before proceeding:
 
-### Git
-https://git-scm.com/
-After installation, verify:
-```
-git --version
-```
+* **Java 17 or higher** (JDK)
+* **Node.js** (v18+) & **npm**
+* **MySQL Server 8.0+**
+* **Git**
 
-## How to Run the Project
-First, clone the project from GitHub:
-```
-git clone https://github.com/Haojerh/Verity.git
-cd Verity
-```
-### 1. Run Frontend (React)
-Open a terminal:
-```
-cd frontend
-npm install
-npm run dev
-```
-Frontend will run at: http://localhost:5173
+---
 
-### 2. Run Backend (Spring Boot)
-Open a second terminal:
-```
-cd backend
-.\mvnw spring-boot:run
-```
-Backend will run at: http://localhost:8080
+## 🚀 Installation & Setup
 
-### 3. Database Setup (MySQL)
-Make sure MySQL is running, then create the database in MYSQL command line client:
-```
+### 1. Database Configuration
+Open your MySQL Command Line Client or Workbench and run:
+```sql
 CREATE DATABASE verity;
 ```
 
-## Project Architecture
-Frontend (React + Tailwind), Backend (Spring Boot), Database (MySQL)
+### 2. Backend Setup (Spring Boot)
+Navigate to the backend directory:
+
+``` Bash
+cd backend
+```
+**Environment Variables**: Create a .env file in the backend/ root (same folder as pom.xml). Use the following template:
+
+``` Plaintext
+API_KEY=your_gemini_api_key
+DATABASE_URL=jdbc:mysql://localhost:3306/verity?useSSL=false&serverTimezone=UTC
+DATABASE_USERNAME=root
+DATABASE_PASSWORD=root
+```
+(Note: Use .env.example as a reference. Never commit your actual .env file.)
+
+Run the Application:
+
+``` Bash
+./mvnw spring-boot:run
+```
+The backend will start at: http://localhost:8080
+
+---
+### 3. Frontend Setup (React + Tailwind)
+Open a new terminal and navigate to the frontend directory:
+
+``` Bash
+cd frontend
+```
+Install dependencies:
+
+```Bash
+npm install
+```
+Launch the development server:
+
+``` Bash
+npm run dev
+```
+The frontend will start at: http://localhost:5173
+
+## 🏗 Project Architecture
+Verity uses a Decoupled Architecture to ensure scalability and security:
+
+- **Frontend**: React.js with Tailwind CSS for a responsive, modern UI.
+
+- **Backend**: Spring Boot (Java) implementing a Hybrid Security model (JWT + Persistence-based validation).
+
+- **AI Integration**: Google Gemini API for real-time content analysis and toxic behavior detection.
+
+- **Database**: MySQL for relational data integrity.
+
+---
+
+## 🛡 Security & Best Practices
+- **Environment Isolation**: Sensitive keys are managed via .env files and are excluded from version control via .gitignore.
+
+- **Role-Based Access Control (RBAC)**: Distinct permissions for USER, MODERATOR, and ADMIN.
+
+- **Audit Logging**: Automatic tracking of system actions (CreatedBy, ModifiedBy, DeletedFlags).
+---
+
+## 📝 Troubleshooting
+- **Database Connection Failed**: Ensure your MySQL service is running and that the DATABASE_URL in your .env matches your local settings.
+
+- **Port 8080 already in use**: Stop any other local services or change the port in application.yml.
+
+- **Missing API Key**: Ensure the API_KEY in your .env is a valid Google Gemini key from Google AI Studio.
+"""
