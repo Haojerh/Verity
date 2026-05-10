@@ -3,9 +3,9 @@ spring:
     name: Verity
 
   datasource:
-    url: jdbc:mysql://localhost:3306/Verity?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: root
-    password: root
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -29,4 +29,4 @@ spring:
 
 gemini:
   api:
-    key: "AIzaSyBh_cHiGrOFgTrhMy5lnXDeThJPH3Q1BnQ"
+    key: ${API_KEY}
