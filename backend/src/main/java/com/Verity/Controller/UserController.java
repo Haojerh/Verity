@@ -77,7 +77,7 @@ public class UserController {
             response.addCookie(cookie);
             return ResponseEntity.ok().body(getResponse(request, Map.of("User", userDTO), "Login was successful!", OK));
         } catch (Exception e) {
-            throw new ApiException("An unknown error occurred");
+            throw new ApiException("An unknown error occurred" + e);
         }
     }
 

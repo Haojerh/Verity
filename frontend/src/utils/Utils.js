@@ -62,4 +62,4 @@ export const formatDuration = (minutes) => {
 };
 
 export const isModerator = (currentUser) => { return currentUser?.userRole?.toUpperCase() === "MODERATOR" };
-export const isAdmin = (currentUser) => { return currentUser?.userRole?.toUpperCase() === "ADMINISTRATOR" };
+export const isAdmin = (currentUser) => { return currentUser?.userRole?.toUpperCase() === "ADMIN" };

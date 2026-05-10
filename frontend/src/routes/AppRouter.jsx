@@ -37,12 +37,8 @@ export const router = createBrowserRouter(
           <Route path="recent" element={<RecentPage />} />
           <Route path="popular" element={<PopularPage />} />
           <Route path="search" element={<SearchPage />} />
-          <Route path="analytics" element={<Analytics />} />
           <Route path="rules" element={<Rules />} />
           <Route path="policies" element={<Policies />} />
-          <Route path="user-management" element={<UserManagement />} />
-          <Route path="moderator-management" element={<ModeratorManagement />} />
-
           <Route path="create-post" element={<CreatePost />} />
           
           <Route path="explore">
@@ -50,14 +46,23 @@ export const router = createBrowserRouter(
             <Route path=":id" element={<ExploreDetail />} />
           </Route>
 
-          <Route path="topic-management" element={<TopicManagement />} />
-          <Route path="report-management" element={<ManageReport />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:id" element={<UserProfile />} />
           <Route path="settings" element={<Settings />} />
           <Route path="post/:id" element={<PostPage />} />
-          <Route path="/comment/:id" element={<CommentPage />} />
         </Route>
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["MODERATOR", "ADMIN"]} />}>
+        <Route path="user-management" element={<UserManagement />} />
+        <Route path="topic-management" element={<TopicManagement />} />
+        <Route path="report-management" element={<ManageReport />} />
+        <Route path="/comment/:id" element={<CommentPage />} />
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="moderator-management" element={<ModeratorManagement />} />
       </Route>
 
       {/* FALLBACK */}

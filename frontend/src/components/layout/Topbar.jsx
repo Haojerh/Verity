@@ -19,25 +19,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
   const [unreadCount, setUnreadCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getCurrentUser();
-        setUser({
-          ...user,
-          avatar: user.avatar
-            ? `http://localhost:8080/api/uploads/users/${user.avatar}`
-            : null,
-        });
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    fetchUser();
-  }, [setUser]);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!user?.userID) return;

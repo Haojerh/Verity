@@ -98,7 +98,7 @@ public class UserServices {
         return userRepo.findAll()
             .stream()
             .filter(user -> !Boolean.TRUE.equals(user.getSYSISDELETED()))
-            .filter(user -> "MODERATOR".equalsIgnoreCase(user.getUserRole().getAuthority()))
+            .filter(user -> "ROLE_MODERATOR".equalsIgnoreCase(user.getUserRole().getAuthority()))
             .map(user -> {
                 UserDTO dto = new UserDTO();
                 BeanUtils.copyProperties(user, dto);
