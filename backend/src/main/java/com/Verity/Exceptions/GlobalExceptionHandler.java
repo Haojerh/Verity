@@ -10,6 +10,11 @@ import com.Verity.Utils.RequestUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.nio.file.AccessDeniedException;
+
+import static com.Verity.Utils.RequestUtils.getResponse;
+import static java.util.Collections.emptyMap;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -18,7 +23,7 @@ public class GlobalExceptionHandler {
             ApiException ex,
             HttpServletRequest request) {
         return ResponseEntity.badRequest()
-                .body(RequestUtils.getResponse(request, null, ex.getMessage(), HttpStatus.BAD_REQUEST));
+                .body(getResponse(request, null, ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -26,7 +31,13 @@ public class GlobalExceptionHandler {
             RuntimeException ex,
             HttpServletRequest request) {
         return ResponseEntity.internalServerError()
-                .body(RequestUtils.getResponse(request, null, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(getResponse(request, null, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Response> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(getResponse(request, emptyMap(), "You do not have permission to perform this action", HttpStatus.FORBIDDEN));
     }
 }
 

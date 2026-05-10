@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/takedown/{id}")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
     public ResponseEntity<Response> takedownComment(@PathVariable String id, HttpServletRequest request) {
         commentService.takedownComment(id);
         return ResponseEntity.ok(getResponse(request, emptyMap(), "Comment taken down", OK));

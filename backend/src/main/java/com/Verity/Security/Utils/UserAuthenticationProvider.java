@@ -33,27 +33,33 @@ public class UserAuthenticationProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(String Username) {
+    public String createToken(String email) {
         Date now = new Date();
-        //Date validity = new Date(now.getTime() + 3_200_000);
         Date validity = new Date(now.getTime() + 7_200_000);
-
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-        String token = JWT.create()
-                .withSubject(Username)
+        UserEntity user = userServices.getUserByEmail(email);
+
+        return JWT.create()
+                .withSubject(email)
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
+                .withClaim("role", user.getUserRole().name())
                 .sign(algorithm);
-
-        return token;
     }
 
     public Authentication validateToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decoded = verifier.verify(token);
+
         UserEntity userEntity = userServices.getUserByEmail(decoded.getSubject());
-        return new UsernamePasswordAuthenticationToken(new UserPrincipal(userEntity), null, Collections.emptyList());
+        UserPrincipal principal = new UserPrincipal(userEntity);
+
+        return new UsernamePasswordAuthenticationToken(
+                principal,
+                null,
+                principal.getAuthorities()
+        );
     }
 }

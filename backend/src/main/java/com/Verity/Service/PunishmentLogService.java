@@ -2,6 +2,7 @@ package com.Verity.Service;
 
 import java.util.List;
 
+import com.Verity.Constant.UserRole;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -54,23 +55,17 @@ public class PunishmentLogService {
             log.getModerator().getName()
         ))
         .toList();
-    }   
+    }
 
     public void createPunishment(PunishmentLogRequest request) {
         UserEntity punishedUser = userRepo.findById(request.getUserID())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // get current logged-in moderator
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String moderatorEmail = auth.getName();
-
+        String moderatorEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity moderator = userRepo.findUserByEmail(moderatorEmail)
-            .orElseThrow(() -> new RuntimeException("Moderator not found"));
-        
-        validatePunishmentPermission(
-            moderator.getUserRole(),
-            punishedUser.getUserRole()
-        );
+                .orElseThrow(() -> new RuntimeException("Moderator not found"));
+
+        validateHierarchy(moderator, punishedUser);
 
         PunishmentLogEntity log = new PunishmentLogEntity();
         log.setType(request.getType());
@@ -82,28 +77,23 @@ public class PunishmentLogService {
         punishmentLogRepo.save(log);
 
         userNotiService.createNotification(
-            punishedUser,
-            buildPunishmentMessage(request),
-            "PUNISHMENT"
+                punishedUser,
+                buildPunishmentMessage(request),
+                "PUNISHMENT"
         );
     }
 
-    private void validatePunishmentPermission(String currentRole, String targetRole) {
-        if (currentRole.equalsIgnoreCase("MODERATOR")) {
-            if (targetRole.equalsIgnoreCase("MODERATOR") ||
-                targetRole.equalsIgnoreCase("ADMINISTRATOR")) {
+    private void validateHierarchy(UserEntity moderator, UserEntity target) {
+        UserRole modRole = moderator.getUserRole();
+        UserRole targetRole = target.getUserRole();
 
-                throw new RuntimeException(
-                    "Moderators cannot punish moderators or admins"
-                );
-            }
+        if (modRole == UserRole.ADMIN && targetRole == UserRole.ADMIN) {
+            throw new ApiException("Administrators cannot punish other administrators.");
         }
 
-        if (currentRole.equalsIgnoreCase("ADMINISTRATOR")) {
-            if (targetRole.equalsIgnoreCase("ADMINISTRATOR")) {
-                throw new RuntimeException(
-                    "Admins cannot punish other admins"
-                );
+        if (modRole == UserRole.MODERATOR) {
+            if (targetRole == UserRole.MODERATOR || targetRole == UserRole.ADMIN) {
+                throw new ApiException("Moderators cannot punish higher or equal staff members.");
             }
         }
     }
@@ -186,21 +176,21 @@ public class PunishmentLogService {
             .toList();
     }
 
-    public void demoteModerator (String id) {
+    public void demoteModerator(String id) {
         UserEntity userEntity = userRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if(!"MODERATOR".equalsIgnoreCase(userEntity.getUserRole())) {
+        if (userEntity.getUserRole() != UserRole.MODERATOR) {
             throw new ApiException("User is not a moderator.");
-        } else {
-            userEntity.setUserRole("BASIC");
-            userRepo.save(userEntity);
         }
 
+        userEntity.setUserRole(UserRole.USER);
+        userRepo.save(userEntity);
+
         userNotiService.createNotification(
-            userEntity,
-            "You have been DEMOTED by Administrator",
-            "PUNISHMENT"
+                userEntity,
+                "You have been DEMOTED by Administrator",
+                "PUNISHMENT"
         );
     }
 }

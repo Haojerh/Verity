@@ -9,6 +9,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,6 +66,7 @@ public class PostController {
     }
 
     @DeleteMapping("/takedown/{id}")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
     public ResponseEntity<Response> takedownComment(@PathVariable String id, HttpServletRequest request) {
         postService.takedownPost(id);
         return ResponseEntity.ok(getResponse(request, emptyMap(), "Post taken down", OK));
