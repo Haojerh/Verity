@@ -11,14 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.Verity.DTO.PostDTO;
@@ -235,5 +228,24 @@ public class PostController {
                 OK
             )
         );
+    }
+
+    @PutMapping("/{postID}")
+    public ResponseEntity<Response> updatePost(
+            @PathVariable String postID,
+            @RequestBody PostRequest postRequest,
+            HttpServletRequest request) {
+
+        postService.updatePost(postID, postRequest);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "Post updated successfully", OK));
+    }
+
+    @DeleteMapping("/{postID}")
+    public ResponseEntity<Response> deletePost(
+            @PathVariable String postID,
+            HttpServletRequest request) {
+
+        postService.deletePost(postID);
+        return ResponseEntity.ok(getResponse(request, emptyMap(), "Post deleted successfully", OK));
     }
 }

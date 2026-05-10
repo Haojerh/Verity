@@ -1,6 +1,7 @@
 package com.Verity.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,12 +10,15 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.Verity.Constant.UserRole;
+import com.Verity.Exceptions.ApiException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -462,5 +466,42 @@ public class PostService {
             PageRequest.of(page, size),
             Math.min(maxSize, ordered.size())
         );
+    }
+
+    public void updatePost(String postID, PostRequest request) {
+        PostEntity post = postRepo.findById(postID)
+                .orElseThrow(() -> new ApiException("Post not found"));
+
+        validateOwnership(post);
+
+        post.setTitle(request.getTitle());
+        post.setDescription(request.getDescription());
+        post.setSYSMODIFIEDDATE(LocalDateTime.now());
+
+        postRepo.save(post);
+    }
+
+    public void deletePost(String postID) {
+        PostEntity post = postRepo.findById(postID)
+                .orElseThrow(() -> new ApiException("Post not found"));
+
+        validateOwnership(post);
+
+        post.setSYSISDELETED(true);
+        postRepo.save(post);
+    }
+
+    private void validateOwnership(PostEntity post) {
+        String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity currentUser = userRepo.findUserByEmail(currentEmail)
+                .orElseThrow(() -> new ApiException("User not found"));
+
+        boolean isAuthor = post.getAuthor().getUserID().equals(currentUser.getUserID());
+        boolean isAdmin = currentUser.getUserRole().equals(UserRole.ADMIN);
+
+        if (!isAuthor && !isAdmin) {
+            throw new ApiException("You do not have permission to modify this post.");
+        }
     }
 }
