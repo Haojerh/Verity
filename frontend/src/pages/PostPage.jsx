@@ -56,7 +56,7 @@ export default function PostPage() {
         <p className="text-muted-foreground">{post.description}</p>
       </section> */}
 
-      <DebateSummary postID={post.postID} />
+      {/* <DebateSummary postID={post.postID} /> */}
 
       <StatsRow
         counts={{ totalParticipants, totalComments }}

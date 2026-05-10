@@ -206,7 +206,7 @@ public class PostService {
         postRepo.save(post);
 
         // delete comments under post
-        List<CommentEntity> comments = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postId);
+        List<CommentEntity> comments = commentRepo.findByPost_PostID(postId);
         comments.forEach(c -> c.setSYSISDELETED(true));
         commentRepo.saveAll(comments);
 

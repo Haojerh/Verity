@@ -18,11 +18,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import net.bytebuddy.utility.RandomString;
+import org.hibernate.annotations.SQLRestriction;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "comment")
+@SQLRestriction("SYSISDELETED = false")
 public class CommentEntity extends Auditable {
     @Id
     @Column(length = 20)

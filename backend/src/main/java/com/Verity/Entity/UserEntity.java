@@ -1,5 +1,6 @@
 package com.Verity.Entity;
 
+import com.Verity.Constant.UserRole;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,7 +32,8 @@ public class UserEntity extends Auditable {
     private String name;
 
     @Column(name = "userRole", nullable = false, unique = false, length = 40)
-    private String userRole;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     @Column(name = "password", nullable = false, unique = false, length = 256)
     private String password;

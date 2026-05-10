@@ -7,11 +7,12 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.Verity.Constant.UserRole;
 
 import com.Verity.Entity.UserEntity;
 
 public class UserPrincipal implements UserDetails {
-    UserEntity user;
+    private final UserEntity user;
 
     public UserPrincipal(UserEntity user) {
         this.user = user;
@@ -19,7 +20,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(user.getUserRole()));
+        return Collections.singleton(new SimpleGrantedAuthority(user.getUserRole().getAuthority()));
     }
 
     @Override
