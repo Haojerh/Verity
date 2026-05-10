@@ -22,6 +22,7 @@ import SearchPage from "../pages/SearchPage";
 import Rules from "../pages/Rules";
 import Policies from "../pages/Policies";
 import Analytics from "../pages/Analytics";
+import RoleHomeRedirect from "./RoleHomeRedirect";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,7 +34,7 @@ export const router = createBrowserRouter(
       {/* PROTECTED ROUTES */}
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
-          <Route index element={<Home />} />
+          <Route index element={<RoleHomeRedirect />} />
           <Route path="recent" element={<RecentPage />} />
           <Route path="popular" element={<PopularPage />} />
           <Route path="search" element={<SearchPage />} />
@@ -54,15 +55,19 @@ export const router = createBrowserRouter(
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={["MODERATOR", "ADMIN"]} />}>
-        <Route path="user-management" element={<UserManagement />} />
-        <Route path="topic-management" element={<TopicManagement />} />
-        <Route path="report-management" element={<ManageReport />} />
-        <Route path="/comment/:id" element={<CommentPage />} />
+        <Route element={<Layout />}>
+          <Route path="user-management" element={<UserManagement />} />
+          <Route path="topic-management" element={<TopicManagement />} />
+          <Route path="report-management" element={<ManageReport />} />
+          <Route path="/comment/:id" element={<CommentPage />} />
+          </Route>
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-        <Route path="analytics" element={<Analytics />} />
-        <Route path="moderator-management" element={<ModeratorManagement />} />
+        <Route element={<Layout />}>
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="moderator-management" element={<ModeratorManagement />} />
+        </Route>
       </Route>
 
       {/* FALLBACK */}

@@ -117,7 +117,7 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
           {/* Profile */}
           <div className="relative">
             <button onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-              <Avatar name={user?.name} imageUrl={user?.avatar} />
+              <Avatar name={user?.name} imageUrl={user?.avatar ? `http://localhost:8080/api/uploads/users/${user?.avatar}` : null} />
             </button>
             {profileMenuOpen && (
               <ProfileDropdown 
