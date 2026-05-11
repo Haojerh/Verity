@@ -72,7 +72,7 @@ Verity uses a Decoupled Architecture to ensure scalability and security:
 
 - **Backend**: Spring Boot (Java) implementing a Hybrid Security model (JWT + Persistence-based validation).
 
-- **AI Integration**: Google Gemini API for real-time content analysis and toxic behavior detection.
+- **AI Integration**: Google Gemini API for real-time debate contents summarisation.
 
 - **Database**: MySQL for relational data integrity.
 

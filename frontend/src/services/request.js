@@ -30,10 +30,14 @@ client.interceptors.response.use(
     },
     (error) => {
         const status = error.response?.status;
+        const requestUrl = error.config?.url;
 
         if (status === 401) {
             console.log("Unauthorized - token invalid or missing");
-            logout();
+
+            if (requestUrl !== '/logout' && window.location.pathname !== '/login') {
+                logout();
+            }
         }
 
         return Promise.reject(error);

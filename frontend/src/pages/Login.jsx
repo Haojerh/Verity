@@ -8,6 +8,9 @@ import { loginUser } from "../services/auth"
 import LoginModal from "../components/auth/LoginModal";
 import PasswordBox from "../components/ui/PasswordBox";
 import { useToast } from "../context/ToastContext";
+import { getCurrentUser } from "../services/UserService";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const {
@@ -20,6 +23,8 @@ export default function Login() {
   });
 
   const { showToast } = useToast();
+  const { refreshUser } = useAuth();
+  const navigate = useNavigate();
 
   const [modal, setModal] = useState({
     open: false,
@@ -37,7 +42,9 @@ export default function Login() {
         return;
       }
 
-      window.location.href = "/";
+      await refreshUser();
+
+      navigate("/");
     } catch (err) {
       console.error("Login failed:", err);
       showToast("Failed to login");
