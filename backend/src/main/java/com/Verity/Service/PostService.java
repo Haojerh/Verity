@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.Verity.Constant.UserRole;
 import com.Verity.Exceptions.ApiException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -498,14 +499,20 @@ public class PostService {
         return mapToDTO(updatedPost);
     }
 
-    public void deletePost(String postID) {
-        PostEntity post = postRepo.findById(postID)
-                .orElseThrow(() -> new ApiException("Post not found"));
+    @Transactional
+    public void deletePost(String postId) {
+        PostEntity post = postRepo.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        validateOwnership(post);
-
+        // 1. Soft delete the main post
         post.setSYSISDELETED(true);
         postRepo.save(post);
+
+        // 2. Bulk soft delete all related records via repository methods
+        commentRepo.softDeleteByPostID(postId);
+        voteRepo.softDeleteByPostID(postId);
+        postStanceRepo.softDeleteByPostID(postId);
+        reportRepo.softDeleteByPostID(postId);
     }
 
     private void validateOwnership(PostEntity post) {

@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.bytebuddy.utility.RandomString;
+import org.hibernate.annotations.SQLRestriction;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "post")
+@SQLRestriction("SYSISDELETED = false")
 public class PostEntity extends Auditable {
     @Id
     @Column(length = 20)

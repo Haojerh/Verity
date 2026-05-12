@@ -3,7 +3,9 @@ package com.Verity.Repo;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -32,4 +34,14 @@ public interface VoteRepo extends JpaRepository<VoteEntity, String> {
     List<VoteEntity> findByComment_Post_PostIDAndSYSISDELETEDFalse(String postId);
 
     List<VoteEntity> findByComment_CommentIDAndSYSISDELETEDFalse(String commentId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE VoteEntity v SET v.SYSISDELETED = true WHERE v.comment.post.postID = :postID")
+    void softDeleteByPostID(String postID);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE VoteEntity v SET v.SYSISDELETED = true WHERE v.comment.id = :commentID")
+    void softDeleteByCommentID(String commentID);
 }

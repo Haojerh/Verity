@@ -3,7 +3,9 @@ package com.Verity.Repo;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -48,4 +50,9 @@ public interface PostStanceRepo extends JpaRepository<PostStanceEntity, String> 
     Double avgParticipantsPerPost();
 
     List<PostStanceEntity> findByPostID_PostIDAndSYSISDELETEDFalse(String postId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE PostStanceEntity s SET s.SYSISDELETED = true WHERE s.postID.postID = :postID")
+    void softDeleteByPostID(String postID);
 }
