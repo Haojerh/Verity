@@ -471,26 +471,21 @@ public class PostService {
     }
 
     public PostDTO updatePost(String postID, PostRequest request, MultipartFile image) throws IOException {
-        // 1. Find existing post
         PostEntity post = postRepo.findById(postID)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 2. Update basic fields
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setProLabel(request.getProLabel() != null ? request.getProLabel() : post.getProLabel());
         post.setConLabel(request.getConLabel() != null ? request.getConLabel() : post.getConLabel());
 
-        // 3. Update Topic if it changed
         if (request.getTopicID() != null && !post.getTopic().getTopicID().equals(request.getTopicID())) {
             TopicEntity topic = topicRepo.findByTopicIDAndSYSISDELETEDFalse(request.getTopicID())
                     .orElseThrow(() -> new RuntimeException("Topic not found"));
             post.setTopic(topic);
         }
 
-        // 4. Handle Image Update
         if (image != null && !image.isEmpty()) {
-            // Optional: Delete the old file using post.getImagePath() before saving the new one
             String fileName = FileUtil.saveFile(image, uploadDir, "PST");
             post.setImagePath(fileName);
         }
@@ -504,11 +499,9 @@ public class PostService {
         PostEntity post = postRepo.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 1. Soft delete the main post
         post.setSYSISDELETED(true);
         postRepo.save(post);
-
-        // 2. Bulk soft delete all related records via repository methods
+        
         commentRepo.softDeleteByPostID(postId);
         voteRepo.softDeleteByPostID(postId);
         postStanceRepo.softDeleteByPostID(postId);
