@@ -9,7 +9,7 @@ import { reasonOptions } from "../../constant/Constants";
 import { createPunishment } from "../../services/PunishmentLogsService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { WarnSchema } from "../../utils/Schema";
+import { warnSchema } from "../../utils/Schema";
 import { useToast } from "../../context/ToastContext";
 
 export default function WarnModal({ user, onClose, roleType="default" }) {
@@ -20,7 +20,7 @@ export default function WarnModal({ user, onClose, roleType="default" }) {
     setValue,
     formState: { errors, isSubmitting }
   } = useForm({
-    resolver: zodResolver(WarnSchema),
+    resolver: zodResolver(warnSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {

@@ -65,7 +65,7 @@ export default function PostHeader({
               {/* OWNER/ADMIN MANAGEMENT SECTION */}
               {(authUser?.userID === authorID || isAdmin(authUser)) ? (
                 <>
-                  <div className="h-[1px] bg-border mx-2" />
+                  <div className="h-px bg-border mx-2" />
                   <div className="px-4 py-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                     Management
                   </div>
@@ -92,7 +92,7 @@ export default function PostHeader({
               ) : (
                 /* 3. VISITOR REPORT SECTION */
                 <>
-                  <div className="h-[1px] bg-border mx-2" />
+                  <div className="h-px bg-border mx-2" />
                   <button 
                     onClick={() => { openModal("postReport", post); setMenuOpen(false); }}
                     className="flex gap-3 p-4 w-full text-destructive hover:bg-destructive/5 text-sm font-bold items-center transition-all"

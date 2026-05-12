@@ -9,7 +9,7 @@ import { reasonOptions } from "../../constant/Constants";
 import { createPunishment } from "../../services/PunishmentLogsService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BanMuteSchema } from "../../utils/Schema";
+import { banMuteSchema } from "../../utils/Schema";
 import { useToast } from "../../context/ToastContext";
 
 export default function MuteModal({ user, onClose, setUserData, isProfile=false }) {
@@ -20,7 +20,7 @@ export default function MuteModal({ user, onClose, setUserData, isProfile=false 
       setValue,
       formState: { errors, isSubmitting }
     } = useForm({
-      resolver: zodResolver(BanMuteSchema),
+      resolver: zodResolver(banMuteSchema),
       mode: "onChange",
       reValidateMode: "onChange",
       defaultValues: {
