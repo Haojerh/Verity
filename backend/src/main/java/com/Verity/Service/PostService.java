@@ -392,6 +392,7 @@ public class PostService {
             ? List.of()
             : postRepo.findByTopic_TopicIDInAndSYSISDELETEDFalse(
                 followedTopicIds,
+                userID,
                 Pageable.unpaged()
             ).getContent();
 
@@ -428,7 +429,7 @@ public class PostService {
         if (remainingSlots > 0) {
 
             List<PostEntity> randomPool =
-                postRepo.findRandomPool(new ArrayList<>(usedIds));
+                postRepo.findRandomPool(new ArrayList<>(usedIds), userID);
 
             Collections.shuffle(randomPool, new Random(userID.hashCode()));
 

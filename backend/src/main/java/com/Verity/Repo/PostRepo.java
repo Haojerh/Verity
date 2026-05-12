@@ -43,11 +43,13 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
     @Query("""
         SELECT p FROM PostEntity p
         WHERE p.topic.topicID IN :topicIds
+        AND p.author.userID <> :userID
         AND p.SYSISDELETED = false
         ORDER BY p.SYSCREATEDDATE DESC
     """)
     Page<PostEntity> findByTopic_TopicIDInAndSYSISDELETEDFalse(
         @Param("topicIds") List<String> topicIds,
+        @Param("userID") String userID,
         Pageable pageable
     );
     
@@ -72,6 +74,7 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
             FROM UserFavTopicEntity f
             WHERE f.user.userID = :userID
         )
+        AND p.author.userID <> :userID
         AND p.SYSISDELETED = false
         ORDER BY p.SYSCREATEDDATE DESC
     """)
@@ -90,9 +93,10 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
     @Query("""
         SELECT p FROM PostEntity p
         WHERE p.SYSISDELETED = false
+        AND p.author.userID <> :userID
         AND (:excludedIds IS NULL OR p.postID NOT IN :excludedIds)
     """)
-    List<PostEntity> findRandomPool(@Param("excludedIds") List<String> excludedIds);
+    List<PostEntity> findRandomPool(@Param("excludedIds") List<String> excludedIds, @Param("userID") String userID);
 
     @Query("""
         SELECT p FROM PostEntity p

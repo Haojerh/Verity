@@ -47,7 +47,7 @@ export default function VoteControl({ commentID, initialVotes, userVoteStatus })
       <button
         onClick={() => handleVote("downvote")}
         className={`p-1.5 rounded-md transition-all ${
-          vote === "downvote" ? "bg-destructive text-destructive-foreground" : "text-muted-foreground hover:text-destructive"
+          vote === "downvote" ? "bg-destructive text-primary-foreground" : "text-muted-foreground hover:text-destructive"
         }`}
       >
         <ArrowDown className="w-3.5 h-3.5" />

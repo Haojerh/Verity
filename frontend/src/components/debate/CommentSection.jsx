@@ -30,6 +30,7 @@ export default function CommentSection({
     };
     fetchHighlights();
   }, [postID]);
+  console.log(highlights.pros);
 
   const normalizedPro = proLabel?.toUpperCase();
   const normalizedCon = conLabel?.toUpperCase();

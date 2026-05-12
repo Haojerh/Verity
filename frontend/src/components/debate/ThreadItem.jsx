@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { formatDistanceToNow } from "date-fns";
 import { isModerator, isAdmin } from "../../utils/Utils.js";
 import VoteControl from "./VoteControl";
+import { useNavigate } from "react-router-dom";
 
 export default function ThreadItem({ 
   comment, 
@@ -17,10 +18,13 @@ export default function ThreadItem({
   minimal = false 
 }) {
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
+  console.log(comment);
   
   const { 
     id, 
     side, 
+    authorID,
     user, 
     userAvatar, 
     text, 
@@ -65,7 +69,9 @@ export default function ThreadItem({
       } ${isPros ? "border-l-4 border-l-primary" : "border-l-4 border-l-destructive"}`}>
         
         <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3 mb-3">
+          <div 
+            onClick={() => navigate(`/profile/${authorID}`)}
+            className="flex items-center gap-3 mb-3 cursor-pointer">
             <Avatar
               name={user}
               size="sm"

@@ -45,7 +45,7 @@ export default function UserRow({ user, onAction }) {
         <button
           onClick={() => setOpen(!open)}
           className={`px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 ${
-            open ? "bg-primary text-white" : "bg-muted hover:bg-gray-300"
+            open ? "bg-primary text-white" : "bg-muted hover:bg-muted/50"
             }`}>
           Manage
           <ChevronDown className="h-4 w-4" />
