@@ -468,17 +468,33 @@ public class PostService {
         );
     }
 
-    public void updatePost(String postID, PostRequest request) {
+    public PostDTO updatePost(String postID, PostRequest request, MultipartFile image) throws IOException {
+        // 1. Find existing post
         PostEntity post = postRepo.findById(postID)
-                .orElseThrow(() -> new ApiException("Post not found"));
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        validateOwnership(post);
-
+        // 2. Update basic fields
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
-        post.setSYSMODIFIEDDATE(LocalDateTime.now());
+        post.setProLabel(request.getProLabel() != null ? request.getProLabel() : post.getProLabel());
+        post.setConLabel(request.getConLabel() != null ? request.getConLabel() : post.getConLabel());
 
-        postRepo.save(post);
+        // 3. Update Topic if it changed
+        if (request.getTopicID() != null && !post.getTopic().getTopicID().equals(request.getTopicID())) {
+            TopicEntity topic = topicRepo.findByTopicIDAndSYSISDELETEDFalse(request.getTopicID())
+                    .orElseThrow(() -> new RuntimeException("Topic not found"));
+            post.setTopic(topic);
+        }
+
+        // 4. Handle Image Update
+        if (image != null && !image.isEmpty()) {
+            // Optional: Delete the old file using post.getImagePath() before saving the new one
+            String fileName = FileUtil.saveFile(image, uploadDir, "PST");
+            post.setImagePath(fileName);
+        }
+
+        PostEntity updatedPost = postRepo.save(post);
+        return mapToDTO(updatedPost);
     }
 
     public void deletePost(String postID) {

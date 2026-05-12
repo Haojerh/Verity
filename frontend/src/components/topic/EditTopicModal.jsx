@@ -37,7 +37,6 @@ export default function EditTopicModal({ topic, onClose, setTopics }) {
     try {
       const res = await updateTopic(topic.topicID, data);
       const updated = res.topic;
-      console.log("Updated:", data);
       onClose();
       setTopics((prev) =>
         prev.map((t) =>

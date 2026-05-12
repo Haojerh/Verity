@@ -233,10 +233,11 @@ public class PostController {
     @PutMapping("/{postID}")
     public ResponseEntity<Response> updatePost(
             @PathVariable String postID,
-            @RequestBody PostRequest postRequest,
-            HttpServletRequest request) {
+            @RequestPart("request") PostRequest postRequest,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            HttpServletRequest request) throws IOException {
 
-        postService.updatePost(postID, postRequest);
+        postService.updatePost(postID, postRequest, image);
         return ResponseEntity.ok(getResponse(request, emptyMap(), "Post updated successfully", OK));
     }
 

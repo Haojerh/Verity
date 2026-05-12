@@ -1,84 +1,104 @@
-﻿import { useParams } from "react-router-dom";
+﻿import { useParams, useNavigate } from "react-router-dom";
 import VotingSection from "../components/debate/VotingSection";
 import StatsRow from "../components/debate/StatsRow";
 import PostHeader from "../components/debate/PostHeader";
 import CommentSection from "../components/debate/CommentSection";
 import ReportModal from "../components/debate/ReportModal";
 import ShareModal from "../components/debate/ShareModal";
+import TakedownModal from "../components/debate/TakedownModal";
+import UpdatePostForm from "../components/createPost/UpdatePostForm"; 
 import { usePostPage } from "../hooks/usePostPage";
 import { useAuth } from "../context/AuthContext";
-import { useEffect, useState } from "react";
-import TakedownModal from "../components/debate/TakedownModal";
-import { useNavigate } from "react-router-dom";
-import DebateSummary from "../components/debate/DebateSummary";
 
 export default function PostPage() {
   const navigate = useNavigate();
   const { id: postID } = useParams();
+  const { user } = useAuth(); 
+  // const topics = []; 
+
   const {
-    post, comments, mvp, setComments, commentText, totalComments, totalParticipants, setCommentText,
-    userSide, userStanceLabel, activeTab, fetchData, setActiveTab, modal, stats,
-    handleStanceChange, handleDeletePost, handleSubmitComment, handleSubmitReply, openModal, closeModal,
+    post, comments, mvp, totalComments, totalParticipants, commentText,
+    userSide, userStanceLabel, activeTab, stats, modal, isEditing,
+    setCommentText, fetchData, setActiveTab, handleStanceChange, topics, 
+    handleDeletePost, handleSubmitComment, handleSubmitReply, 
+    openModal, closeModal, setIsEditing, handleUpdatePost,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
 
-  if (!post) return <div className="text-center py-10">Loading debate...</div>;
-
-  const removeCommentById = (list, id) => {
-    return list
-      .filter(c => c.id !== id)
-      .map(c => ({
-        ...c,
-        replies: c.replies ? removeCommentById(c.replies, id) : []
-      }));
-  };
+  if (!post) return <div className="text-center py-10 text-muted-foreground">Loading debate...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto w-full">
-      <PostHeader 
-        post={post} 
-        openModal={openModal}
-        fullscreenImageIndex={fullscreenImageIndex}
-        openFullscreenImage={openFullscreenImage}
-        closeFullscreenImage={closeFullscreenImage}
-      />
-      
-      <VotingSection 
-        post={post} 
-        userSide={userSide} 
-        userStanceLabel={userStanceLabel}
-        handleStanceChange={handleStanceChange} 
-        stats={stats}
-      />
+    <div className="max-w-4xl mx-auto w-full px-4 sm:px-0">
+      {isEditing ? (
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <button 
+            onClick={() => setIsEditing(false)}
+            className="mb-6 text-sm font-bold text-muted-foreground hover:text-primary transition-all flex items-center gap-2"
+          >
+            ← Back to Debate
+          </button>
+          <UpdatePostForm 
+            post={post} 
+            topics={topics} 
+            onSubmit={handleUpdatePost} 
+          />
+        </div>
+      ) : (
+        <>
+          <PostHeader 
+            post={post} 
+            openModal={openModal}
+            setIsEditing={setIsEditing} 
+            handleDeletePost={handleDeletePost} 
+            fullscreenImageIndex={fullscreenImageIndex}
+            openFullscreenImage={openFullscreenImage}
+            closeFullscreenImage={closeFullscreenImage}
+          />
+          
+          <VotingSection 
+            post={post} 
+            userSide={userSide} 
+            userStanceLabel={userStanceLabel}
+            handleStanceChange={handleStanceChange} 
+            stats={stats}
+          />
 
-      {/* <DebateSummary postID={post.postID} /> */}
+          <StatsRow
+            counts={{ totalParticipants, totalComments }}
+            mvp={mvp}
+          />
 
-      <StatsRow
-        counts={{ totalParticipants, totalComments }}
-        mvp={mvp}
-      />
-
-      <CommentSection
-        post={post}
-        userSide={userSide}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        comments={comments}
-        commentText={commentText}
-        setCommentText={setCommentText}
-        onSubmitComment={handleSubmitComment}
-        onSubmitReply={handleSubmitReply}
-        openModal={openModal}
-      />
-
-      {/* Overlay */}
-      {modal.type === "postReport" && (
-        <ReportModal
-          entity={modal.entity}
-          type="postReport"
-          onClose={closeModal}
-        />
+          <CommentSection
+            post={post}
+            userSide={userSide}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            comments={comments}
+            commentText={commentText}
+            setCommentText={setCommentText}
+            onSubmitComment={handleSubmitComment}
+            onSubmitReply={handleSubmitReply}
+            openModal={openModal}
+          />
+        </>
       )}
+
+      {/* --- Overlay Section --- */}
+
+      {/* Handles both reporting for visitors and management for owners */}
+      {modal.type === "postReport" && (
+      <ReportModal
+        entity={modal.entity}
+        type="postReport"
+        onClose={closeModal}
+        onEdit={() => setIsEditing(true)}
+        onDelete={
+          (authUser?.userID === modal.entity.authorID || authUser?.role === "ADMIN") 
+            ? handleDeletePost 
+            : null
+        }
+      />
+    )}
 
       {modal.type === "commentReport" && (
         <ReportModal
@@ -88,26 +108,12 @@ export default function PostPage() {
         />
       )}
 
-      {modal.type === "postReport" && (
-        <ReportModal
-          entity={modal.entity}
-          type="postReport"
-          onClose={closeModal}
-          onDelete={
-            (user?.userID === modal.entity.authorID || user?.role === "ADMIN") 
-              ? handleDeletePost 
-              : null
-          }
-        />
-      )}
-
       {modal.type === "commentTakedown" && (
         <TakedownModal
           entity={modal.entity}
           type="comment"
           onClose={closeModal}
           onSuccess={() => {
-            // setComments(prev => removeCommentById(prev, modal.entity.id));
             fetchData();
             closeModal();
           }}
@@ -119,9 +125,7 @@ export default function PostPage() {
           entity={modal.entity}
           type="post"
           onClose={closeModal}
-          onSuccess={() => {
-            navigate("/");
-          }}
+          onSuccess={() => navigate("/")}
         />
       )}
 

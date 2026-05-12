@@ -151,25 +151,42 @@ export const voteOnComment = async (commentID, voterID, voteValue) => {
   }
 };
 
-export const getConsensusData = async (postID) => {
-  const response = await fetch(`/api/consensus/post/${postID}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch consensus data");
-  }
-  return await response.json();
-};
-
 export const deletePost = async (postID) => {
   try {
-    const token = localStorage.getItem("token"); 
-    const response = await axios.delete(`/api/posts/${postID}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
+    return await request(Http.DELETE, `/api/posts/${postID}`);
   } catch (error) {
     console.error("Error deleting post:", error);
+    throw error;
+  }
+};
+
+export const getConsensusData = async (postID) => {
+  return await request(Http.GET, `/api/consensus/post/${postID}`);
+};
+
+export const updatePost = async (postID, postData) => {
+  try {
+    const formData = new FormData();
+
+    const jsonBlob = new Blob([JSON.stringify({
+      title: postData.title,
+      description: postData.description,
+      topicID: postData.topicID,
+      proLabel: postData.proLabel,
+      conLabel: postData.conLabel
+    })], { type: 'application/json' });
+
+    formData.append("request", jsonBlob);
+
+    if (postData.image instanceof File) {
+      formData.append("image", postData.image);
+    }
+
+    return await request(Http.PUT, `/api/posts/${postID}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  } catch (error) {
+    console.error("Error updating post:", error);
     throw error;
   }
 };
