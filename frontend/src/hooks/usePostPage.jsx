@@ -32,7 +32,6 @@ export const usePostPage = (postID) => {
     if (!postID) return;
 
     try {
-      // 1. Fetch all data in parallel for speed
       const [postResponse, commentResponse, statsData, topicResponse] = await Promise.all([
         getPostById(postID),
         getPostComments(postID),
