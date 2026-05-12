@@ -1,7 +1,7 @@
 import { request } from './request';
 
-export const getLogs = async (userID) => {
-    return await request('GET', `/api/users/logs/${userID}`);
+export const getLogs = async (userID, type) => {
+    return await request('GET', `/api/users/logs/${userID}/${type}`);
 };
 
 export const createPunishment = async (punishmentData) => {

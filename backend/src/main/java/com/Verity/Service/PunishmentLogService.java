@@ -2,11 +2,10 @@ package com.Verity.Service;
 
 import java.util.List;
 
-import com.Verity.Constant.UserRole;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.Verity.Constant.UserRole;
 import com.Verity.DTO.PunishmentLogDTO;
 import com.Verity.DTO.PunishmentLogRequest;
 import com.Verity.Entity.PunishmentLogEntity;
@@ -42,19 +41,35 @@ public class PunishmentLogService {
     }
 
     public List<PunishmentLogDTO> getAllPunishmentsByUser(String id) {
-    return punishmentLogRepo.findByUserID(id)
-        .stream()
-        .map(log -> new PunishmentLogDTO(
-            log.getLogID(),
-            log.getType(),
-            log.getReason(),
-            log.getDuration(),
-            log.getSYSCREATEDDATE(),
-            log.getPunishedUser().getUserID(),
-            log.getPunishedUser().getName(),
-            log.getModerator().getName()
-        ))
-        .toList();
+        return punishmentLogRepo.findByUserID(id)
+            .stream()
+            .map(log -> new PunishmentLogDTO(
+                log.getLogID(),
+                log.getType(),
+                log.getReason(),
+                log.getDuration(),
+                log.getSYSCREATEDDATE(),
+                log.getPunishedUser().getUserID(),
+                log.getPunishedUser().getName(),
+                log.getModerator().getName()
+            ))
+            .toList();
+    }
+
+    public List<PunishmentLogDTO> getAllPunishmentsByModerator(String id) {
+        return punishmentLogRepo.findByModeratorID(id)
+            .stream()
+            .map(log -> new PunishmentLogDTO(
+                log.getLogID(),
+                log.getType(),
+                log.getReason(),
+                log.getDuration(),
+                log.getSYSCREATEDDATE(),
+                log.getPunishedUser().getUserID(),
+                log.getPunishedUser().getName(),
+                log.getModerator().getName()
+            ))
+            .toList();
     }
 
     public void createPunishment(PunishmentLogRequest request) {

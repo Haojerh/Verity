@@ -37,6 +37,7 @@ public class CommentService {
     private final VoteService voteService;
     private final UserServices userServices;
     private final UserNotiService userNotiService;
+    private final PunishmentLogService punishmentLogService;
 
     private static final Pattern BAD_WORDS = Pattern.compile(
     "(?i)\\b(fuck|shit|damn|ass|faggot|cunt|fk|fuc|sht|asshole|bitch)\\b"
@@ -57,6 +58,10 @@ public class CommentService {
 
         UserEntity author = userRepo.findUserByEmail(authorEmail)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
+
+        if (punishmentLogService.isUserPunished(author.getUserID(), "MUTE")) {
+            throw new RuntimeException("User is Currently Muted");
+        }
 
         CommentEntity comment = new CommentEntity();
         comment.setText(request.getText());

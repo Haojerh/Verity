@@ -11,7 +11,9 @@ export default function UserRow({ user, onAction }) {
 
       <td className="p-4">
         <div className="flex items-center gap-2">
-          <Avatar name={user.name} size="sm" imageUrl={user.avatar} />
+          <div className="hidden sm:block">
+            <Avatar name={user.name} size="sm" imageUrl={user.avatar} />
+          </div>
           {user.name}
         </div>
       </td>

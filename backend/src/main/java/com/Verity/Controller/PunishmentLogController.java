@@ -1,5 +1,6 @@
 package com.Verity.Controller;
 import static java.util.Collections.emptyMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Verity.DTO.PunishmentLogDTO;
 import com.Verity.DTO.PunishmentLogRequest;
 import com.Verity.Domain.Response;
 import com.Verity.Service.PunishmentLogService;
@@ -26,9 +28,16 @@ public class PunishmentLogController {
 
     private final PunishmentLogService punishmentLogService;
 
-    @GetMapping("/api/users/logs/{id}")
-    public ResponseEntity<Response> getAllPunishmentLogs(@PathVariable String id, HttpServletRequest request) {
-        var logs = punishmentLogService.getAllPunishmentsByUser(id);
+    @GetMapping("/api/users/logs/{id}/{type}")
+    public ResponseEntity<Response> getAllPunishmentLogs(@PathVariable String id, @PathVariable String type, HttpServletRequest request) {
+        List<PunishmentLogDTO> logs;
+
+        if (type.equals("user")) {
+            logs = punishmentLogService.getAllPunishmentsByUser(id);
+        } else {
+            logs = punishmentLogService.getAllPunishmentsByModerator(id);
+        }
+        
         return ResponseEntity.ok(getResponse(request, Map.of("logs", logs), "Punishment Logs Retrieved", OK));
     }
 
