@@ -1,10 +1,9 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { getPostComments, createPostComment } from "../services/CommentService";
-import { getPostById, mapPostData } from "../services/PostService";
+import { getPostById, mapPostData, getConsensusData, deletePost} from "../services/PostService";
 import { getPostStats, getUserStance, selectStance } from "../services/PostStanceService";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
-import { getConsensusData } from "../services/PostService";
 
 export const usePostPage = (postID) => {
   const { user } = useAuth();
@@ -62,6 +61,19 @@ export const usePostPage = (postID) => {
   }, [postID, user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  /**
+   * Delete Handler
+   */
+  const handleDeletePost = async (targetID) => {
+    try {
+      await deletePost(targetID);
+      showToast("Debate deleted successfully");
+      navigate("/");
+    } catch (err) {
+      showToast(err.response?.data?.message || "Failed to delete debate");
+    }
+  };
 
   useEffect(() => {
         const fetchInitialData = async () => {
@@ -126,6 +138,7 @@ export const usePostPage = (postID) => {
     userSide, userStanceLabel, activeTab, modal, fullscreenImageIndex,
     setCommentText, setActiveTab, fetchData,
     handleStanceChange,
+    handleDeletePost,
     totalParticipants: stats.totalParticipants,
     handleSubmitComment: () => handleCommentSubmit(commentText),
     handleSubmitReply: (id, text) => handleCommentSubmit(text, id),

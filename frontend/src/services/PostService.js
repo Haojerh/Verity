@@ -158,3 +158,18 @@ export const getConsensusData = async (postID) => {
   }
   return await response.json();
 };
+
+export const deletePost = async (postID) => {
+  try {
+    const token = localStorage.getItem("token"); 
+    const response = await axios.delete(`/api/posts/${postID}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw error;
+  }
+};

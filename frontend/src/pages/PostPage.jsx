@@ -18,7 +18,7 @@ export default function PostPage() {
   const {
     post, comments, mvp, setComments, commentText, totalComments, totalParticipants, setCommentText,
     userSide, userStanceLabel, activeTab, fetchData, setActiveTab, modal, stats,
-    handleStanceChange, handleSubmitComment, handleSubmitReply, openModal, closeModal,
+    handleStanceChange, handleDeletePost, handleSubmitComment, handleSubmitReply, openModal, closeModal,
     fullscreenImageIndex, openFullscreenImage, closeFullscreenImage
   } = usePostPage(postID);
 
@@ -85,6 +85,19 @@ export default function PostPage() {
           entity={modal.entity}
           type="commentReport"
           onClose={closeModal}
+        />
+      )}
+
+      {modal.type === "postReport" && (
+        <ReportModal
+          entity={modal.entity}
+          type="postReport"
+          onClose={closeModal}
+          onDelete={
+            (user?.userID === modal.entity.authorID || user?.role === "ADMIN") 
+              ? handleDeletePost 
+              : null
+          }
         />
       )}
 
