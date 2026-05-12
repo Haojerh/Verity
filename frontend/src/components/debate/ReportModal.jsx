@@ -10,8 +10,9 @@ import { useToast } from "../../context/ToastContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { WarnSchema } from "../../utils/Schema";
+import { deletePost } from "../../services/PostService";
 
-export default function ReportModal({ entity, onClose, type }) {
+export default function ReportModal({ entity, onClose, type, onDelete}) {
   const {
     register,
     handleSubmit,
@@ -46,6 +47,13 @@ export default function ReportModal({ entity, onClose, type }) {
     }
   };
 
+  const handleDeleteClick = () => {
+    if (window.confirm(`Are you sure you want to delete this ${type === "postReport" ? "post" : "comment"}?`)) {
+      onDelete(type === "postReport" ? entity.postID : entity.id);
+      onClose();
+    }
+  };
+
   return (
     <Modal onClose={onClose}>
       <ModalHeader
@@ -55,15 +63,23 @@ export default function ReportModal({ entity, onClose, type }) {
         onClose={onClose}
       />
 
-      <div className="px-8 pb-8 space-y-6">
+      <div className="px-8 pb-4 space-y-6">
         <SelectBox
-          label="Select Reason"
+          label="Select Violation Reason"
           options={reasonOptions}
           value={watch("reason")}
           onChange={(val) => setValue("reason", val, { shouldValidate: true })}
-          placeholder="Choose a violation reason..."
+          placeholder="Choose a reason..."
           error={errors.reason?.message}
         />
+        
+        <button
+          onClick={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+          className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all disabled:opacity-50"
+        >
+          {isSubmitting ? "Submitting Report..." : "Submit Report"}
+        </button>
       </div>
 
       <ModalFooter

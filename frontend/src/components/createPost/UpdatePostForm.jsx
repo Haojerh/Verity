@@ -5,15 +5,13 @@ import SelectBox from "../ui/SelectBox";
 import ImageUpload from "../ui/ImageUpload";
 import { postSchema } from "../../utils/Schema";
 import Header from "../ui/Header";
-import { useEffect } from "react";
 
-export default function UpdatePostForm({ onSubmit, topics, post }) {
+export default function UpdatePostPage({ onSubmit, topics, post }) {
   const { 
     register, 
     handleSubmit, 
     setValue,
     watch,
-    reset,
     formState: { errors, isSubmitting } 
   } = useForm({
     resolver: zodResolver(postSchema),
@@ -27,37 +25,23 @@ export default function UpdatePostForm({ onSubmit, topics, post }) {
     }
   });
 
-  useEffect(() => {
-    if (post) {
-      reset({
-        title: post.title,
-        topicID: post.topicID,
-        description: post.description,
-        proLabel: post.proLabel,
-        conLabel: post.conLabel,
-        image: post.images?.[0] || post.imagePath || null
-      });
-    }
-  }, [post, reset]);
-
-  const topicOptions = topics.map(t => ({
-    value: t.topicID,
-    label: t.name
-  }));
+  const topicOptions = Array.isArray(topics) 
+    ? topics.map(t => ({
+        value: t.topicID,
+        label: t.name
+      }))
+    : [];
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div>
       <Header
-        title="Edit Debate"
-        desc={`Updating "${post?.title}"`}
+        title="Edit Post"
+        desc={`Updating: ${post?.title}`}
       />
 
-      <form 
-        onSubmit={handleSubmit(onSubmit)} 
-        className="space-y-6 bg-card p-8 rounded-xl border border-border shadow-md dark:shadow-dark-md"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-card p-8 rounded-xl border border-border shadow-md dark:shadow-dark-md">
         <TextBox 
-          label="Debate Title" 
+          label="Title" 
           {...register("title")} 
           error={errors.title?.message}
           placeholder="Enter post title..."
@@ -67,7 +51,7 @@ export default function UpdatePostForm({ onSubmit, topics, post }) {
           <SelectBox
             label="Topic"
             options={topicOptions}
-            placeholder="Select a topic..."
+            placeholder="Search or select a topic..."
             value={watch("topicID")}
             onChange={(value) => setValue("topicID", value, { shouldValidate: true })}
             error={errors.topicID?.message}
@@ -83,30 +67,27 @@ export default function UpdatePostForm({ onSubmit, topics, post }) {
         />
 
         <div className="flex flex-col gap-2">
-          <label className="text-foreground font-medium">Header Image</label>
+          <label className="text-foreground font-medium">Post Image (Optional)</label>
           <ImageUpload
             value={watch("image")}
             onChange={(file) => setValue("image", file, { shouldValidate: true })}
             error={errors.image?.message}
             type="banner" 
           />
-          <p className="text-[10px] text-muted-foreground italic">
-            Leave as is to keep current image, or upload a new one to replace it.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextBox label="Pro Side Label" {...register("proLabel")} error={errors.proLabel?.message} />
-          <TextBox label="Con Side Label" {...register("conLabel")} error={errors.conLabel?.message} />
+          <TextBox label="Pro Label" {...register("proLabel")} error={errors.proLabel?.message} />
+          <TextBox label="Con Label" {...register("conLabel")} error={errors.conLabel?.message} />
         </div>
 
-        <div className="pt-4 flex gap-3">
+        <div className="pt-4">
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full bg-primary text-white py-4 rounded-lg hover:brightness-110 transition-all disabled:opacity-50 font-bold tracking-wide shadow-lg"
+            className="w-full bg-primary text-white py-4 rounded-lg hover:bg-secondary transition-all disabled:opacity-50 font-bold tracking-wide shadow-lg"
           >
-            {isSubmitting ? "Saving Changes..." : "Save Changes"}
+            {isSubmitting ? "Saving Changes..." : "Update Post"}
           </button>
         </div>
       </form>

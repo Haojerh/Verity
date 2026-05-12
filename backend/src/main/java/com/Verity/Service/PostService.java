@@ -1,6 +1,7 @@
 package com.Verity.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,12 +10,16 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.Verity.Constant.UserRole;
+import com.Verity.Exceptions.ApiException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -463,5 +468,57 @@ public class PostService {
             PageRequest.of(page, size),
             Math.min(maxSize, ordered.size())
         );
+    }
+
+    public PostDTO updatePost(String postID, PostRequest request, MultipartFile image) throws IOException {
+        PostEntity post = postRepo.findById(postID)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        post.setTitle(request.getTitle());
+        post.setDescription(request.getDescription());
+        post.setProLabel(request.getProLabel() != null ? request.getProLabel() : post.getProLabel());
+        post.setConLabel(request.getConLabel() != null ? request.getConLabel() : post.getConLabel());
+
+        if (request.getTopicID() != null && !post.getTopic().getTopicID().equals(request.getTopicID())) {
+            TopicEntity topic = topicRepo.findByTopicIDAndSYSISDELETEDFalse(request.getTopicID())
+                    .orElseThrow(() -> new RuntimeException("Topic not found"));
+            post.setTopic(topic);
+        }
+
+        if (image != null && !image.isEmpty()) {
+            String fileName = FileUtil.saveFile(image, uploadDir, "PST");
+            post.setImagePath(fileName);
+        }
+
+        PostEntity updatedPost = postRepo.save(post);
+        return mapToDTO(updatedPost);
+    }
+
+    @Transactional
+    public void deletePost(String postId) {
+        PostEntity post = postRepo.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        post.setSYSISDELETED(true);
+        postRepo.save(post);
+        
+        commentRepo.softDeleteByPostID(postId);
+        voteRepo.softDeleteByPostID(postId);
+        postStanceRepo.softDeleteByPostID(postId);
+        reportRepo.softDeleteByPostID(postId);
+    }
+
+    private void validateOwnership(PostEntity post) {
+        String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity currentUser = userRepo.findUserByEmail(currentEmail)
+                .orElseThrow(() -> new ApiException("User not found"));
+
+        boolean isAuthor = post.getAuthor().getUserID().equals(currentUser.getUserID());
+        boolean isAdmin = currentUser.getUserRole().equals(UserRole.ADMIN);
+
+        if (!isAuthor && !isAdmin) {
+            throw new ApiException("You do not have permission to modify this post.");
+        }
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -30,4 +31,7 @@ public interface CommentRepo extends JpaRepository<CommentEntity, String> {
         ORDER BY FUNCTION('DATE', c.SYSCREATEDDATE)
         """)
     List<Object[]> countCommentsLast5Days(@Param("startDate") LocalDateTime startDate);
+    @Modifying
+    @Query("UPDATE CommentEntity c SET c.SYSISDELETED = true WHERE c.post.postID = :postId")
+    void softDeleteByPostID(String postId);
 }

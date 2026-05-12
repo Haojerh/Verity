@@ -10,7 +10,6 @@ export function AuthProvider({ children }) {
   const refreshUser = async () => {
     try {
       const res = await getCurrentUser();
-      console.log(res);
       setUser(res);
     } catch {
       setUser(null);

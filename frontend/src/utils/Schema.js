@@ -93,10 +93,16 @@ export const postSchema = z.object({
   image: z
     .any()
     .optional()
-    .refine((file) => file == null || file instanceof File, {
-      message: "Image must be a file",
+    .refine((file) => {
+      if (file == null) return true;
+      return file instanceof File || typeof file === "string";
+    }, {
+      message: "Image must be a file or a valid URL",
     })
-    .refine((file) => file == null || file?.size <= MAX_FILE_SIZE, {
+    .refine((file) => {
+      if (!(file instanceof File)) return true;
+      return file.size <= MAX_FILE_SIZE;
+    }, {
       message: "Image cannot exceed 10MB",
     }),
 });
