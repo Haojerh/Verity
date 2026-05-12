@@ -5,7 +5,7 @@ export default function ModerationActivity({ data }) {
     <div className="bg-card border rounded-lg p-6">
       <h2 className="mb-4 flex items-center gap-2">
         <AlertCircle className="w-5 h-5" />
-        Moderation Activity (Last 30 Days)
+        Moderation Activity
       </h2>
 
       <div className="space-y-4">

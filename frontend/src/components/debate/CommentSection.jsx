@@ -23,13 +23,14 @@ export default function CommentSection({
     const fetchHighlights = async () => {
       try {
         const data = await getConsensusHighlights(postID);
-        setHighlights(data);
+        setHighlights(data.highlights);
       } catch (err) {
         console.error("Failed to load highlights", err);
       }
     };
     fetchHighlights();
   }, [postID]);
+  console.log(highlights.pros);
 
   const normalizedPro = proLabel?.toUpperCase();
   const normalizedCon = conLabel?.toUpperCase();

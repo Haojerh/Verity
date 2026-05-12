@@ -25,7 +25,7 @@ export default function ModeratorRow({ user, onAction }) {
         <div className="flex items-center justify-center gap-2 flex-wrap">
             <button 
               onClick={() => onAction("warn", user)}
-              className="px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 bg-muted hover:bg-gray-300">
+              className="px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 bg-muted hover:bg-muted/50">
                 Warn
             </button>
             <button
