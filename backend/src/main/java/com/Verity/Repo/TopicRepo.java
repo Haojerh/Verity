@@ -9,6 +9,9 @@ import com.Verity.Entity.TopicEntity;
 
 @Repository
 public interface TopicRepo extends JpaRepository<TopicEntity,String> {
+
+    long countBySYSISDELETEDFalse();
+    
     Optional<TopicEntity> findByName(String name);
 
     Optional<TopicEntity> findByTopicIDAndSYSISDELETEDFalse(String topicID);

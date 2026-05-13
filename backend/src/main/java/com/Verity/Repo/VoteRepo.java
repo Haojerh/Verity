@@ -3,7 +3,6 @@ package com.Verity.Repo;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,8 +11,12 @@ import org.springframework.stereotype.Repository;
 
 import com.Verity.Entity.VoteEntity;
 
+import jakarta.transaction.Transactional;
+
 @Repository
 public interface VoteRepo extends JpaRepository<VoteEntity, String> {
+
+    long countBySYSISDELETEDFalse();
 
     Optional<VoteEntity> findByComment_CommentIDAndVoter_UserID(String commentID, String voterID);
 

@@ -60,10 +60,10 @@ public class AnalyticsService {
     }
 
     private List<StatsCardDTO> getStatsCards() {
-        long totalUsers = userRepo.count();
-        long totalPosts = postRepo.count();
-        long totalReports = reportRepo.count();
-        long totalDebates = postRepo.count();
+        long totalUsers = userRepo.countBySYSISDELETEDFalse();
+        long totalPosts = postRepo.countBySYSISDELETEDFalse();
+        long totalReports = reportRepo.countBySYSISDELETEDFalse();
+        long totalTopics = topicRepo.countBySYSISDELETEDFalse();
 
         return List.of(
             new StatsCardDTO(
@@ -85,8 +85,8 @@ public class AnalyticsService {
                 "destructive"
             ),
             new StatsCardDTO(
-                "Total Debates",
-                totalDebates,
+                "Total Topics",
+                totalTopics,
                 "ActivityIcon",
                 "purple-500"
             )
@@ -94,9 +94,9 @@ public class AnalyticsService {
     }
 
     private List<AverageStatDTO> getAverageStats() {
-        long totalPosts = postRepo.count();
-        long totalComments = commentRepo.count();
-        long totalVotes = voteRepo.count();
+        long totalPosts = postRepo.countBySYSISDELETEDFalse();
+        long totalComments = commentRepo.countBySYSISDELETEDFalse();
+        long totalVotes = voteRepo.countBySYSISDELETEDFalse();
 
         double avgComments = totalPosts == 0 ? 0 : (double) totalComments / totalPosts;
         double avgVotes = totalPosts == 0 ? 0 : (double) totalVotes / totalPosts;
