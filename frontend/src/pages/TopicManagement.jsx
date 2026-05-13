@@ -74,11 +74,10 @@ export default function TopicManagement() {
             onAction={openModal}
           />
         ))}
-
-        {filteredTopics.length === 0 && (
-            <div className="text-sm text-center text-muted-foreground">No Topic Yet.</div>
-        )}
       </div>
+      {filteredTopics.length === 0 && (
+          <div className="text-sm text-center text-muted-foreground">No Topic Yet.</div>
+      )}
 
       {/* Overlay */}
       {modal.type === "new" && (
