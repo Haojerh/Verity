@@ -75,9 +75,6 @@ export default function TopicManagement() {
           />
         ))}
       </div>
-      {filteredTopics.length === 0 && (
-          <div className="text-sm text-center text-muted-foreground">No Topic Yet.</div>
-      )}
 
       {filteredTopics.length === 0 && (
           <div className="text-sm text-center text-muted-foreground">No Topic Yet.</div>
