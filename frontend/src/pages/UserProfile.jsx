@@ -49,7 +49,13 @@ export default function UserProfile() {
     const fetchUser = async () => {
       try {
         const res = await getUserById(id);
-        setProfileUser(res.user);
+        const formattedUser = {
+          ...res.user,
+          avatar: res.user.avatar
+            ? `http://localhost:8080/uploads/users/${res.user.avatar}`
+            : null,
+        };
+        setProfileUser(formattedUser);
       } catch (err) {
         console.error("Failed to fetch user", err);
       }

@@ -28,8 +28,7 @@ public class ReportController {
     private final ReportService reportService;
     
     @PostMapping("/api/reports")
-    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
-    public ResponseEntity<Response> createTopic(@RequestBody ReportRequest reportRequest, HttpServletRequest request) throws IOException {
+    public ResponseEntity<Response> createReport(@RequestBody ReportRequest reportRequest, HttpServletRequest request) throws IOException {
         reportService.createReport(reportRequest);
         return ResponseEntity.created(create("")).body(getResponse(request, emptyMap(), "Report Issued", CREATED));
     }

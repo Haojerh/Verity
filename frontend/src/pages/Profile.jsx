@@ -2,7 +2,7 @@ import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileTabs from "../components/profile/ProfileTabs";
 import PostSkeleton from "../components/ui/PostSkeleton";
 import { useAuth } from "../context/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getUserPosts, getFollowedUsersPosts, getFollowedTopicsPosts } from "../services/PostService";
 import useInfinitePostsById from "../hooks/useInfinitePostsById.jsx";
 import useFollowers from "../hooks/useFollowers";
@@ -22,6 +22,17 @@ export default function Profile() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
+
+  const formattedUser = useMemo(() => {
+    if (!user) return null;
+
+    return {
+      ...user,
+      avatar: user.avatar
+        ? `http://localhost:8080/uploads/users/${user.avatar}`
+        : null,
+    };
+  }, [user]);
 
   if (!user) {
     return (
@@ -46,7 +57,7 @@ export default function Profile() {
   return (
     <div className="max-w-4xl mx-auto">
       <ProfileHeader
-        user={user}
+        user={formattedUser}
         isOwnProfile={true}
         followers={followers}
         reputation={reputation}

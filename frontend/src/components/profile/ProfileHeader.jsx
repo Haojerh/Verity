@@ -17,11 +17,7 @@ export default function ProfileHeader({
         <Avatar
           name={user.name}
           size="xl"
-          imageUrl={
-            user.avatar
-              ? `http://localhost:8080/api/uploads/users/${user.avatar}`
-              : null
-          }
+          imageUrl={user.avatar}
         />
 
         <div className="flex-1">

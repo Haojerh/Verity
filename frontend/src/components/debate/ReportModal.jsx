@@ -72,14 +72,6 @@ export default function ReportModal({ entity, onClose, type, onDelete}) {
           placeholder="Choose a reason..."
           error={errors.reason?.message}
         />
-        
-        <button
-          onClick={handleSubmit(onSubmit)}
-          disabled={isSubmitting}
-          className="w-full py-3 bg-destructive hover:bg-destructive-hover text-white rounded-xl font-bold transition-all disabled:opacity-50"
-        >
-          {isSubmitting ? "Submitting Report..." : "Submit Report"}
-        </button>
       </div>
 
       <ModalFooter
