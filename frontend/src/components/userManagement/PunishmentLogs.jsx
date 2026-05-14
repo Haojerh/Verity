@@ -13,7 +13,7 @@ export default function PunishmentLogs({ roleType="user", onClose, user }) {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const res = await getLogs(user.userID);
+        const res = await getLogs(user.userID, roleType);
         setLogs(res.logs);
       } catch (error) {
         console.error("Error fetching punishment logs:", error);
@@ -32,7 +32,7 @@ export default function PunishmentLogs({ roleType="user", onClose, user }) {
         <table className="w-full text-sm">
           <thead className="text-xs uppercase bg-muted/80">
             <tr>
-              {roleType == "mod" && <th className="p-4 text-left">User</th>}
+              {roleType == "mod" && <th className="p-4 text-left">Punished User</th>}
               <th className="p-4 text-left">Time</th>
               <th className="p-4 text-left">Type</th>
               <th className="p-4 text-left">Duration</th>

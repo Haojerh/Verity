@@ -14,9 +14,15 @@ import com.Verity.Entity.CommentEntity;
 
 @Repository
 public interface CommentRepo extends JpaRepository<CommentEntity, String> {
+
+    long countBySYSISDELETEDFalse();
+
     List<CommentEntity> findByPost_PostID(String postID);
+
     Optional<CommentEntity> findByCommentID(String commentID);
+
     long countByPost_PostID(String postID);
+    
     @Query("SELECT DISTINCT c FROM CommentEntity c " +
             "LEFT JOIN FETCH c.replies " +
             "WHERE c.post.postID = :postID " +

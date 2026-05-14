@@ -13,6 +13,8 @@ import com.Verity.Entity.UserEntity;
 @Repository
 public interface UserRepo extends JpaRepository<UserEntity,String> {
 
+    long countBySYSISDELETEDFalse();
+
     @Query("SELECT u FROM UserEntity u WHERE u.email = :email AND u.SYSISDELETED = false")
     Optional<UserEntity> findUserByEmail(String email);
 

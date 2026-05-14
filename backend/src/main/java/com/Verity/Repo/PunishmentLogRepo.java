@@ -26,6 +26,13 @@ public interface PunishmentLogRepo extends JpaRepository<PunishmentLogEntity,Str
     """)
     List<PunishmentLogEntity> findByUserID(String userID);
 
+    @Query("""
+    SELECT p FROM PunishmentLogEntity p
+    WHERE p.moderator.userID = :moderatorID
+    AND p.SYSISDELETED = false
+    """)
+    List<PunishmentLogEntity> findByModeratorID(String moderatorID);
+
     long countByTypeIgnoreCase(String type);
 
 }

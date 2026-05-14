@@ -9,7 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { WarnSchema } from "../../utils/Schema";
+import { warnSchema } from "../../utils/Schema";
 import { deletePost } from "../../services/PostService";
 
 export default function ReportModal({ entity, onClose, type, onDelete}) {
@@ -20,7 +20,7 @@ export default function ReportModal({ entity, onClose, type, onDelete}) {
     setValue,
     formState: { errors, isSubmitting }
   } = useForm({
-    resolver: zodResolver(WarnSchema),
+    resolver: zodResolver(warnSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -76,7 +76,7 @@ export default function ReportModal({ entity, onClose, type, onDelete}) {
         <button
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting}
-          className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all disabled:opacity-50"
+          className="w-full py-3 bg-destructive hover:bg-destructive-hover text-white rounded-xl font-bold transition-all disabled:opacity-50"
         >
           {isSubmitting ? "Submitting Report..." : "Submit Report"}
         </button>

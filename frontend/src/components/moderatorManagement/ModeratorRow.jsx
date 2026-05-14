@@ -8,8 +8,10 @@ export default function ModeratorRow({ user, onAction }) {
 
       <td className="p-4">
         <div className="flex items-center gap-2">
+          <div className="hidden sm:block">
             <Avatar name={user.name} size="sm" imageUrl={user.avatar} />
-            {user.name}
+          </div>
+          {user.name}
         </div>
       </td>
 

@@ -65,7 +65,7 @@ export default function PostHeader({
               {/* OWNER/ADMIN MANAGEMENT SECTION */}
               {(authUser?.userID === authorID || isAdmin(authUser)) ? (
                 <>
-                  <div className="h-[1px] bg-border mx-2" />
+                  <div className="h-px bg-border mx-2" />
                   <div className="px-4 py-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                     Management
                   </div>
@@ -84,7 +84,7 @@ export default function PostHeader({
                       }
                       setMenuOpen(false);
                     }}
-                    className="flex gap-3 p-4 w-full hover:bg-red-50 text-red-600 text-sm font-bold items-center transition-all"
+                    className="flex gap-3 p-4 w-full hover:bg-destructive/5 text-destructive text-sm font-bold items-center transition-all"
                   >
                     <Trash2 className="w-4 h-4" /> Delete Post
                   </button>
@@ -92,12 +92,12 @@ export default function PostHeader({
               ) : (
                 /* 3. VISITOR REPORT SECTION */
                 <>
-                  <div className="h-[1px] bg-border mx-2" />
+                  <div className="h-px bg-border mx-2" />
                   <button 
-                    onClick={() => { openModal("postReport", post); setMenuOpen(false); }}
+                    onClick={() => { openModal((isModerator(authUser) || isAdmin(authUser)) ? "postTakedown" : "postReport", post); setMenuOpen(false); }}
                     className="flex gap-3 p-4 w-full text-destructive hover:bg-destructive/5 text-sm font-bold items-center transition-all"
                   >
-                    <Flag className="w-4 h-4" /> Report Violation
+                    <Flag className="w-4 h-4" /> {(isModerator(authUser) || isAdmin(authUser)) ? "Takedown Post" : "Report Violation"}
                   </button>
                 </>
               )}

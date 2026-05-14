@@ -107,11 +107,11 @@ export const postSchema = z.object({
     }),
 });
 
-export const WarnSchema = z.object({
+export const warnSchema = z.object({
   reason: z.string().min(1, "Reason is required")
 });
 
-export const BanMuteSchema = z.object({
+export const banMuteSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
   duration: z
     .number({

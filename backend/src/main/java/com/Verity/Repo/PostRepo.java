@@ -15,6 +15,9 @@ import com.Verity.Entity.PostEntity;
 
 @Repository
 public interface PostRepo extends JpaRepository<PostEntity, String> {
+
+    long countBySYSISDELETEDFalse();
+    
     Optional<PostEntity> findByTitle(String title);
 
     Optional<PostEntity> findByPostIDAndSYSISDELETEDFalse(String postID);

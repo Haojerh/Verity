@@ -9,6 +9,7 @@ import TakedownModal from "../components/debate/TakedownModal";
 import UpdatePostForm from "../components/createPost/UpdatePostForm"; 
 import { usePostPage } from "../hooks/usePostPage";
 import { useAuth } from "../context/AuthContext";
+import { ArrowLeft } from "lucide-react";
 
 export default function PostPage() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function PostPage() {
             onClick={() => setIsEditing(false)}
             className="mb-6 text-sm font-bold text-muted-foreground hover:text-primary transition-all flex items-center gap-2"
           >
-            ← Back to Debate
+            <ArrowLeft size={16} /> Back to Debate
           </button>
           <UpdatePostForm 
             post={post} 
@@ -93,7 +94,7 @@ export default function PostPage() {
         onClose={closeModal}
         onEdit={() => setIsEditing(true)}
         onDelete={
-          (authUser?.userID === modal.entity.authorID || authUser?.role === "ADMIN") 
+          (user?.userID === modal.entity.authorID || user?.role === "ADMIN") 
             ? handleDeletePost 
             : null
         }

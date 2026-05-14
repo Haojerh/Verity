@@ -2,7 +2,6 @@ package com.Verity.Repo;
 
 import java.util.List;
 
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,8 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import com.Verity.Entity.ReportEntity;
 
+import jakarta.transaction.Transactional;
+
 @Repository
 public interface ReportRepo extends JpaRepository<ReportEntity, String> {
+
+    long countBySYSISDELETEDFalse();
 
     List<ReportEntity> findBySYSISDELETEDFalse();
 
