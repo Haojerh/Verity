@@ -19,7 +19,6 @@ export default function ThreadItem({
 }) {
   const { user: currentUser } = useAuth();
   const navigate = useNavigate();
-  console.log(comment);
   
   const { 
     id, 
