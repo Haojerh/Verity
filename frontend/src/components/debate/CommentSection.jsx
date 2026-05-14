@@ -30,7 +30,6 @@ export default function CommentSection({
     };
     fetchHighlights();
   }, [postID]);
-  console.log(highlights.pros);
 
   const normalizedPro = proLabel?.toUpperCase();
   const normalizedCon = conLabel?.toUpperCase();
@@ -102,7 +101,7 @@ export default function CommentSection({
           <div className="p-4 bg-muted/20 rounded-xl text-center border border-border mb-6">
             <p className="text-sm text-muted-foreground font-medium">
               You joined Team {userSide === "pros" ? proLabel : conLabel}. 
-              You can only contribute to your own team's side.
+              You can only reply to the opposing team's side.
             </p>
           </div>
         )}

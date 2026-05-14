@@ -47,13 +47,6 @@ export default function ReportModal({ entity, onClose, type, onDelete}) {
     }
   };
 
-  const handleDeleteClick = () => {
-    if (window.confirm(`Are you sure you want to delete this ${type === "postReport" ? "post" : "comment"}?`)) {
-      onDelete(type === "postReport" ? entity.postID : entity.id);
-      onClose();
-    }
-  };
-
   return (
     <Modal onClose={onClose}>
       <ModalHeader

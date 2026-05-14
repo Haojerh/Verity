@@ -35,7 +35,7 @@ public class ReportController {
 
     @GetMapping("/api/reports")
     @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
-    public ResponseEntity<Response> getAllTopics(HttpServletRequest request) {
+    public ResponseEntity<Response> getAllReport(HttpServletRequest request) {
         var reports = reportService.getAllReports();
         return ResponseEntity.ok(getResponse(request, Map.of("reports", reports), "Reports Retrieved", OK));
     }
