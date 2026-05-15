@@ -16,6 +16,7 @@ public class PostEntity extends Auditable {
     @Column(length = 20)
     private String postID;
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String proLabel;
     private String conLabel;

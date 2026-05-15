@@ -7,6 +7,7 @@ import ReportModal from "../components/debate/ReportModal";
 import ShareModal from "../components/debate/ShareModal";
 import TakedownModal from "../components/debate/TakedownModal";
 import UpdatePostForm from "../components/createPost/UpdatePostForm"; 
+import DebateSummary from "../components/debate/DebateSummary";
 import { usePostPage } from "../hooks/usePostPage";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
@@ -15,7 +16,6 @@ export default function PostPage() {
   const navigate = useNavigate();
   const { id: postID } = useParams();
   const { user } = useAuth(); 
-  // const topics = []; 
 
   const {
     post, comments, mvp, totalComments, totalParticipants, commentText,
@@ -63,6 +63,8 @@ export default function PostPage() {
             handleStanceChange={handleStanceChange} 
             stats={stats}
           />
+
+          {/* <DebateSummary postID={post.postID} /> */}
 
           <StatsRow
             counts={{ totalParticipants, totalComments }}

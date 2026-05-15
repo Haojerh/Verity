@@ -87,7 +87,8 @@ export const passwordSchema = z.object({
 export const postSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters").max(100),
   topicID: z.string().min(1, "Please select a topic"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  description: z.string()
+  .min(10, "Description must be at least 10 characters").max(1000, "Description cannot exceed 1000 characters"),
   proLabel: z.string().default("Pro"),
   conLabel: z.string().default("Con"),
   image: z

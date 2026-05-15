@@ -5,40 +5,25 @@ import SelectBox from "../ui/SelectBox";
 import ImageUpload from "../ui/ImageUpload";
 import { postSchema } from "../../utils/Schema";
 import Header from "../ui/Header";
-import { useEffect } from "react";
 
-export default function UpdatePostForm({ onSubmit, topics, post }) {
+export default function CreatePostForm({ onSubmit, topics }) {
   const { 
     register, 
     handleSubmit, 
     setValue,
     watch,
-    reset,
     formState: { errors, isSubmitting } 
   } = useForm({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      title: post?.title || "",
-      topicID: post?.topicID || "",
-      description: post?.description || "",
-      proLabel: post?.proLabel || "Pro",
-      conLabel: post?.conLabel || "Con",
-      image: post?.images?.[0] || post?.imagePath || null 
+      title: "",
+      topicID: "",
+      description: "",
+      proLabel: "Pro",
+      conLabel: "Con",
+      image: null 
     }
   });
-
-  useEffect(() => {
-    if (post) {
-      reset({
-        title: post.title,
-        topicID: post.topicID,
-        description: post.description,
-        proLabel: post.proLabel,
-        conLabel: post.conLabel,
-        image: post.images?.[0] || post.imagePath || null
-      });
-    }
-  }, [post, reset]);
 
   const topicOptions = topics.map(t => ({
     value: t.topicID,
@@ -48,8 +33,8 @@ export default function UpdatePostForm({ onSubmit, topics, post }) {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <Header
-        title="Edit Debate"
-        desc={`Updating "${post?.title}"`}
+        title="Create New Debate"
+        desc="Start a new discussion in the Verity community."
       />
 
       <form 
@@ -83,16 +68,13 @@ export default function UpdatePostForm({ onSubmit, topics, post }) {
         />
 
         <div className="flex flex-col gap-2">
-          <label className="text-foreground font-medium">Header Image</label>
+          <label className="text-foreground font-medium">Header Image (Optional)</label>
           <ImageUpload
             value={watch("image")}
             onChange={(file) => setValue("image", file, { shouldValidate: true })}
             error={errors.image?.message}
             type="banner" 
           />
-          <p className="text-[10px] text-muted-foreground italic">
-            Leave as is to keep current image, or upload a new one to replace it.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,13 +82,13 @@ export default function UpdatePostForm({ onSubmit, topics, post }) {
           <TextBox label="Con Side Label" {...register("conLabel")} error={errors.conLabel?.message} />
         </div>
 
-        <div className="pt-4 flex gap-3">
+        <div className="pt-4">
           <button 
             type="submit" 
             disabled={isSubmitting}
             className="w-full bg-primary text-white py-4 rounded-lg hover:brightness-110 transition-all disabled:opacity-50 font-bold tracking-wide shadow-lg"
           >
-            {isSubmitting ? "Saving Changes..." : "Save Changes"}
+            {isSubmitting ? "Posting..." : "Create Post"}
           </button>
         </div>
       </form>
