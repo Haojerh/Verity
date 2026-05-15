@@ -50,7 +50,7 @@ export default function ProfileDropdown({ onClose, onToggle }) {
 
       <button
         onClick={handleLogout}
-        className="w-full p-3 text-left hover:bg-muted transition-colors flex items-center gap-3 text-sm text-red-600"
+        className="w-full p-3 text-left hover:bg-destructive/5 transition-colors flex items-center gap-3 text-sm text-destructive"
       >
         <LogOut className="w-4 h-4"/>
         Logout
