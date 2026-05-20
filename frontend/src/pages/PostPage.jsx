@@ -11,6 +11,7 @@ import DebateSummary from "../components/debate/DebateSummary";
 import { usePostPage } from "../hooks/usePostPage";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
+import DelelePostModal from "../components/debate/DeletePostModal";
 
 export default function PostPage() {
   const navigate = useNavigate();
@@ -127,6 +128,14 @@ export default function PostPage() {
         <TakedownModal
           entity={modal.entity}
           type="post"
+          onClose={closeModal}
+          onSuccess={() => navigate("/")}
+        />
+      )}
+
+      {modal.type === "delete" && (
+        <DelelePostModal
+          entity={modal.entity}
           onClose={closeModal}
           onSuccess={() => navigate("/")}
         />

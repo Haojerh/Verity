@@ -28,6 +28,7 @@ export default function PostHeader({
     images, 
     date, 
     topicName, 
+    topicID,
     title,
     authorImageUrl
   } = post;
@@ -36,7 +37,9 @@ export default function PostHeader({
     <section className="space-y-3 mb-10">
       <div className="flex justify-between gap-2">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          <button className="text-primary border border-secondary px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-primary/5 hover:scale-105 transition-all">
+          <button 
+          onClick={() => navigate(`/explore/${topicID}`)}
+          className="text-primary border border-secondary px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-primary/5 hover:scale-105 transition-all cursor-pointer">
             {topicName}
           </button>
           <span>•</span>
@@ -78,12 +81,7 @@ export default function PostHeader({
                   </button>
 
                   <button 
-                    onClick={() => {
-                      if (window.confirm("Permanently delete this debate?")) {
-                        handleDeletePost(post.postID);
-                      }
-                      setMenuOpen(false);
-                    }}
+                    onClick={() => {openModal("delete", post); setMenuOpen(false);}}
                     className="flex gap-3 p-4 w-full hover:bg-destructive/5 text-destructive text-sm font-bold items-center transition-all"
                   >
                     <Trash2 className="w-4 h-4" /> Delete Post

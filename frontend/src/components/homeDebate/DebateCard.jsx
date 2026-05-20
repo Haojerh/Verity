@@ -16,6 +16,7 @@ export default function DebateCard({ debate }) {
       onClick={() => navigate(`/post/${debate.postID}`)}
       className="relative bg-card border rounded-lg p-4 cursor-pointer hover:shadow-md dark:hover:shadow-dark-md"
     >
+
       <DebateHeader debate={debate} />
 
       <h3 className="text-lg font-medium">{debate.title}</h3>
