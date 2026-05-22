@@ -30,8 +30,6 @@ export default function PostPage() {
 
   if (!post) return <div className="text-center py-10 text-muted-foreground">Loading debate...</div>;
 
-  console.log(post.title);
-
   return (
     <div className="max-w-4xl mx-auto w-full px-4 sm:px-0">
       <Helmet>

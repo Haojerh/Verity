@@ -30,7 +30,7 @@ export default function PostHeader({
     topicName, 
     topicID,
     title,
-    authorImageUrl
+    authorAvatar
   } = post;
   
   return (
@@ -112,7 +112,7 @@ export default function PostHeader({
         <div 
         onClick={() => navigate(`/profile/${authorID}`)}
         className="flex gap-2 items-center text-xs cursor-pointer w-fit">
-          <Avatar name={author} size="sm" imageUrl={authorImageUrl} />
+          <Avatar name={author} size="sm" imageUrl={authorAvatar ? `http://localhost:8080/api/uploads/users/${authorAvatar}` : null} />
           <span className="text-xs font-bold text-secondary uppercase tracking-tighter">
             @{author}
           </span>

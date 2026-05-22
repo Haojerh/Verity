@@ -192,6 +192,7 @@ public class PostService {
         if (entity.getAuthor() != null) {
             dto.setAuthorID(entity.getAuthor().getUserID());
             dto.setAuthorName(entity.getAuthor().getName());
+            dto.setAuthorAvatar(entity.getAuthor().getAvatar());
         }
 
         long pros = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(entity, "PROS");
@@ -465,9 +466,17 @@ public class PostService {
             Math.min(endLimit, ordered.size())
         );
 
-        List<PostDTO> content = pageSlice.stream()
-            .map(dp -> mapToDTO(dp.post))
-            .toList();
+        List<PostDTO> content = pageSlice.stream().map(post -> {
+            PostDTO dto = new PostDTO();
+            BeanUtils.copyProperties(post.post, dto);
+
+            dto.setAuthorID(post.post.getAuthor().getUserID());
+            dto.setAuthorName(post.post.getAuthor().getName());
+            dto.setAuthorAvatar(post.post.getAuthor().getAvatar());
+            dto.setTopicName(post.post.getTopic() != null ? post.post.getTopic().getName() : null);
+            dto.setStatistics(postStanceService.getPostStats(post.post.getPostID()));
+            return dto;
+        }).toList();
 
         return new PageImpl<>(
             content,

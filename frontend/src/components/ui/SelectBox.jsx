@@ -20,8 +20,9 @@ export default function SelectBox({
         <select
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full appearance-none bg-muted/70 border text-muted-foreground rounded-xl py-3.5 px-4 pr-10 text-sm font-medium transition-all 
-            ${error ? "border-destructive" : ""}`}
+          className={`w-full appearance-none bg-muted/70 border rounded-xl py-3.5 px-4 pr-10 text-sm font-medium transition-all 
+            ${error ? "border-destructive" : ""}
+            ${value ? "text-foreground" : "text-muted-foreground"}`}
         >
           <option value="" disabled>
             {placeholder}

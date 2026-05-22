@@ -7,6 +7,7 @@ import Topbar from "./Topbar";
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [displayModeOpen, setDisplayModeOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem("theme");
 
@@ -53,6 +54,8 @@ export default function Layout() {
         setSidebarOpen={setSidebarOpen}
         onOpenDisplayMode={() => setDisplayModeOpen(true)}
         isDark={isDark}
+        mobileSearchOpen={mobileSearchOpen}
+        setMobileSearchOpen={setMobileSearchOpen}
       />
 
       <div className="flex relative">

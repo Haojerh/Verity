@@ -3,6 +3,7 @@ package com.Verity.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -225,11 +226,13 @@ public class AnalyticsService {
     private List<PeakActivityDTO> getPeakActivities() {
         List<Object[]> results = postRepo.countPostsByHour();
 
-        Map<Integer, Long> map = results.stream()
-            .collect(Collectors.toMap(
-                r -> ((Number) r[0]).intValue(),
-                r -> (Long) r[1]
-            ));
+        Map<Integer, Long> map = new HashMap<>();
+        for (Object[] r : results) {
+            int utcHour = ((Number) r[0]).intValue();
+            int localHour = (utcHour + 8) % 24;
+            long count = ((Number) r[1]).longValue();
+            map.merge(localHour, count, Long::sum);
+        }
 
         return IntStream.range(0, 24)
             .mapToObj(hour -> new PeakActivityDTO(

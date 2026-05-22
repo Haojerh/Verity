@@ -15,9 +15,8 @@ import { useDebounce } from "../../hooks/useDebounce";
 import SearchDropdown from "../ui/SearchDropdown";
 import { getSearchSuggestions } from "../../services/PostService";
 
-export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
+export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode, isDark, mobileSearchOpen, setMobileSearchOpen }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   // Noti State
   const [notificationOpen, setNotificationOpen] = useState(false);
