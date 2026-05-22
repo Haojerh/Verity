@@ -12,6 +12,7 @@ import { usePostPage } from "../hooks/usePostPage";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import DelelePostModal from "../components/debate/DeletePostModal";
+import { Helmet } from "react-helmet-async";
 
 export default function PostPage() {
   const navigate = useNavigate();
@@ -29,8 +30,16 @@ export default function PostPage() {
 
   if (!post) return <div className="text-center py-10 text-muted-foreground">Loading debate...</div>;
 
+  console.log(post.title);
+
   return (
     <div className="max-w-4xl mx-auto w-full px-4 sm:px-0">
+      <Helmet>
+        <title>{post.title}</title>
+        <meta name="description" content={post.description?.slice(0, 155)} />
+        <meta name="author" content={post.authorName} />
+      </Helmet>
+
       {isEditing ? (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <button 

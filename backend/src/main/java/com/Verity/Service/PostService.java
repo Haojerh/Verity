@@ -357,6 +357,13 @@ public class PostService {
         });
     }
 
+    public List<String> getSearchSuggestions(String q, int limit) {
+        if (q == null || q.trim().length() < 2) return List.of();
+
+        Pageable pageable = PageRequest.of(0, limit);
+        return postRepo.findTitleSuggestions(q, pageable); // returns List<String>
+    }
+
     public Page<PostDTO> getRecommendedPosts(String userID, int page, int size) {
         int maxSize = 50;
         int start = page * size;

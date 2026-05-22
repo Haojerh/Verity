@@ -78,6 +78,11 @@ export const getSearchPosts = async (q, page = 0, size = 6) => {
   );
 };
 
+export const getSearchSuggestions = async (q) => {
+  if (!q || q.trim().length < 2) return [];
+  return await request("GET", `/api/posts/suggestions?q=${encodeURIComponent(q)}&limit=5`)
+};
+
 export const createPost = async (postData, imageFile) => {
   try {
     const formData = new FormData();

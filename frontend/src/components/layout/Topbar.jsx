@@ -10,14 +10,27 @@ import { useAuth } from "../../context/AuthContext";
 import { getCurrentUser } from "../../services/UserService";
 import NotificationPanel from "../notification/NotificationPanel";
 import { getUserNotifications } from "../../services/NotiService";
+import useSearchHistory from "../../hooks/useSearchHistory";
+import { useDebounce } from "../../hooks/useDebounce";
+import SearchDropdown from "../ui/SearchDropdown";
+import { getSearchSuggestions } from "../../services/PostService";
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,isDark }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  // Noti State
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Search State
   const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const debouncedQuery = useDebounce(searchQuery, 100);
+  const { history, addToHistory, removeFromHistory, clearHistory } = useSearchHistory();
+
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -35,6 +48,23 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
     const count = notifications.filter(n => !n.read).length;
     setUnreadCount(count);
   }, [notifications]);
+
+  useEffect(() => {
+    if (debouncedQuery.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    getSearchSuggestions(debouncedQuery).then(setSuggestions);
+  }, [debouncedQuery]);
+
+  const handleSearch = (q) => {
+    const query = q || searchQuery;
+    if (!query.trim()) return;
+    addToHistory(query.trim());
+    setSearchQuery(query);
+    setDropdownVisible(false);
+    navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+  };
 
   return (
     <>
@@ -62,12 +92,9 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
               placeholder="Search debates..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setMobileSearchOpen(false);
-                  navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-                }
-              }}
+              onFocus={() => setDropdownVisible(true)}
+              onBlur={() => setDropdownVisible(false)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
               className="w-full pl-10 pr-4 py-2 bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
               style={{
                 border: '2px solid transparent',
@@ -75,6 +102,16 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
                 backgroundOrigin: 'border-box',
                 backgroundClip: 'padding-box, border-box'
               }}
+            />
+
+            <SearchDropdown
+              query={searchQuery}
+              suggestions={suggestions}
+              history={history}
+              onSelect={handleSearch}
+              onRemoveHistory={removeFromHistory}
+              onClearHistory={clearHistory}
+              visible={dropdownVisible}
             />
           </div>
         </div>
@@ -133,19 +170,19 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
     {mobileSearchOpen && (
       <div className="sm:hidden px-4 py-3 border-b border-border bg-card">
         <div className="relative flex items-center">
-          
           <Search className="absolute left-3 w-5 h-5 text-muted-foreground" />
-
           <input
             autoFocus
             type="text"
             placeholder="Search debates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setDropdownVisible(true)}
+            onBlur={() => setDropdownVisible(false)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 setMobileSearchOpen(false);
-                navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+                handleSearch();
               }
             }}
             className="w-full pl-10 pr-10 py-2 bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
@@ -155,6 +192,18 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, onOpenDisplayMode,
                 backgroundOrigin: 'border-box',
                 backgroundClip: 'padding-box, border-box'
               }}
+          />
+          <SearchDropdown
+            query={searchQuery}
+            suggestions={suggestions}
+            history={history}
+            onSelect={(q) => {
+              setMobileSearchOpen(false);
+              handleSearch(q);
+            }}
+            onRemoveHistory={removeFromHistory}
+            onClearHistory={clearHistory}
+            visible={dropdownVisible}
           />
         </div>
       </div>
