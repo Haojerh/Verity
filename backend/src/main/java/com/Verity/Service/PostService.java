@@ -1,7 +1,6 @@
 package com.Verity.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,9 +9,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.Verity.Constant.UserRole;
-import com.Verity.Exceptions.ApiException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.Verity.Constant.UserRole;
 import com.Verity.DTO.PostDTO;
 import com.Verity.DTO.PostRequest;
 import com.Verity.DTO.PostStanceDTO;
@@ -33,6 +30,7 @@ import com.Verity.Entity.ReportEntity;
 import com.Verity.Entity.TopicEntity;
 import com.Verity.Entity.UserEntity;
 import com.Verity.Entity.VoteEntity;
+import com.Verity.Exceptions.ApiException;
 import com.Verity.Repo.CommentRepo;
 import com.Verity.Repo.FollowRepo;
 import com.Verity.Repo.PostRepo;
@@ -44,6 +42,7 @@ import com.Verity.Repo.UserRepo;
 import com.Verity.Repo.VoteRepo;
 import com.Verity.Utils.FileUtil;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -193,6 +192,7 @@ public class PostService {
         if (entity.getAuthor() != null) {
             dto.setAuthorID(entity.getAuthor().getUserID());
             dto.setAuthorName(entity.getAuthor().getName());
+            dto.setAuthorAvatar(entity.getAuthor().getAvatar());
         }
 
         long pros = postStanceRepo.countByPostIDAndChosenStanceIgnoreCase(entity, "PROS");
@@ -358,6 +358,13 @@ public class PostService {
         });
     }
 
+    public List<String> getSearchSuggestions(String q, int limit) {
+        if (q == null || q.trim().length() < 2) return List.of();
+
+        Pageable pageable = PageRequest.of(0, limit);
+        return postRepo.findTitleSuggestions(q, pageable); // returns List<String>
+    }
+
     public Page<PostDTO> getRecommendedPosts(String userID, int page, int size) {
         int maxSize = 50;
         int start = page * size;
@@ -459,9 +466,17 @@ public class PostService {
             Math.min(endLimit, ordered.size())
         );
 
-        List<PostDTO> content = pageSlice.stream()
-            .map(dp -> mapToDTO(dp.post))
-            .toList();
+        List<PostDTO> content = pageSlice.stream().map(post -> {
+            PostDTO dto = new PostDTO();
+            BeanUtils.copyProperties(post.post, dto);
+
+            dto.setAuthorID(post.post.getAuthor().getUserID());
+            dto.setAuthorName(post.post.getAuthor().getName());
+            dto.setAuthorAvatar(post.post.getAuthor().getAvatar());
+            dto.setTopicName(post.post.getTopic() != null ? post.post.getTopic().getName() : null);
+            dto.setStatistics(postStanceService.getPostStats(post.post.getPostID()));
+            return dto;
+        }).toList();
 
         return new PageImpl<>(
             content,

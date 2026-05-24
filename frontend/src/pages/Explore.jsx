@@ -79,11 +79,11 @@ export default function Explore() {
         {topics.map((topic) => (
           <TopicCard key={topic.topicID} topic={topic} onFollowToggle={handleFollowToggle} />
         ))}
-
-        {topics.length === 0 && (
-            <div className="text-sm text-center text-muted-foreground">No Topic Yet.</div>
-        )}
       </div>
+
+      {topics.length === 0 && (
+          <div className="text-sm text-muted-foreground">No Topic Yet.</div>
+      )}
     </div>
   );
 }

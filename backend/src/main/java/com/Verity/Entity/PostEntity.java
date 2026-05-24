@@ -1,10 +1,18 @@
 package com.Verity.Entity;
 
-import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.bytebuddy.utility.RandomString;
-import org.hibernate.annotations.SQLRestriction;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,9 +23,12 @@ public class PostEntity extends Auditable {
     @Id
     @Column(length = 20)
     private String postID;
+    
     private String title;
+
     @Column(columnDefinition = "TEXT")
     private String description;
+    
     private String proLabel;
     private String conLabel;
     private String imagePath;

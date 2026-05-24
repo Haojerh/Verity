@@ -31,7 +31,7 @@ export default function DeleteModal({ user, onClose }) {
         onClose={onClose}
       />
 
-      <div className="px-8 pb-8 space-y-6">
+      <div className="px-8 pb-2 space-y-6">
         <ConfirmDisplay data={user} type="delete" />
       </div>
 

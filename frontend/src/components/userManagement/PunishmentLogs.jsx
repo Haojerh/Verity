@@ -36,7 +36,7 @@ export default function PunishmentLogs({ roleType="user", onClose, user }) {
               <th className="p-4 text-left">Time</th>
               <th className="p-4 text-left">Type</th>
               <th className="p-4 text-left">Duration</th>
-              {roleType == "user" && <th className="p-4 text-left">Moderator</th>}
+              {roleType == "user" && <th className="p-4 text-left">Punished By</th>}
               <th className="p-4 text-left">Reason</th>
             </tr>
           </thead>

@@ -11,6 +11,8 @@ import DebateSummary from "../components/debate/DebateSummary";
 import { usePostPage } from "../hooks/usePostPage";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
+import DelelePostModal from "../components/debate/DeletePostModal";
+import { Helmet } from "react-helmet-async";
 
 export default function PostPage() {
   const navigate = useNavigate();
@@ -30,6 +32,12 @@ export default function PostPage() {
 
   return (
     <div className="max-w-4xl mx-auto w-full px-4 sm:px-0">
+      <Helmet>
+        <title>{post.title}</title>
+        <meta name="description" content={post.description?.slice(0, 155)} />
+        <meta name="author" content={post.authorName} />
+      </Helmet>
+
       {isEditing ? (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <button 
@@ -127,6 +135,14 @@ export default function PostPage() {
         <TakedownModal
           entity={modal.entity}
           type="post"
+          onClose={closeModal}
+          onSuccess={() => navigate("/")}
+        />
+      )}
+
+      {modal.type === "delete" && (
+        <DelelePostModal
+          entity={modal.entity}
           onClose={closeModal}
           onSuccess={() => navigate("/")}
         />

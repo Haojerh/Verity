@@ -68,7 +68,7 @@ export default function ImageModal({
       <img
         src={images[index]}
         alt={`Fullscreen ${index + 1}`}
-        className="max-w-[90vw] max-h-[90vh] object-contain"
+        className="max-w-[90vw] max-h-[90vh] min-w-[50vw] min-h-[50vh] object-contain"
         onClick={(e) => e.stopPropagation()}
       />
     </div>

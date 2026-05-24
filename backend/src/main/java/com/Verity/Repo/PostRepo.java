@@ -111,6 +111,11 @@ public interface PostRepo extends JpaRepository<PostEntity, String> {
     """)
     Page<PostEntity> searchPosts(@Param("q") String q, Pageable pageable);
 
+    @Query("SELECT p.title FROM PostEntity p " +
+        "WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')) " +
+        "ORDER BY p.SYSCREATEDDATE DESC")
+    List<String> findTitleSuggestions(@Param("q") String q, Pageable pageable);
+
     @Query("""
         SELECT FUNCTION('DATE', p.SYSCREATEDDATE), COUNT(p)
         FROM PostEntity p
