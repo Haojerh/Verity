@@ -145,7 +145,7 @@ export default function NotificationPanel({ notifications, setNotifications, onC
               </div>
 
               {!notification.read && (
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <div className="w-2 h-2 bg-primary rounded-full shrink-0"></div>
               )}
 
             </div>

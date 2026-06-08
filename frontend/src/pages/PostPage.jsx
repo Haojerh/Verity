@@ -72,7 +72,7 @@ export default function PostPage() {
             stats={stats}
           />
 
-          <DebateSummary postID={post.postID} />
+          {/* <DebateSummary postID={post.postID} /> */}
 
           <StatsRow
             counts={{ totalParticipants, totalComments }}

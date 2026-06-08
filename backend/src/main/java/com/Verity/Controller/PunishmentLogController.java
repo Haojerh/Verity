@@ -56,7 +56,7 @@ public class PunishmentLogController {
     }
 
     @DeleteMapping("/api/punishments/unban/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
     public ResponseEntity<Response> unbanUser(@PathVariable String id, HttpServletRequest request) {
         punishmentLogService.unbanUser(id);
         return ResponseEntity.ok(getResponse(request, emptyMap(), "User Unbanned", OK));
