@@ -24,7 +24,6 @@ import org.hibernate.annotations.SQLRestriction;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "comment")
-@SQLRestriction("SYSISDELETED = false")
 public class CommentEntity extends Auditable {
     @Id
     @Column(length = 20)

@@ -35,7 +35,7 @@ public class ConsensusService {
     private final CommentService commentService;
 
     public int calculateConsensusScore(CommentEntity comment) {
-        List<VoteEntity> votes = voteRepo.findByComment_CommentID(comment.getCommentID());
+        List<VoteEntity> votes = voteRepo.findByComment_CommentIDAndSYSISDELETEDFalse(comment.getCommentID());
         String commentSide = postStanceService.resolveLabel(comment.getAuthor(), comment.getPost());
 
         return votes.stream()
@@ -64,7 +64,7 @@ public class ConsensusService {
     }
 
     public CommentDTO getLeadingCommentForSide(String postID, String sideLabel) {
-        List<CommentEntity> allComments = commentRepo.findByPost_PostID(postID);
+        List<CommentEntity> allComments = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID);
 
         return allComments.stream()
                 .filter(c -> {
@@ -88,7 +88,7 @@ public class ConsensusService {
     }
 
     public String getDebateMVP(String postID) {
-        List<CommentEntity> allComments = commentRepo.findByPost_PostID(postID);
+        List<CommentEntity> allComments = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID);
 
         if (allComments.isEmpty()) return "None";
 

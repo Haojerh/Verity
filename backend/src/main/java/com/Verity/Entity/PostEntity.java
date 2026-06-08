@@ -18,7 +18,6 @@ import net.bytebuddy.utility.RandomString;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "post")
-@SQLRestriction("SYSISDELETED = false")
 public class PostEntity extends Auditable {
     @Id
     @Column(length = 20)

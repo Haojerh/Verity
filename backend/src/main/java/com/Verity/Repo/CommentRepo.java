@@ -19,7 +19,9 @@ public interface CommentRepo extends JpaRepository<CommentEntity, String> {
 
     List<CommentEntity> findByPost_PostID(String postID);
 
-    Optional<CommentEntity> findByCommentID(String commentID);
+    List<CommentEntity> findByPost_PostIDAndSYSISDELETEDFalse(String postID);
+
+    Optional<CommentEntity> findByCommentIDAndSYSISDELETEDFalse(String commentID);
 
     long countByPost_PostID(String postID);
     

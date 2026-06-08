@@ -69,7 +69,7 @@ public class CommentService {
         comment.setAuthor(author);
 
         if (request.getParentCommentID() != null && !request.getParentCommentID().isBlank()) {
-            CommentEntity parentComment = commentRepo.findByCommentID(request.getParentCommentID())
+            CommentEntity parentComment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(request.getParentCommentID())
                     .orElseThrow(() -> new RuntimeException("Parent comment not found"));
 
             if (!parentComment.getPost().getPostID().equals(postID)) {
@@ -95,7 +95,7 @@ public class CommentService {
     }
 
     public List<CommentDTO> getCommentsByPostID(String postID) {
-        List<CommentEntity> entities = commentRepo.findByPost_PostID(postID);
+        List<CommentEntity> entities = commentRepo.findByPost_PostIDAndSYSISDELETEDFalse(postID);
         long totalCount = entities.size();
 
         Map<String, CommentDTO> dtoMap = new HashMap<>();
@@ -123,7 +123,7 @@ public class CommentService {
     }
 
     public CommentDTO getCommentByID(String id) {
-        CommentEntity comment = commentRepo.findByCommentID(id)
+        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         CommentDTO dto = new CommentDTO();
@@ -148,7 +148,7 @@ public class CommentService {
     }
 
     public void takedownComment(String id) {
-        CommentEntity comment = commentRepo.findByCommentID(id)
+        CommentEntity comment = commentRepo.findByCommentIDAndSYSISDELETEDFalse(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         // Deletion Logic and Replies too
