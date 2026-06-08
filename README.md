@@ -22,26 +22,29 @@ Open your MySQL Command Line Client or Workbench and run:
 ```sql
 CREATE DATABASE verity;
 ```
-- Import data in MySQL Workbench by [ Server -> Import Data ]
+- Import the verity.sql file (located in the zipped folder) into MySQL Workbench by navigating [ Server -> Import Data ]
 - Select TestData Provided in the Repository
 
 Admin: 
-- email: joshua@gmail.com
-- password: @Joshua123
+- email: haojerhs@gmail.com
+- password: @Haojerh123
 
 Moderator:
-- email: buddy@gmail.com
-- password: @Buddy123
+- email: haojerh@gmail.com
+- password: @Haojerh123
 
 User:
 - email: celine@gmail.com
 - password: @Celine123
 
-- email: test@gmail.com
-- password: @Test123
+- email: johndoe@gmail.com
+- password: @Johndoe123
 
-- email: mrbean@gmail.com
-- password: @MrBean123
+- email: bro@gmail.com
+- password: @Bro1234
+
+- email: johnny@gmail.com
+- password: @Johnny123
 
 ### 2. Backend Setup (Spring Boot)
 Navigate to the backend directory:
